@@ -1,5 +1,8 @@
 # KissLog.Net
-KissLog is a lightweight, customizable and powerful Logging tool for .NET
+
+KissLog represents a lightweight, adaptive and straightforward solution to integrate logging and error handling in .NET applications.
+
+<br>
 
 Some of the main features of KissLog are:
 
