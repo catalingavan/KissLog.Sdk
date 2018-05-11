@@ -33,6 +33,21 @@ Verbosity levels have been inspired from [AspNetCore logging documentation](http
 | Error  | `_logger.Error($"User with Id = {userId} was not found");` <br> `_logger.Error(ex);`  |
 | Critical  | `_logger.Critical("There is not enough space on the disk. Save failed.");`  |
 
+When a Log message is created, source file, method name and line number are automatically captured.
+
+Example:
+
+```C
+MyApplication.Services.ProductsService.cs CreateProduct : 17
+[Info] Product inserted in database
+
+MyApplication.Services.ProductsService.cs CreateProduct : 21
+[Info] Sending confirmation email to user demo@example.com
+
+MyApplication.Services.ProductsService.cs CreateProduct : 25
+[Info] Confirmation email successfully sent
+```
+
 <br>
 
 **Requests Tracking**
