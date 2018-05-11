@@ -55,7 +55,7 @@ A LogListener represents a class which persists the log messages to a storage lo
 
 KissLog comes with built-in listeners to save the data on **Text Files** and on **Cloud**, but, if required, it is easy to create your own custom Listeners.
 
-```
+```csharp
 public class MvcApplication : System.Web.HttpApplication
 {
     protected void Application_Start()
@@ -78,9 +78,11 @@ public class MvcApplication : System.Web.HttpApplication
 }
 ```
 
+<br>
+
 **In code**
 
-```
+```csharp
 using KissLog;
 
 public class ProductsService : IProductsService
