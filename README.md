@@ -60,9 +60,7 @@ public class ProductsService : IProductsService
 
 A LogListener represents a class which persists the log messages to a storage location (Text File, Database, Cloud etc).
 
-KissLog comes with built-in listeners to save the data on **Text Files** and on **Cloud**, and is easy to create your own custom Listeners.
-
-An application can have any number of LogListeners defined.
+KissLog comes with built-in listeners to save the data on **Text Files** and on **Cloud**, but, if required, it is easy to create your own custom Listeners.
 
 ```
 public class MvcApplication : System.Web.HttpApplication
