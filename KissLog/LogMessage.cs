@@ -5,7 +5,7 @@ namespace KissLog
 {
     public class LogMessage
     {
-        public string CategoryName { get; set; }
+        public string CategoryName { get; set; } 
         public LogLevel LogLevel { get; set; }
         public string Message { get; set; }
         public DateTime DateTime { get; set; }
