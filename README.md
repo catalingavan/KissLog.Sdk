@@ -33,30 +33,17 @@ Please check the [Wiki page](https://github.com/catalingavan/KissLog-net/wiki) f
 
 <br>
 
-```
-public class ProductsService : IProductsService
-{
-    public void CreateProduct(Product product, User createdBy)
-    {
-        _productsRepository.Insert(product);
-        
-        _logger.Info("Product inserted in database");
-    
-        try
-        {
-            _logger.Info($"Sending confirmation email to user {createdBy.EmailAddress}");
+**Requests Tracking**
 
-            EmailNotifications.SendConfirmation(createdBy.EmailAddress, product);
+Logging only Exceptions is not always a complete solution.
 
-            _logger.Info("Confirmation email successfully sent");
-        }
-        catch(Exception ex)
-        {
-            _logger.Error(new Args("Send confirmation email failed with exception", ex));
-        }
-    }
-}
-```
+Inconsistent application behaviour can be determined by observing all the requests, in general.
+
+KissLog captures all the information for a specific HttpRequest, regardless if it was successful or not.
+
+| General | Request | Response | Log Messages |
+| :--- | :--- | :--- | :--- |
+| UserAgent <br> HttpMethod <br> Uri <br> IP Address <br> MachineName <br> StartTime <br> EndTime <br>Duration | Headers <br> Cookies <br> QueryString <br> FormData <br> InputStream <br> ServerVariables <br> Claims | HttpStatusCode <br> Headers | _Log messages_ <br> _Unhandled Exceptions_ |
 
 <br>
 
@@ -91,4 +78,39 @@ public class MvcApplication : System.Web.HttpApplication
 }
 ```
 
+**In code**
 
+```
+using KissLog;
+
+public class ProductsService : IProductsService
+{
+    private readonly ILogger _logger;
+    private readonly IProductsRepository _productsRepository;
+    public ProductsService(ILogger logger, IProductsRepository productsRepository)
+    {
+        _logger = logger;
+        _productsRepository = productsRepository;
+    }
+
+    public void CreateProduct(Product product, User createdBy)
+    {
+        _productsRepository.Insert(product);
+        
+        _logger.Info("Product inserted in database");
+    
+        try
+        {
+            _logger.Info($"Sending confirmation email to user {createdBy.EmailAddress}");
+
+            EmailNotifications.SendConfirmation(createdBy.EmailAddress, product);
+
+            _logger.Info("Confirmation email successfully sent");
+        }
+        catch(Exception ex)
+        {
+            _logger.Error(new Args("Send confirmation email failed with exception", ex));
+        }
+    }
+}
+```
