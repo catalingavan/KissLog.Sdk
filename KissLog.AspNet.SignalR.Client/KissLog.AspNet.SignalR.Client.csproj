@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.3;netstandard1.4;net40;net45</TargetFrameworks>
+    <AssemblyName>KissLog.AspNet.SignalR.Client</AssemblyName>
+    <RootNamespace>KissLog.AspNet.SignalR.Client</RootNamespace>
+    <Authors>KissLog.net</Authors>
+    <Company>KissLog.net</Company>
+    <Product>KissLog.net</Product>
+    <Description>KissLog SignalR client. Contains ready to use services to access KissLog SignalR endpoints. Install this package to root applications  (Asp.Net MVC, Asp.Net WebApi, AspNetCore)</Description>
+    <Copyright></Copyright>
+    <PackageLicenseUrl>https://opensource.org/licenses/Apache-2.0</PackageLicenseUrl>
+    <PackageProjectUrl>https://kisslog.net</PackageProjectUrl>
+    <PackageIconUrl>https://kisslog.net/Content/images/kissLogLogos/logo_32.png</PackageIconUrl>
+    <PackageTags>Logging, Management, Error, Exception, Tracing, KissLog, Diagnostics, Reporing, SignalR</PackageTags>
+    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net40'">
+    <PackageReference Include="Microsoft.AspNet.SignalR.Client">
+      <Version>2.2.2</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+    <PackageReference Include="Microsoft.AspNet.SignalR.Client">
+      <Version>2.2.2</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="Microsoft.AspNet.SignalR.Client">
+      <Version>2.2.2</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.4'">
+    <PackageReference Include="Microsoft.AspNet.SignalR.Client">
+      <Version>2.2.2</Version>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

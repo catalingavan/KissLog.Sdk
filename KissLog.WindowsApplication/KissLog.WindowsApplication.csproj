@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <Version>1.1.0</Version>
+    <Authors>KissLog.net</Authors>
+    <Company>KissLog.net</Company>
+    <Product>KissLog.net</Product>
+    <Description>KissLog Windows Application package. Contains the components required to hook Console Applications and Windows Service applications with KissLog.</Description>
+    <PackageLicenseUrl>https://opensource.org/licenses/Apache-2.0</PackageLicenseUrl>
+    <PackageProjectUrl>https://kisslog.net</PackageProjectUrl>
+    <PackageIconUrl>https://kisslog.net/Content/images/kissLogLogos/logo_32.png</PackageIconUrl>
+    <PackageTags>Logging, Management, Error, Exception, Tracing, KissLog, KissLog Windows, KissLog Console, KissLog Windows Service, Diagnostics, Reporing</PackageTags>
+    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KissLog\KissLog.csproj" />
+  </ItemGroup>
+
+</Project>

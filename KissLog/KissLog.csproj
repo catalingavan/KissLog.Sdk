@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.3;netstandard1.4;net40;net45</TargetFrameworks>
+    <AssemblyName>KissLog</AssemblyName>
+    <RootNamespace>KissLog</RootNamespace>
+    <PackageLicenseUrl>https://opensource.org/licenses/Apache-2.0</PackageLicenseUrl>
+    <PackageProjectUrl>https://kisslog.net</PackageProjectUrl>
+    <PackageIconUrl>https://kisslog.net/Content/images/kissLogLogos/logo_32.png</PackageIconUrl>
+    <Description>KissLog core package. Contains the minimal components required to use ILogger in your application. Install this package in sub-modules.</Description>
+    <PackageReleaseNotes>Added Trace, Critical log level.
+Added LogListenerParser, so each ILogListener can filter the data it collects individually.</PackageReleaseNotes>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>KissLog.net</Authors>
+    <Company>KissLog.net</Company>
+    <Product>KissLog.net</Product>
+    <PackageTags>Logging, Management, Error, Exception, Tracing, KissLog, Diagnostics, Reporing</PackageTags>
+    <Version>2.4.0</Version>
+    <AssemblyVersion>2.4.0.0</AssemblyVersion>
+    <FileVersion>2.4.0.0</FileVersion>
+    <PackageId>KissLog</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+  </ItemGroup>
+
+</Project>

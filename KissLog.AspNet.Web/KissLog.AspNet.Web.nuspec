@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>KissLog.AspNet.Web</id>
+    <version>1.5.0</version>
+    <authors>KissLog.net</authors>
+    <owners>KissLog.net</owners>
+    <licenseUrl>https://opensource.org/licenses/Apache-2.0</licenseUrl>
+    <projectUrl>http://kisslog.net</projectUrl>
+    <iconUrl>https://kisslog.net/Content/images/kissLogLogos/logo_32.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>KissLog Web package. Contains the components required to hook AspNet Web applications with KissLog. You should not manually install this package, as it will be installed as a dependency.</description>
+    <releaseNotes>Small improvements</releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>KissLog</tags>
+    <dependencies>
+      <dependency id="KissLog" version="2.4.0" />
+      <dependency id="KissLog.Apis.v1" version="1.7.0" />
+    </dependencies>
+  </metadata>
+  <files></files>
+</package>
