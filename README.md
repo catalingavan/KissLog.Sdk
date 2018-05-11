@@ -28,3 +28,7 @@ Some of the main features of KissLog are:
 | Warning  | `_logger.Warn($"Cache entry for {key} was not found");`  |
 | Error  | `_logger.Error($"User with Id = {userId} was not found");` <br> `_logger.Error(ex);`  |
 | Critical  | `_logger.Critical("There is not enough space on the disk. Save failed.");`  |
+
+<br>
+
+Please check the [Wiki page](https://github.com/catalingavan/KissLog-net/wiki) for a complete documentation.
