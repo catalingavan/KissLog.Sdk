@@ -78,7 +78,7 @@ public class MvcApplication : System.Web.HttpApplication
             // writes on Text Files
             new LocalTextFileListener(),
             
-            // writes on Databse, only if request was unsuccessfully 
+            // writes on Databse, only if request was unsuccessful 
             new DatabaseListener
             {
                 MinimumResponseHttpStatusCode = 400
