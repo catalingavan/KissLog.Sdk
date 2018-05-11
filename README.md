@@ -16,6 +16,10 @@ Some of the main features of KissLog are:
 
 <br>
 
+Please check the [Wiki page](https://github.com/catalingavan/KissLog-net/wiki) for a complete documentation.
+
+<br>
+
 **Basic Usage**
 
 | Level  | Usage |
@@ -56,7 +60,9 @@ public class ProductsService : IProductsService
 
 <br>
 
-**Registering Listeners**
+**Log Listeners**
+
+You can have any number of Log targets for an application.
 
 A LogListener represents a class which persists the log messages to a storage location (Text File, Database, Cloud etc).
 
@@ -85,4 +91,4 @@ public class MvcApplication : System.Web.HttpApplication
 }
 ```
 
-Please check the [Wiki page](https://github.com/catalingavan/KissLog-net/wiki) for a complete documentation.
+
