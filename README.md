@@ -22,6 +22,8 @@ Please check the [Wiki page](https://github.com/catalingavan/KissLog-net/wiki) f
 
 **Basic Usage**
 
+Verbosity levels have been inspired from [AspNetCore logging documentation](http://vibrantcode.com/AspNetDocsPreview/fundamentals/logging.html#logging-verbosity-levels)
+
 | Level  | Usage |
 | :--- | :--- |
 | Trace  | `_logger.Trace("Database connection opened");`  |
