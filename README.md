@@ -29,4 +29,62 @@ Some of the main features of KissLog are:
 
 <br>
 
+```
+public class ProductsService : IProductsService
+{
+    public void CreateProduct(Product product, User createdBy)
+    {
+        _productsRepository.Insert(product);
+        
+        _logger.Info("Product inserted in database");
+    
+        try
+        {
+            _logger.Info($"Sending confirmation email to user {createdBy.EmailAddress}");
+
+            EmailNotifications.SendConfirmation(createdBy.EmailAddress, product);
+
+            _logger.Info("Confirmation email successfully sent");
+        }
+        catch(Exception ex)
+        {
+            _logger.Error(new Args("Send confirmation email failed with exception", ex));
+        }
+    }
+}
+```
+
+<br>
+
+**Registering Listeners**
+
+A LogListener represents a class which persists the log messages to a storage location (Text File, Database, Cloud etc).
+
+KissLog comes with built-in listeners to save the data on **Text Files** and on **Cloud**, and is easy to create your own custom Listeners.
+
+An application can have any number of LogListeners defined.
+
+```
+public class MvcApplication : System.Web.HttpApplication
+{
+    protected void Application_Start()
+    {
+        KissLogConfiguration.Listeners.AddRange(
+        
+            // writes on Text Files
+            new LocalTextFileListener(),
+            
+            // writes on Databse, only if request was unsuccessfully 
+            new DatabaseListener
+            {
+                MinimumResponseHttpStatusCode = 400
+            },
+            
+            // logs on cloud
+            new KissLogApiListener("applicationId")
+        );
+    }
+}
+```
+
 Please check the [Wiki page](https://github.com/catalingavan/KissLog-net/wiki) for a complete documentation.
