@@ -6,13 +6,11 @@ KissLog represents a lightweight, adaptive and straightforward solution to integ
 
 Some of the main features of KissLog are:
 
-:small_blue_diamond: It is lightweight. The only required dependency is `Newtonsoft.Json`
-
-:small_blue_diamond: It is easy to install and configure, even for existing - legacy applications.
+:small_blue_diamond: Centralized Logging, Diagnostics and Exceptions Handling
 
 :small_blue_diamond: Automatically captures all the the requests, including unhandled exceptions.
 
-:small_blue_diamond: You have full control over data.
+:small_blue_diamond: It is easy to install and configure, even for existing - legacy applications.
 
 :small_blue_diamond: Provides ready-to-use [KissLog.net](https://kisslog.net) cloud or on-premises integration.
 
