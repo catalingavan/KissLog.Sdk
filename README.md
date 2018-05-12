@@ -104,6 +104,14 @@ public class MvcApplication : System.Web.HttpApplication
 }
 ```
 
+Text File
+
+![Text Log output](https://preview.ibb.co/nw9cad/3.png)
+
+Cloud
+
+![Cloud output](https://preview.ibb.co/b7Styy/frame_2.png)
+
 <br>
 
 **[IoC Integration](https://github.com/catalingavan/KissLog-net/wiki/IoC)**
