@@ -20,7 +20,7 @@ Please check the [Wiki page](https://github.com/catalingavan/KissLog-net/wiki) f
 
 <br>
 
-**Basic Usage**
+**[Basic Usage](https://github.com/catalingavan/KissLog-net/wiki/Basic-Usage)**
 
 Verbosity levels have been inspired from [AspNetCore logging documentation](http://vibrantcode.com/AspNetDocsPreview/fundamentals/logging.html#logging-verbosity-levels)
 
@@ -50,7 +50,7 @@ MyApplication.Services.ProductsService.cs CreateProduct : 25
 
 <br>
 
-**Requests Tracking**
+**[Requests Tracking](https://github.com/catalingavan/KissLog-net/wiki/Requests-Tracking)**
 
 Logging only Exceptions is not always a complete solution.
 
@@ -58,13 +58,24 @@ Inconsistent application behaviour can be determined by observing all the reques
 
 KissLog captures all the information for a specific HttpRequest, regardless if it was successful or not.
 
+For each requst, we capture all the relevant information required to debug an issue.
+
 | General | Request | Response | Log Messages |
 | :--- | :--- | :--- | :--- |
 | UserAgent <br> HttpMethod <br> Uri <br> IP Address <br> MachineName <br> StartTime <br> EndTime <br>Duration | Headers <br> Cookies <br> QueryString <br> FormData <br> InputStream <br> ServerVariables <br> Claims | HttpStatusCode <br> Headers | _Log messages_ <br> _Unhandled Exceptions_ |
 
 <br>
 
-**Log Listeners**
+**[Frameworks support](https://github.com/catalingavan/KissLog-net/wiki/Install-Instructions)**
+
+- AspNetCore
+- AspNet Mvc
+- AspNet WebApi
+- Windows Services / Console Applications
+
+<br>
+
+**[Log Targets](https://github.com/catalingavan/KissLog-net/wiki/Listeners)**
 
 You can have any number of Log targets for an application.
 
@@ -94,6 +105,18 @@ public class MvcApplication : System.Web.HttpApplication
     }
 }
 ```
+
+<br>
+
+**[IoC Integration](https://github.com/catalingavan/KissLog-net/wiki/IoC)**
+
+KissLog supports easily integration with most of the IoC frameworks available.
+
+- Ninject
+
+- Autofac
+
+- Unity
 
 <br>
 
