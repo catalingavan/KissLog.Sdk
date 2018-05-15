@@ -20,6 +20,20 @@ Please check the [Wiki page](https://github.com/catalingavan/KissLog-net/wiki) f
 
 <br>
 
+[![NuGet](https://img.shields.io/nuget/v/KissLog.svg?style=flat-square&label=KissLog)](https://www.nuget.org/packages/KissLog/) 
+[![NuGet](https://img.shields.io/nuget/v/KissLog.AspNetCore.svg?style=flat-square&label=KissLog.AspNetCore)](https://www.nuget.org/packages/KissLog.AspNetCore/) 
+[![NuGet](https://img.shields.io/nuget/v/KissLog.AspNet.Mvc.svg?style=flat-square&label=KissLog.AspNet.Mvc)](https://www.nuget.org/packages/KissLog.AspNet.Mvc/) 
+[![NuGet](https://img.shields.io/nuget/v/KissLog.AspNet.WebApi.svg?style=flat-square&label=KissLog.AspNet.WebApi)](https://www.nuget.org/packages/KissLog.AspNet.WebApi/) 
+[![NuGet](https://img.shields.io/nuget/v/KissLog.WindowsApplication.svg?style=flat-square&label=KissLog.WindowsApplication)](https://www.nuget.org/packages/KissLog.WindowsApplication/) 
+
+Package name                              | Stable (master branch)
+-------------------------------------------|-----------------------------
+`KissLog` | [![NuGet](https://img.shields.io/nuget/v/KissLog.svg?style=flat-square&label=KissLog)](https://www.nuget.org/packages/KissLog/)
+`KissLog.AspNetCore` | [![NuGet](https://img.shields.io/nuget/v/KissLog.AspNetCore.svg?style=flat-square&label=KissLog.AspNetCore)](https://www.nuget.org/packages/KissLog.AspNetCore/)
+`KissLog.AspNet.Mvc` | [![NuGet](https://img.shields.io/nuget/v/KissLog.AspNet.Mvc.svg?style=flat-square&label=KissLog.AspNet.Mvc)](https://www.nuget.org/packages/KissLog.AspNet.Mvc/)
+`KissLog.AspNet.WebApi` | [![NuGet](https://img.shields.io/nuget/v/KissLog.AspNet.WebApi.svg?style=flat-square&label=KissLog.AspNet.WebApi)](https://www.nuget.org/packages/KissLog.AspNet.WebApi/)
+`KissLog.WindowsApplication` | [![NuGet](https://img.shields.io/nuget/v/KissLog.WindowsApplication.svg?style=flat-square&label=KissLog.WindowsApplication)](https://www.nuget.org/packages/KissLog.WindowsApplication/)
+
 **[Basic Usage](https://github.com/catalingavan/KissLog-net/wiki/Basic-Usage)**
 
 | Level  | Usage |
