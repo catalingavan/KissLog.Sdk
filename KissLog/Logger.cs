@@ -81,7 +81,8 @@ namespace KissLog
             if(ex.Data.Contains(ExceptionLoggedKey))
                 return;
 
-            ErrorMessage = ex.Message;
+            if(string.Compare(CategoryName, DefaultCategoryName, StringComparison.OrdinalIgnoreCase) == 0)
+                ErrorMessage = ex.Message;
 
             string formatted = FormatMessage(ex);
             Log(logLevel, formatted, action, memberName, lineNumber, memberType);
@@ -137,7 +138,7 @@ namespace KissLog
 
             StringBuilder sb = new StringBuilder();
 
-            FormatException(ex, sb, "Exception:");
+            FormatException(ex, sb, "Exception:", new List<string>());
 
             string exceptionDetails = KissLogConfiguration.AppendExceptionDetails(ex);
             if (string.IsNullOrEmpty(exceptionDetails) == false)
@@ -157,22 +158,30 @@ namespace KissLog
             return JsonConvert.SerializeObject(json, Formatting.Indented);
         }
 
-        private void FormatException(Exception ex, StringBuilder sb, string errorType)
+        private void FormatException(Exception ex, StringBuilder sb, string errorType, List<string> exMessages)
         {
-            sb.AppendLine(errorType);
-            sb.AppendLine(ex.ToString());
+            string exString = ex.ToString();
+            bool alreadyLogged = exMessages.Any(p => string.Compare(p, exString, StringComparison.Ordinal) == 0);
+
+            if (alreadyLogged == false)
+            {
+                sb.AppendLine(errorType);
+                sb.AppendLine(exString);
+
+                exMessages.Add(exString);
+            }
 
             Exception innerException = ex.InnerException;
             while (innerException != null)
             {
-                FormatException(innerException, sb, "Inner Exception:");
+                FormatException(innerException, sb, "Inner Exception:", exMessages);
                 innerException = innerException.InnerException;
             }
 
             Exception baseException = ex.GetBaseException();
             if (baseException != null && baseException != ex)
             {
-                FormatException(baseException, sb, "Base Exception:");
+                FormatException(baseException, sb, "Base Exception:", exMessages);
             }
         }
 
