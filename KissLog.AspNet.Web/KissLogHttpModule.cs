@@ -63,12 +63,27 @@ namespace KissLog.AspNet.Web
             if(requestProperties == null)
                 return;
 
-            ClaimsPrincipal claimsPrincipal = (ClaimsPrincipal)ctx.User;
-            ClaimsIdentity identity = (ClaimsIdentity) claimsPrincipal?.Identity;
+            if((ctx.User is ClaimsPrincipal) == false)
+                return;
 
-            if (identity != null && identity.IsAuthenticated == true)
+            ClaimsPrincipal claimsPrincipal = (ClaimsPrincipal)ctx.User;
+            if(claimsPrincipal.Identity == null)
+                return;
+
+            if(claimsPrincipal.Identity.IsAuthenticated == false)
+                return;
+
+            requestProperties.IsAuthenticated = true;
+            requestProperties.User = new UserDetails
             {
-                List<KeyValuePair<string, string>> claims = DataParser.ToDictionary(identity);
+                Name = claimsPrincipal.Identity.Name,
+            };
+
+            ClaimsIdentity claimsIdentity = claimsPrincipal?.Identity as ClaimsIdentity;
+
+            if (claimsIdentity != null)
+            {
+                List<KeyValuePair<string, string>> claims = DataParser.ToDictionary(claimsIdentity);
 
                 string userName = claims.FirstOrDefault(p => KissLogConfiguration.UserNameClaims.Contains(p.Key.ToLower())).Value;
                 string emailAddress = claims.FirstOrDefault(p => KissLogConfiguration.EmailAddressClaims.Contains(p.Key.ToLower())).Value;
@@ -76,10 +91,9 @@ namespace KissLog.AspNet.Web
 
                 requestProperties.Request.Claims = claims;
 
-                requestProperties.IsAuthenticated = true;
                 requestProperties.User = new UserDetails
                 {
-                    Name = userName,
+                    Name = userName ?? claimsIdentity.Name,
                     EmailAddress = emailAddress,
                     Avatar = avatar
                 };
