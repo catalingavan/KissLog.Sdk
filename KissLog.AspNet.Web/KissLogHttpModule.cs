@@ -14,6 +14,8 @@ namespace KissLog.AspNet.Web
 {
     public class KissLogHttpModule : IHttpModule
     {
+        internal const string IsHandledByHttpModule = "X-KissLog-IsHandledByHttpModule";
+
         public void Init(HttpApplication context)
         {
             context.BeginRequest += BeginRequest;
@@ -106,6 +108,7 @@ namespace KissLog.AspNet.Web
             var request = ctx.Request;
 
             ILogger logger = LoggerFactory.GetInstance(ctx);
+            (logger as Logger)?.AddCustomProperty(IsHandledByHttpModule, true);
 
             WebRequestProperties requestProperties = WebRequestPropertiesFactory.Create(request);
             ctx.Items[Constants.HttpRequestPropertiesKey] = requestProperties;

@@ -20,6 +20,31 @@ namespace KissLog
 
         public string CategoryName { get; set; }
 
+        private Dictionary<string, object> _customProperties = null;
+
+        public void AddCustomProperty(string key, object value)
+        {
+            if(_customProperties == null)
+                _customProperties = new Dictionary<string, object>();
+
+            if (_customProperties.ContainsKey(key))
+            {
+                _customProperties[key] = value;
+            }
+            else
+            {
+                _customProperties.Add(key, value);
+            }
+        }
+
+        public object GetCustomProperty(string key)
+        {
+            if (_customProperties == null || !_customProperties.ContainsKey(key))
+                return null;
+
+            return _customProperties[key];
+        }
+
         public IEnumerable<LogMessage> LogMessages => _messages;
 
         public HttpStatusCode? HttpStatusCode => _httpStatusCode;
@@ -41,6 +66,8 @@ namespace KissLog
 
             _messages = new List<LogMessage>();
             CategoryName = categoryName;
+
+            WebRequestProperties = WebRequestPropertiesFactory.CreateDefault();
         }
 
         public void Log(LogLevel logLevel, string message, Action<LogMessage> action = null, string memberName = null, int lineNumber = 0, string memberType = null)
@@ -270,9 +297,26 @@ namespace KissLog
             ILogger defaultLogger = loggers.FirstOrDefault(p => p.CategoryName == DefaultCategoryName) ?? loggers.First();
 
             WebRequestProperties webRequestProperties = defaultLogger.WebRequestProperties;
+            if (webRequestProperties == null)
+            {
+                webRequestProperties = WebRequestPropertiesFactory.CreateDefault();
+            }
 
             if (defaultLogger.HttpStatusCode.HasValue && webRequestProperties != null)
                 webRequestProperties.Response.HttpStatusCode = defaultLogger.HttpStatusCode.Value;
+
+            if (!defaultLogger.HttpStatusCode.HasValue)
+            {
+                var lastMessage = defaultLogger.LogMessages.LastOrDefault();
+
+                bool isLastMessageError = lastMessage != null && (lastMessage.LogLevel == LogLevel.Critical || lastMessage.LogLevel == LogLevel.Error);
+                if (isLastMessageError && webRequestProperties.Response.HttpStatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    webRequestProperties.Response.HttpStatusCode = System.Net.HttpStatusCode.InternalServerError;
+                }
+            }
+
+            webRequestProperties.EndDateTime = DateTime.UtcNow;
 
             IEnumerable<LogMessagesGroup> messagesGroups = loggers.Select(p =>
                 new LogMessagesGroup
