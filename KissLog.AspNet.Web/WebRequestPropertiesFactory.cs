@@ -36,6 +36,11 @@ namespace KissLog.AspNet.Web
                 string inputStream = ReadInputStream(request);
                 if (string.IsNullOrEmpty(inputStream) == false)
                 {
+                    if (inputStream.Length > 3000)
+                    {
+                        inputStream = inputStream.Substring(0, 3000);
+                    }
+
                     requestProperties.InputStream = inputStream;
                 }
             }
