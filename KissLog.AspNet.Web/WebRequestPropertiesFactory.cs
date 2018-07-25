@@ -33,7 +33,7 @@ namespace KissLog.AspNet.Web
             result.Request = requestProperties;
 
             var headers = DataParser.ToDictionary(request.Unvalidated.Headers);
-            headers = headers.Select(TruncateValue).ToList();
+            headers = FilterHeaders(headers);
 
             var queryString = DataParser.ToDictionary(request.Unvalidated.QueryString);
             queryString = queryString.Select(TruncateValue).ToList();
@@ -109,6 +109,27 @@ namespace KissLog.AspNet.Web
             }
 
             return content;
+        }
+
+        private static List<KeyValuePair<string, string>> FilterHeaders(List<KeyValuePair<string, string>> values)
+        {
+            if (values == null || !values.Any())
+                return values;
+
+            List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
+
+            foreach (var item in values)
+            {
+                if (string.IsNullOrEmpty(item.Key))
+                    continue;
+
+                if(string.Compare(item.Key, "Cookie", StringComparison.OrdinalIgnoreCase) == 0)
+                    continue;
+
+                result.Add(TruncateValue(item));
+            }
+
+            return result;
         }
 
         private static List<KeyValuePair<string, string>> FilterServerVariables(List<KeyValuePair<string, string>> values)

@@ -7,7 +7,7 @@ namespace KissLog
 {
     public static class KissLogConfiguration
     {
-        private static readonly string[] UserNameClaims = new[] {"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress", "email", "emailaddress"};
+        private static readonly string[] UserNameClaims = new[] { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", "name", "email" };
         private static readonly string[] EmailClaims = new[] {"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress","email","emailaddress"};
         private static readonly string[] AvatarClaims = new[] {"avatar", "picture", "image"};
 
