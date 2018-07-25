@@ -87,9 +87,9 @@ namespace KissLog.AspNet.Web
             {
                 List<KeyValuePair<string, string>> claims = DataParser.ToDictionary(claimsIdentity);
 
-                string userName = claims.FirstOrDefault(p => KissLogConfiguration.UserNameClaims.Contains(p.Key.ToLower())).Value;
-                string emailAddress = claims.FirstOrDefault(p => KissLogConfiguration.EmailAddressClaims.Contains(p.Key.ToLower())).Value;
-                string avatar = claims.FirstOrDefault(p => KissLogConfiguration.UserAvatarClaims.Contains(p.Key.ToLower())).Value;
+                string userName = KissLogConfiguration.GetLoggedInUserName(claims);
+                string emailAddress = KissLogConfiguration.GetLoggedInUserEmailAddress(claims);
+                string avatar = KissLogConfiguration.GetLoggedInUserAvatar(claims);
 
                 requestProperties.Request.Claims = claims;
 

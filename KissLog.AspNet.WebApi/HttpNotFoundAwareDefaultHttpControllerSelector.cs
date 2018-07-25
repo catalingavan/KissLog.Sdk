@@ -34,7 +34,6 @@ namespace KissLog.AspNet.WebApi
             }
             catch (Exception ex)
             {
-                var a = 1;
                 throw;
             }
         }

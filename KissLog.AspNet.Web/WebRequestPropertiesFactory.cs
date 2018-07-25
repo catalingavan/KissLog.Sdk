@@ -1,12 +1,19 @@
 ﻿using KissLog.Web;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Web;
 
 namespace KissLog.AspNet.Web
 {
     internal static class WebRequestPropertiesFactory
     {
+        private static readonly int MaxKeyLength = 100;
+        private static readonly int MaxValueLength = 1000;
+        private static readonly int MaxInputStreamLength = 2000;
+        private static readonly string[] ServerVariablesKeysToIgnore = {"all_http", "all_raw"};
+
         public static WebRequestProperties Create(HttpRequest request)
         {
             WebRequestProperties result = new WebRequestProperties();
@@ -25,23 +32,33 @@ namespace KissLog.AspNet.Web
             RequestProperties requestProperties = new RequestProperties();
             result.Request = requestProperties;
 
-            requestProperties.Headers = DataParser.ToDictionary(request.Unvalidated.Headers);
-            requestProperties.QueryString = DataParser.ToDictionary(request.Unvalidated.QueryString);
-            requestProperties.FormData = DataParser.ToDictionary(request.Unvalidated.Form);
-            requestProperties.ServerVariables = DataParser.ToDictionary(request.ServerVariables);
-            requestProperties.Cookies = DataParser.ToDictionary(request.Unvalidated.Cookies);
+            var headers = DataParser.ToDictionary(request.Unvalidated.Headers);
+            headers = headers.Select(TruncateValue).ToList();
+
+            var queryString = DataParser.ToDictionary(request.Unvalidated.QueryString);
+            queryString = queryString.Select(TruncateValue).ToList();
+
+            var formData = DataParser.ToDictionary(request.Unvalidated.Form);
+            formData = formData.Select(TruncateValue).ToList();
+
+            var serverVariables = DataParser.ToDictionary(request.ServerVariables);
+            serverVariables = FilterServerVariables(serverVariables);
+
+            var cookies = DataParser.ToDictionary(request.Unvalidated.Cookies);
+            cookies = FilterCookies(cookies);
+
+            requestProperties.Headers = headers;
+            requestProperties.QueryString = queryString;
+            requestProperties.FormData = formData;
+            requestProperties.ServerVariables = serverVariables;
+            requestProperties.Cookies = cookies;
 
             if (KissLogConfiguration.ShouldReadInputStream(result))
             {
                 string inputStream = ReadInputStream(request);
                 if (string.IsNullOrEmpty(inputStream) == false)
                 {
-                    if (inputStream.Length > 3000)
-                    {
-                        inputStream = inputStream.Substring(0, 3000);
-                    }
-
-                    requestProperties.InputStream = inputStream;
+                    requestProperties.InputStream = TruncateInputStream(inputStream);
                 }
             }
 
@@ -92,6 +109,81 @@ namespace KissLog.AspNet.Web
             }
 
             return content;
+        }
+
+        private static List<KeyValuePair<string, string>> FilterServerVariables(List<KeyValuePair<string, string>> values)
+        {
+            if (values == null || !values.Any())
+                return values;
+
+            List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
+
+            foreach (var item in values)
+            {
+                if(string.IsNullOrEmpty(item.Key))
+                    continue;
+
+                string key = item.Key.ToLower();
+
+                if(ServerVariablesKeysToIgnore.Contains(key))
+                    continue;
+
+                if(key.StartsWith("http_"))
+                    continue;
+
+                result.Add(TruncateValue(item));
+            }
+
+            return result;
+        }
+
+        private static List<KeyValuePair<string, string>> FilterCookies(List<KeyValuePair<string, string>> values)
+        {
+            if (values == null || !values.Any())
+                return values;
+
+            List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
+
+            foreach (var item in values)
+            {
+                if(KissLogConfiguration.ShouldReadCookie(item.Key) == false)
+                    continue;
+
+                result.Add(TruncateValue(item));
+            }
+
+            return result;
+        }
+
+        private static KeyValuePair<string, string> TruncateValue(KeyValuePair<string, string> keyValuePair)
+        {
+            string key = keyValuePair.Key;
+            string value = keyValuePair.Value;
+
+            if (!string.IsNullOrEmpty(key) && key.Length > MaxKeyLength)
+            {
+                key = $"{key.Substring(0, MaxKeyLength - 3)}***";
+            }
+
+            if (!string.IsNullOrEmpty(value) && value.Length > MaxValueLength)
+            {
+                value = $"{value.Substring(0, MaxValueLength - 3)}***";
+            }
+
+            return new KeyValuePair<string, string>(key, value);
+        }
+
+        private static string TruncateInputStream(string inputStream)
+        {
+            if (string.IsNullOrEmpty(inputStream))
+                return inputStream;
+
+            if (inputStream.Length > MaxInputStreamLength)
+            {
+                return $"{inputStream.Substring(0, MaxInputStreamLength - 3)}***";
+            }
+
+            return inputStream;
         }
     }
 }

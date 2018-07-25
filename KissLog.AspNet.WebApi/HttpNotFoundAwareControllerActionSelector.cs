@@ -18,7 +18,6 @@ namespace KissLog.AspNet.WebApi
             }
             catch (HttpResponseException ex)
             {
-                var x = 1;
                 throw;
             }
         }

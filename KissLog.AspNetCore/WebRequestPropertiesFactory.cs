@@ -15,6 +15,10 @@ namespace KissLog.AspNetCore
 {
     internal static class WebRequestPropertiesFactory
     {
+        private static readonly int MaxKeyLength = 100;
+        private static readonly int MaxValueLength = 1000;
+        private static readonly int MaxInputStreamLength = 2000;
+
         public static WebRequestProperties Create(HttpRequest request)
         {
             WebRequestProperties result = new WebRequestProperties();
@@ -59,14 +63,15 @@ namespace KissLog.AspNetCore
 
             foreach (string key in request.Headers.Keys)
             {
+                if(string.Compare(key, "Cookie", StringComparison.OrdinalIgnoreCase) == 0)
+                    continue;
+
                 StringValues values;
                 request.Headers.TryGetValue(key, out values);
 
                 string value = values.ToString();
 
-                requestProperties.Headers.Add(
-                    new KeyValuePair<string, string>(key, value)
-                );
+                requestProperties.Headers.Add(TruncateValue(key, value));
 
                 if (string.Compare(key, "Referer", true) == 0)
                     result.HttpReferer = value;
@@ -74,11 +79,12 @@ namespace KissLog.AspNetCore
 
             foreach (string key in request.Cookies.Keys)
             {
+                if (KissLogConfiguration.ShouldReadCookie(key) == false)
+                    continue;
+
                 string value = request.Cookies[key];
 
-                requestProperties.Cookies.Add(
-                    new KeyValuePair<string, string>(key, value)
-                );
+                requestProperties.Cookies.Add(TruncateValue(key, value));
             }
 
             foreach (string key in request.Query.Keys)
@@ -96,9 +102,7 @@ namespace KissLog.AspNetCore
                 {
                     string value = string.Join("; ", request.Form[key]);
 
-                    requestProperties.FormData.Add(
-                        new KeyValuePair<string, string>(key, value)
-                    );
+                    requestProperties.FormData.Add(TruncateValue(key, value));
                 }
             }
 
@@ -107,7 +111,7 @@ namespace KissLog.AspNetCore
                 string inputStream = ReadInputStream(request);
                 if (string.IsNullOrEmpty(inputStream) == false)
                 {
-                    requestProperties.InputStream = inputStream;
+                    requestProperties.InputStream = TruncateInputStream(inputStream);
                 }
             }
 
@@ -130,9 +134,9 @@ namespace KissLog.AspNetCore
 
             List<KeyValuePair<string, string>> claims = ToDictionary(identity);
 
-            string userName = claims.FirstOrDefault(p => KissLogConfiguration.UserNameClaims.Contains(p.Key.ToLower())).Value;
-            string emailAddress = claims.FirstOrDefault(p => KissLogConfiguration.EmailAddressClaims.Contains(p.Key.ToLower())).Value;
-            string avatar = claims.FirstOrDefault(p => KissLogConfiguration.UserAvatarClaims.Contains(p.Key.ToLower())).Value;
+            string userName = KissLogConfiguration.GetLoggedInUserName(claims);
+            string emailAddress = KissLogConfiguration.GetLoggedInUserEmailAddress(claims);
+            string avatar = KissLogConfiguration.GetLoggedInUserAvatar(claims);
 
             properties.Request.Claims = claims;
 
@@ -200,6 +204,34 @@ namespace KissLog.AspNetCore
                     .ToList();
 
             return claims;
+        }
+
+        private static KeyValuePair<string, string> TruncateValue(string key, string value)
+        {
+            if (!string.IsNullOrEmpty(key) && key.Length > MaxKeyLength)
+            {
+                key = $"{key.Substring(0, MaxKeyLength - 3)}***";
+            }
+
+            if (!string.IsNullOrEmpty(value) && value.Length > MaxValueLength)
+            {
+                value = $"{value.Substring(0, MaxValueLength - 3)}***";
+            }
+
+            return new KeyValuePair<string, string>(key, value);
+        }
+
+        private static string TruncateInputStream(string inputStream)
+        {
+            if (string.IsNullOrEmpty(inputStream))
+                return inputStream;
+
+            if (inputStream.Length > MaxInputStreamLength)
+            {
+                return $"{inputStream.Substring(0, MaxInputStreamLength - 3)}***";
+            }
+
+            return inputStream;
         }
     }
 }
