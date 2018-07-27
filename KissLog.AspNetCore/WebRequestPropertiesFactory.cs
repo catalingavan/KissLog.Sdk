@@ -10,6 +10,7 @@ using System.Security.Claims;
 using System.IO;
 using System.Text;
 using Microsoft.AspNetCore.Http.Internal;
+using Newtonsoft.Json;
 
 namespace KissLog.AspNetCore
 {
@@ -223,15 +224,46 @@ namespace KissLog.AspNetCore
 
         private static string TruncateInputStream(string inputStream)
         {
-            if (string.IsNullOrEmpty(inputStream))
+            if (string.IsNullOrEmpty(inputStream) || inputStream.Length <= MaxInputStreamLength)
                 return inputStream;
 
-            if (inputStream.Length > MaxInputStreamLength)
+            if (inputStream.Trim().StartsWith("{") == false)
+                return $"{inputStream.Substring(0, MaxInputStreamLength - 3)}***";
+
+            try
+            {
+                Dictionary<string, object> asDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(inputStream);
+                if (asDictionary == null || !asDictionary.Any())
+                    return $"{inputStream.Substring(0, MaxInputStreamLength - 3)}***";
+
+                Dictionary<string, object> result = new Dictionary<string, object>();
+
+                foreach (var item in asDictionary)
+                {
+                    string key = item.Key;
+                    string value = item.Value == null ? null : item.Value.ToString();
+                    bool valueChanged = false;
+
+                    if (!string.IsNullOrEmpty(key) && key.Length > MaxKeyLength)
+                    {
+                        key = $"{key.Substring(0, MaxKeyLength - 3)}***";
+                    }
+
+                    if (!string.IsNullOrEmpty(value) && value.Length > MaxValueLength)
+                    {
+                        value = $"{value.Substring(0, MaxValueLength - 3)}***";
+                        valueChanged = true;
+                    }
+
+                    result.Add(key, valueChanged ? value : item.Value);
+                }
+
+                return JsonConvert.SerializeObject(result, Formatting.Indented);
+            }
+            catch
             {
                 return $"{inputStream.Substring(0, MaxInputStreamLength - 3)}***";
             }
-
-            return inputStream;
         }
     }
 }
