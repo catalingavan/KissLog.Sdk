@@ -1,5 +1,4 @@
 ﻿using KissLog.Web;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,9 +9,6 @@ namespace KissLog.AspNet.Web
 {
     internal static class WebRequestPropertiesFactory
     {
-        private static readonly int MaxKeyLength = 100;
-        private static readonly int MaxValueLength = 1000;
-        private static readonly int MaxInputStreamLength = 2000;
         private static readonly string[] ServerVariablesKeysToIgnore = {"all_http", "all_raw"};
 
         public static WebRequestProperties Create(HttpRequest request)
@@ -37,10 +33,10 @@ namespace KissLog.AspNet.Web
             headers = FilterHeaders(headers);
 
             var queryString = DataParser.ToDictionary(request.Unvalidated.QueryString);
-            queryString = queryString.Select(TruncateValue).ToList();
+            queryString = queryString.Select(p => InternalHelpers.TruncateRequestPropertyValue(p.Key, p.Value)).ToList();
 
             var formData = DataParser.ToDictionary(request.Unvalidated.Form);
-            formData = formData.Select(TruncateValue).ToList();
+            formData = formData.Select(p => InternalHelpers.TruncateRequestPropertyValue(p.Key, p.Value)).ToList();
 
             var serverVariables = DataParser.ToDictionary(request.ServerVariables);
             serverVariables = FilterServerVariables(serverVariables);
@@ -59,7 +55,7 @@ namespace KissLog.AspNet.Web
                 string inputStream = ReadInputStream(request);
                 if (string.IsNullOrEmpty(inputStream) == false)
                 {
-                    requestProperties.InputStream = TruncateInputStream(inputStream);
+                    requestProperties.InputStream = InternalHelpers.TruncateInputStream(inputStream);
                 }
             }
 
@@ -127,7 +123,7 @@ namespace KissLog.AspNet.Web
                 if(string.Compare(item.Key, "Cookie", StringComparison.OrdinalIgnoreCase) == 0)
                     continue;
 
-                result.Add(TruncateValue(item));
+                result.Add(InternalHelpers.TruncateRequestPropertyValue(item.Key, item.Value));
             }
 
             return result;
@@ -153,7 +149,7 @@ namespace KissLog.AspNet.Web
                 if(key.StartsWith("http_"))
                     continue;
 
-                result.Add(TruncateValue(item));
+                result.Add(InternalHelpers.TruncateRequestPropertyValue(item.Key, item.Value));
             }
 
             return result;
@@ -171,72 +167,10 @@ namespace KissLog.AspNet.Web
                 if(KissLogConfiguration.ShouldReadCookie(item.Key) == false)
                     continue;
 
-                result.Add(TruncateValue(item));
+                result.Add(InternalHelpers.TruncateRequestPropertyValue(item.Key, item.Value));
             }
 
             return result;
-        }
-
-        private static KeyValuePair<string, string> TruncateValue(KeyValuePair<string, string> keyValuePair)
-        {
-            string key = keyValuePair.Key;
-            string value = keyValuePair.Value;
-
-            if (!string.IsNullOrEmpty(key) && key.Length > MaxKeyLength)
-            {
-                key = $"{key.Substring(0, MaxKeyLength - 3)}***";
-            }
-
-            if (!string.IsNullOrEmpty(value) && value.Length > MaxValueLength)
-            {
-                value = $"{value.Substring(0, MaxValueLength - 3)}***";
-            }
-
-            return new KeyValuePair<string, string>(key, value);
-        }
-
-        private static string TruncateInputStream(string inputStream)
-        {
-            if (string.IsNullOrEmpty(inputStream) || inputStream.Length <= MaxInputStreamLength)
-                return inputStream;
-
-            if (inputStream.Trim().StartsWith("{") == false)
-                return $"{inputStream.Substring(0, MaxInputStreamLength - 3)}***";
-
-            try
-            {
-                Dictionary<string, object> asDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(inputStream);
-                if (asDictionary == null || !asDictionary.Any())
-                    return $"{inputStream.Substring(0, MaxInputStreamLength - 3)}***";
-
-                Dictionary<string, object> result = new Dictionary<string, object>();
-
-                foreach (var item in asDictionary)
-                {
-                    string key = item.Key;
-                    string value = item.Value == null ? null : item.Value.ToString();
-                    bool valueChanged = false;
-
-                    if (!string.IsNullOrEmpty(key) && key.Length > MaxKeyLength)
-                    {
-                        key = $"{key.Substring(0, MaxKeyLength - 3)}***";
-                    }
-
-                    if (!string.IsNullOrEmpty(value) && value.Length > MaxValueLength)
-                    {
-                        value = $"{value.Substring(0, MaxValueLength - 3)}***";
-                        valueChanged = true;
-                    }
-
-                    result.Add(key, valueChanged ? value : item.Value);
-                }
-
-                return JsonConvert.SerializeObject(result, Formatting.Indented);
-            }
-            catch
-            {
-                return $"{inputStream.Substring(0, MaxInputStreamLength - 3)}***";
-            }
         }
     }
 }

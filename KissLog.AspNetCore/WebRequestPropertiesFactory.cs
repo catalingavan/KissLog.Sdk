@@ -16,10 +16,6 @@ namespace KissLog.AspNetCore
 {
     internal static class WebRequestPropertiesFactory
     {
-        private static readonly int MaxKeyLength = 100;
-        private static readonly int MaxValueLength = 1000;
-        private static readonly int MaxInputStreamLength = 2000;
-
         public static WebRequestProperties Create(HttpRequest request)
         {
             WebRequestProperties result = new WebRequestProperties();
@@ -72,7 +68,7 @@ namespace KissLog.AspNetCore
 
                 string value = values.ToString();
 
-                requestProperties.Headers.Add(TruncateValue(key, value));
+                requestProperties.Headers.Add(InternalHelpers.TruncateRequestPropertyValue(key, value));
 
                 if (string.Compare(key, "Referer", true) == 0)
                     result.HttpReferer = value;
@@ -85,7 +81,7 @@ namespace KissLog.AspNetCore
 
                 string value = request.Cookies[key];
 
-                requestProperties.Cookies.Add(TruncateValue(key, value));
+                requestProperties.Cookies.Add(InternalHelpers.TruncateRequestPropertyValue(key, value));
             }
 
             foreach (string key in request.Query.Keys)
@@ -103,7 +99,7 @@ namespace KissLog.AspNetCore
                 {
                     string value = string.Join("; ", request.Form[key]);
 
-                    requestProperties.FormData.Add(TruncateValue(key, value));
+                    requestProperties.FormData.Add(InternalHelpers.TruncateRequestPropertyValue(key, value));
                 }
             }
 
@@ -112,7 +108,7 @@ namespace KissLog.AspNetCore
                 string inputStream = ReadInputStream(request);
                 if (string.IsNullOrEmpty(inputStream) == false)
                 {
-                    requestProperties.InputStream = TruncateInputStream(inputStream);
+                    requestProperties.InputStream = InternalHelpers.TruncateInputStream(inputStream);
                 }
             }
 
@@ -205,65 +201,6 @@ namespace KissLog.AspNetCore
                     .ToList();
 
             return claims;
-        }
-
-        private static KeyValuePair<string, string> TruncateValue(string key, string value)
-        {
-            if (!string.IsNullOrEmpty(key) && key.Length > MaxKeyLength)
-            {
-                key = $"{key.Substring(0, MaxKeyLength - 3)}***";
-            }
-
-            if (!string.IsNullOrEmpty(value) && value.Length > MaxValueLength)
-            {
-                value = $"{value.Substring(0, MaxValueLength - 3)}***";
-            }
-
-            return new KeyValuePair<string, string>(key, value);
-        }
-
-        private static string TruncateInputStream(string inputStream)
-        {
-            if (string.IsNullOrEmpty(inputStream) || inputStream.Length <= MaxInputStreamLength)
-                return inputStream;
-
-            if (inputStream.Trim().StartsWith("{") == false)
-                return $"{inputStream.Substring(0, MaxInputStreamLength - 3)}***";
-
-            try
-            {
-                Dictionary<string, object> asDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(inputStream);
-                if (asDictionary == null || !asDictionary.Any())
-                    return $"{inputStream.Substring(0, MaxInputStreamLength - 3)}***";
-
-                Dictionary<string, object> result = new Dictionary<string, object>();
-
-                foreach (var item in asDictionary)
-                {
-                    string key = item.Key;
-                    string value = item.Value == null ? null : item.Value.ToString();
-                    bool valueChanged = false;
-
-                    if (!string.IsNullOrEmpty(key) && key.Length > MaxKeyLength)
-                    {
-                        key = $"{key.Substring(0, MaxKeyLength - 3)}***";
-                    }
-
-                    if (!string.IsNullOrEmpty(value) && value.Length > MaxValueLength)
-                    {
-                        value = $"{value.Substring(0, MaxValueLength - 3)}***";
-                        valueChanged = true;
-                    }
-
-                    result.Add(key, valueChanged ? value : item.Value);
-                }
-
-                return JsonConvert.SerializeObject(result, Formatting.Indented);
-            }
-            catch
-            {
-                return $"{inputStream.Substring(0, MaxInputStreamLength - 3)}***";
-            }
         }
     }
 }
