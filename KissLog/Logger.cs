@@ -45,6 +45,22 @@ namespace KissLog
             return _customProperties[key];
         }
 
+        private List<string> _searchKeywords = null;
+
+        public void AddSearchKeyword(string keyword)
+        {
+            if(string.IsNullOrEmpty(keyword))
+                return;
+
+            if(_searchKeywords == null)
+                _searchKeywords = new List<string>();
+
+            if(_searchKeywords.Any(p => string.Compare(p, keyword, StringComparison.OrdinalIgnoreCase) == 0))
+                return;
+
+            _searchKeywords.Add(keyword);
+        }
+
         public IEnumerable<LogMessage> LogMessages => _messages;
 
         public HttpStatusCode? HttpStatusCode => _httpStatusCode;
@@ -196,6 +212,9 @@ namespace KissLog
                 sb.AppendLine(exString);
 
                 exMessages.Add(exString);
+
+                AddSearchKeyword(ex.GetType().Name);
+                AddSearchKeyword(ex.Message);
             }
 
             Exception innerException = ex.InnerException;
