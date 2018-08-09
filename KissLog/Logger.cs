@@ -16,6 +16,8 @@ namespace KissLog
 
         protected List<LogMessage> _messages = null;
 
+        internal LoggerFiles LoggerFiles = null;
+
         protected HttpStatusCode? _httpStatusCode;
 
         public string CategoryName { get; set; }
@@ -24,7 +26,7 @@ namespace KissLog
 
         public void AddCustomProperty(string key, object value)
         {
-            if(_customProperties == null)
+            if (_customProperties == null)
                 _customProperties = new Dictionary<string, object>();
 
             if (_customProperties.ContainsKey(key))
@@ -81,6 +83,8 @@ namespace KissLog
                 categoryName = DefaultCategoryName;
 
             _messages = new List<LogMessage>();
+            LoggerFiles = new LoggerFiles(this);
+
             CategoryName = categoryName;
 
             WebRequestProperties = WebRequestPropertiesFactory.CreateDefault();
@@ -236,6 +240,8 @@ namespace KissLog
             _messages.Clear();
             _messages = new List<LogMessage>();
             _httpStatusCode = null;
+            LoggerFiles.Dispose();
+            LoggerFiles = new LoggerFiles(this);
         }
 
         private string NormalizeMemberType(string memberType)
@@ -352,8 +358,16 @@ namespace KissLog
                 MessagesGroups = messagesGroups
             };
 
+            IEnumerable<LoggerFile> files = null;
+
+            if (defaultLogger is Logger theLogger)
+            {
+                files = theLogger.LoggerFiles.GetFiles();
+            }
+
             if (KissLogConfiguration.Listeners.Count == 1)
             {
+                args.Files = files;
                 KissLogConfiguration.Listeners.First().OnFlush(args);
             }
             else
@@ -365,6 +379,8 @@ namespace KissLog
                 foreach (ILogListener listener in KissLogConfiguration.Listeners)
                 {
                     FlushLogArgs theArgs = JsonConvert.DeserializeObject<FlushLogArgs>(argsJson);
+                    theArgs.Files = files;
+
                     listener.OnFlush(theArgs);
                 }
             }
@@ -380,7 +396,8 @@ namespace KissLog
 
         public void Dispose()
         {
-            
+            LoggerFiles.Dispose();
+            LoggerFiles = new LoggerFiles(this);
         }
     }
 }

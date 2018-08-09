@@ -3,7 +3,7 @@
 namespace KissLog
 {
 #if NET40
-    public static class ExtensionMethods
+    public static partial class ExtensionMethods
     {
         /// <summary>
         /// Writes a Log message
@@ -552,7 +552,7 @@ namespace KissLog
         }
     }
 #else
-    public static class ExtensionMethods
+    public static partial class ExtensionMethods
     {
         /// <summary>
         /// Writes a Log message
@@ -1151,4 +1151,23 @@ namespace KissLog
 
     }
 #endif
+
+    public static partial class ExtensionMethods
+    {
+        public static void AddFile(this ILogger logger, string sourceFilePath, string fileName)
+        {
+            if (logger is Logger theLogger)
+            {
+                theLogger.LoggerFiles.AddFile(sourceFilePath, fileName);
+            }
+        }
+
+        public static void AddFile(this ILogger logger, byte[] content, string fileName)
+        {
+            if (logger is Logger theLogger)
+            {
+                theLogger.LoggerFiles.AddFile(content, fileName);
+            }
+        }
+    }
 }

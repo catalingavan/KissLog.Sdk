@@ -130,12 +130,11 @@ namespace KissLog.AspNetCore
                 return;
 
             List<KeyValuePair<string, string>> claims = ToDictionary(identity);
-
-            string userName = KissLogConfiguration.GetLoggedInUserName(claims);
-            string emailAddress = KissLogConfiguration.GetLoggedInUserEmailAddress(claims);
-            string avatar = KissLogConfiguration.GetLoggedInUserAvatar(claims);
-
             properties.Request.Claims = claims;
+
+            string userName = KissLogConfiguration.GetLoggedInUserName(properties.Request);
+            string emailAddress = KissLogConfiguration.GetLoggedInUserEmailAddress(properties.Request);
+            string avatar = KissLogConfiguration.GetLoggedInUserAvatar(properties.Request);
 
             properties.IsAuthenticated = true;
             properties.User = new UserDetails

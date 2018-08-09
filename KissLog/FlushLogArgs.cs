@@ -7,12 +7,13 @@ namespace KissLog
     {
         public WebRequestProperties WebRequestProperties { get; set; }
         public IEnumerable<LogMessagesGroup> MessagesGroups { get; set; }
-        // Last error message
         public string ErrorMessage { get; set; }
+        public IEnumerable<LoggerFile> Files { get; set; }
 
         public FlushLogArgs()
         {
             MessagesGroups = new List<LogMessagesGroup>();
+            Files = new List<LoggerFile>();
         }
     }
 }
