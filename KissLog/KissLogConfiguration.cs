@@ -11,6 +11,7 @@ namespace KissLog
         private static readonly string[] EmailClaims = new[] {"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress","email","emailaddress"};
         private static readonly string[] AvatarClaims = new[] {"avatar", "picture", "image"};
         private static readonly string[] InputStreamContentTypes = { "text/plain", "application/json", "application/xml", "text/xml", "text/html" };
+        private static readonly string[] ResponseBodyContentTypes = { "application/json" };
 
         public static List<ILogListener> Listeners = new List<ILogListener>();
 
@@ -40,6 +41,17 @@ namespace KissLog
             contentType = contentType.ToLowerInvariant();
 
             return InputStreamContentTypes.Any(p => contentType.Contains(p.ToLowerInvariant()));
+        };
+
+        public static Func<WebRequestProperties, bool> ShouldReadResponse = (WebRequestProperties request) =>
+        {
+            string contentType = request.Response.Headers.FirstOrDefault(p => string.Compare(p.Key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0).Value;
+            if (string.IsNullOrEmpty(contentType))
+                return false;
+
+            contentType = contentType.ToLowerInvariant();
+
+            return ResponseBodyContentTypes.Any(p => contentType.Contains(p.ToLowerInvariant()));
         };
 
         public static Func<string, bool> ShouldReadCookie = (string cookieName) =>

@@ -1154,19 +1154,35 @@ namespace KissLog
 
     public static partial class ExtensionMethods
     {
-        public static void AddFile(this ILogger logger, string sourceFilePath, string fileName)
+        public static void LogFile(this ILogger logger, string sourceFilePath, string fileName)
         {
             if (logger is Logger theLogger)
             {
-                theLogger.LoggerFiles.AddFile(sourceFilePath, fileName);
+                theLogger.LoggerFiles.LogFile(sourceFilePath, fileName);
             }
         }
 
-        public static void AddFile(this ILogger logger, byte[] content, string fileName)
+        public static void LogAsFile(this ILogger logger, byte[] content, string fileName)
         {
             if (logger is Logger theLogger)
             {
-                theLogger.LoggerFiles.AddFile(content, fileName);
+                theLogger.LoggerFiles.LogAsFile(content, fileName);
+            }
+        }
+
+        public static void LogAsFile(this ILogger logger, string content, string fileName)
+        {
+            if (logger is Logger theLogger)
+            {
+                theLogger.LoggerFiles.LogAsFile(content, fileName);
+            }
+        }
+
+        public static void SaveResponseBody(this ILogger logger)
+        {
+            if (logger is Logger theLogger)
+            {
+                theLogger.AddCustomProperty(InternalHelpers.SaveResponseBodyProperty, true);
             }
         }
     }

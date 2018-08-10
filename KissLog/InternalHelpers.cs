@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,6 +10,10 @@ namespace KissLog
         private const int RequestPropertyKeyLength = 100;
         private const int RequestPropertyValueLength = 1000;
         private const int RequestPropertyInputStreamLength = 2000;
+
+        private const string DefaultResponseFileName = "Response.txt";
+
+        public const string SaveResponseBodyProperty = "X-KissLog-SaveResponseBody";
 
         public static KeyValuePair<string, string> TruncateRequestPropertyValue(string key, string value)
         {
@@ -67,6 +72,29 @@ namespace KissLog
             {
                 return $"{inputStream.Substring(0, RequestPropertyInputStreamLength - 3)}***";
             }
+        }
+
+        public static string ResponseFileName(IEnumerable<KeyValuePair<string, string>> responseHeaders)
+        {
+            if (responseHeaders == null || !responseHeaders.Any())
+                return DefaultResponseFileName;
+
+            string contentType = responseHeaders.FirstOrDefault(p => string.Compare(p.Key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0).Value;
+            if (string.IsNullOrEmpty(contentType))
+                return DefaultResponseFileName;
+
+            contentType = contentType.ToLowerInvariant();
+
+            if (contentType.Contains("application/json"))
+                return "Response.json";
+
+            if (contentType.Contains("text/html"))
+                return "Response.html";
+
+            if (contentType.Contains("application/xml") || contentType.Contains("text/xml"))
+                return "Response.xml";
+
+            return DefaultResponseFileName;
         }
     }
 }

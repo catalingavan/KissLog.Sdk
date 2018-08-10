@@ -143,16 +143,18 @@ namespace KissLog.AspNet.Web
                 logger.Log(LogLevel.Error, ex);
             }
 
+            string response = null;
+            var filter = ctx.Response.Filter as ResponseSniffer;
+            if (filter != null)
+            {
+                response = filter.GetContent();
+            }
+
             if (ctx.Response.StatusCode >= 400 && ex == null)
             {
-                var filter = ctx.Response.Filter as ResponseSniffer;
-                if (filter != null)
+                if (string.IsNullOrEmpty(response) == false)
                 {
-                    string response = filter.GetContent();
-                    if (string.IsNullOrEmpty(response) == false)
-                    {
-                        logger.Log(LogLevel.Error, response);
-                    }
+                    logger.Log(LogLevel.Error, response);
                 }
             }
 
@@ -165,6 +167,12 @@ namespace KissLog.AspNet.Web
 
             webRequestProperties.Response = responseProperties;
 
+            if (!string.IsNullOrEmpty(response) && ShouldSaveResponse(logger, webRequestProperties))
+            {
+                string responseFileName = InternalHelpers.ResponseFileName(webRequestProperties.Response.Headers);
+                logger.LogAsFile(response, responseFileName);
+            }
+
             ((Logger) logger).WebRequestProperties = webRequestProperties;
 
             IEnumerable<ILogger> loggers = LoggerFactory.GetAll(ctx);
@@ -175,6 +183,17 @@ namespace KissLog.AspNet.Web
         public void Dispose()
         {
 
+        }
+
+        private bool ShouldSaveResponse(ILogger logger, WebRequestProperties webRequestProperties)
+        {
+            if (logger is Logger theLogger)
+            {
+                if (theLogger.GetCustomProperty(InternalHelpers.SaveResponseBodyProperty) != null)
+                    return true;
+            }
+
+            return KissLogConfiguration.ShouldReadResponse(webRequestProperties);
         }
     }
 }

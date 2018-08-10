@@ -24,11 +24,11 @@ namespace KissLog
             _filesCount = 0;
         }
 
-        public void AddFile(string sourceFilePath)
+        public void LogFile(string sourceFilePath)
         {
-            AddFile(sourceFilePath, $"File {_filesCount++}");
+            LogFile(sourceFilePath, $"File {_filesCount++}");
         }
-        public void AddFile(string sourceFilePath, string fileName)
+        public void LogFile(string sourceFilePath, string fileName)
         {
             if (!File.Exists(sourceFilePath))
             {
@@ -60,11 +60,11 @@ namespace KissLog
             }
         }
 
-        public void AddFile(byte[] content)
+        public void LogAsFile(byte[] content)
         {
-            AddFile(content, $"File {_filesCount++}");
+            LogAsFile(content, $"File {_filesCount++}");
         }
-        public void AddFile(byte[] content, string fileName)
+        public void LogAsFile(byte[] content, string fileName)
         {
             if(content == null || !content.Any())
                 return;
@@ -86,6 +86,38 @@ namespace KissLog
                 _files.Add(file);
             }
             catch(Exception ex)
+            {
+                tempFile?.Dispose();
+                _logger.Error(ex);
+            }
+        }
+
+        public void LogAsFile(string content)
+        {
+            LogAsFile(content, $"File {_filesCount++}");
+        }
+        public void LogAsFile(string content, string fileName)
+        {
+            if (string.IsNullOrEmpty(content))
+                return;
+
+            if (content.Length > MaxFileSizeBytes)
+            {
+                _logger.Warn($"Could not upload file because size exceeds {MaxFileSizeBytes} bytes");
+                return;
+            }
+
+            TemporaryFile tempFile = null;
+
+            try
+            {
+                tempFile = new TemporaryFile();
+                File.WriteAllText(tempFile.FileName, content);
+                _tempFiles.Add(tempFile);
+                LoggerFile file = new LoggerFile(tempFile.FileName, fileName);
+                _files.Add(file);
+            }
+            catch (Exception ex)
             {
                 tempFile?.Dispose();
                 _logger.Error(ex);
