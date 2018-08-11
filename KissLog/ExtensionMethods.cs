@@ -1178,7 +1178,7 @@ namespace KissLog
             }
         }
 
-        public static void SaveResponseBody(this ILogger logger)
+        public static void SaveResponseBodyOnFlush(this ILogger logger)
         {
             if (logger is Logger theLogger)
             {
