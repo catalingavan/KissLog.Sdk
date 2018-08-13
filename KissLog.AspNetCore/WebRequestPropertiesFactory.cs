@@ -16,7 +16,7 @@ namespace KissLog.AspNetCore
 {
     internal static class WebRequestPropertiesFactory
     {
-        public static WebRequestProperties Create(HttpRequest request)
+        public static WebRequestProperties Create(ILogger logger, HttpRequest request)
         {
             WebRequestProperties result = new WebRequestProperties();
 
@@ -30,7 +30,7 @@ namespace KissLog.AspNetCore
                     bool isNewSession = false;
 
                     string lastSessionId = request.HttpContext.Session.GetString("X-KissLogSessionId");
-                    if (string.IsNullOrEmpty(lastSessionId) || string.Compare(lastSessionId, request.HttpContext.Session.Id, true) != 0)
+                    if (string.IsNullOrEmpty(lastSessionId) || string.Compare(lastSessionId, request.HttpContext.Session.Id, StringComparison.OrdinalIgnoreCase) != 0)
                     {
                         isNewSession = true;
                         request.HttpContext.Session.SetString("X-KissLogSessionId", request.HttpContext.Session.Id);
@@ -70,13 +70,13 @@ namespace KissLog.AspNetCore
 
                 requestProperties.Headers.Add(InternalHelpers.TruncateRequestPropertyValue(key, value));
 
-                if (string.Compare(key, "Referer", true) == 0)
+                if (string.Compare(key, "Referer", StringComparison.OrdinalIgnoreCase) == 0)
                     result.HttpReferer = value;
             }
 
             foreach (string key in request.Cookies.Keys)
             {
-                if (KissLogConfiguration.ShouldReadCookie(key) == false)
+                if (KissLogConfiguration.ShouldLogCookie(key) == false)
                     continue;
 
                 string value = request.Cookies[key];
@@ -103,7 +103,7 @@ namespace KissLog.AspNetCore
                 }
             }
 
-            if (KissLogConfiguration.ShouldReadInputStream(result))
+            if (ShouldLogRequestInputStream(logger, result))
             {
                 string inputStream = ReadInputStream(request);
                 if (string.IsNullOrEmpty(inputStream) == false)
@@ -160,6 +160,20 @@ namespace KissLog.AspNetCore
             { }
 
             return name;
+        }
+
+        private static bool ShouldLogRequestInputStream(ILogger logger, WebRequestProperties webRequestProperties)
+        {
+            if (logger is Logger theLogger)
+            {
+                var logResponse = theLogger.GetCustomProperty(InternalHelpers.LogRequestInputStreamProperty);
+                if (logResponse != null && logResponse is bool asBoolean)
+                {
+                    return asBoolean;
+                }
+            }
+
+            return KissLogConfiguration.ShouldLogRequestInputStream(webRequestProperties);
         }
 
         private static string ReadInputStream(HttpRequest request)

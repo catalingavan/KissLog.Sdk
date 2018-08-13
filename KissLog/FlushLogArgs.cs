@@ -8,11 +8,13 @@ namespace KissLog
         public WebRequestProperties WebRequestProperties { get; set; }
         public IEnumerable<LogMessagesGroup> MessagesGroups { get; set; }
         public string ErrorMessage { get; set; }
+        public IEnumerable<string> SearchKeywords { get; set; }
         public IEnumerable<LoggerFile> Files { get; set; }
 
         public FlushLogArgs()
         {
             MessagesGroups = new List<LogMessagesGroup>();
+            SearchKeywords = new List<string>();
             Files = new List<LoggerFile>();
         }
     }

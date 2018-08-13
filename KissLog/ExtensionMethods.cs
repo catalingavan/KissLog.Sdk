@@ -1178,11 +1178,19 @@ namespace KissLog
             }
         }
 
-        public static void SaveResponseBodyOnFlush(this ILogger logger)
+        public static void LogRequestInputStreamBody(this ILogger logger, bool value = true)
         {
             if (logger is Logger theLogger)
             {
-                theLogger.AddCustomProperty(InternalHelpers.SaveResponseBodyProperty, true);
+                theLogger.AddCustomProperty(InternalHelpers.LogRequestInputStreamProperty, value);
+            }
+        }
+
+        public static void LogResponseBody(this ILogger logger, bool value = true)
+        {
+            if (logger is Logger theLogger)
+            {
+                theLogger.AddCustomProperty(InternalHelpers.LogResponseBodyProperty, value);
             }
         }
     }

@@ -109,7 +109,7 @@ namespace KissLog.AspNet.Web
             ILogger logger = LoggerFactory.GetInstance(ctx);
             (logger as Logger)?.AddCustomProperty(IsHandledByHttpModule, true);
 
-            WebRequestProperties requestProperties = WebRequestPropertiesFactory.Create(request);
+            WebRequestProperties requestProperties = WebRequestPropertiesFactory.Create(logger, request);
             ctx.Items[Constants.HttpRequestPropertiesKey] = requestProperties;
         }
 
@@ -167,7 +167,7 @@ namespace KissLog.AspNet.Web
 
             webRequestProperties.Response = responseProperties;
 
-            if (!string.IsNullOrEmpty(response) && ShouldSaveResponse(logger, webRequestProperties))
+            if (!string.IsNullOrEmpty(response) && ShouldLogResponseBody(logger, webRequestProperties))
             {
                 string responseFileName = InternalHelpers.ResponseFileName(webRequestProperties.Response.Headers);
                 logger.LogAsFile(response, responseFileName);
@@ -185,15 +185,18 @@ namespace KissLog.AspNet.Web
 
         }
 
-        private bool ShouldSaveResponse(ILogger logger, WebRequestProperties webRequestProperties)
+        private bool ShouldLogResponseBody(ILogger logger, WebRequestProperties webRequestProperties)
         {
             if (logger is Logger theLogger)
             {
-                if (theLogger.GetCustomProperty(InternalHelpers.SaveResponseBodyProperty) != null)
-                    return true;
+                var logResponse = theLogger.GetCustomProperty(InternalHelpers.LogResponseBodyProperty);
+                if (logResponse != null && logResponse is bool asBoolean)
+                {
+                    return asBoolean;
+                }
             }
 
-            return KissLogConfiguration.ShouldReadResponse(webRequestProperties);
+            return KissLogConfiguration.ShouldLogResponseBody(webRequestProperties);
         }
     }
 }

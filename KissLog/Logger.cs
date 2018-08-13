@@ -18,6 +18,8 @@ namespace KissLog
 
         internal LoggerFiles LoggerFiles = null;
 
+        private List<string> _searchKeywords = null;
+
         protected HttpStatusCode? _httpStatusCode;
 
         public string CategoryName { get; set; }
@@ -47,8 +49,6 @@ namespace KissLog
             return _customProperties[key];
         }
 
-        private List<string> _searchKeywords = null;
-
         public void AddSearchKeyword(string keyword)
         {
             if(string.IsNullOrEmpty(keyword))
@@ -64,6 +64,8 @@ namespace KissLog
         }
 
         public IEnumerable<LogMessage> LogMessages => _messages;
+
+        public IEnumerable<string> SearchKeywords => _searchKeywords;
 
         public HttpStatusCode? HttpStatusCode => _httpStatusCode;
 
@@ -240,6 +242,13 @@ namespace KissLog
             _messages.Clear();
             _messages = new List<LogMessage>();
             _httpStatusCode = null;
+
+            if (_searchKeywords != null)
+            {
+                _searchKeywords.Clear();
+                _searchKeywords = null;
+            }
+
             LoggerFiles.Dispose();
             LoggerFiles = new LoggerFiles(this);
         }
@@ -359,11 +368,26 @@ namespace KissLog
             };
 
             IEnumerable<LoggerFile> files = null;
+            List<string> searchKeywords = null;
 
             if (defaultLogger is Logger theLogger)
             {
                 files = theLogger.LoggerFiles.GetFiles();
+                searchKeywords = (theLogger.SearchKeywords ?? Enumerable.Empty<string>()).ToList();
             }
+
+            if(searchKeywords == null)
+                searchKeywords = new List<string>();
+
+            IEnumerable<string> appendSearchKeywords = KissLogConfiguration.AppendSearchKeywords(args.WebRequestProperties);
+            if (appendSearchKeywords != null && appendSearchKeywords.Any())
+            {
+                searchKeywords.AddRange(appendSearchKeywords);
+            }
+
+            searchKeywords.RemoveAll(string.IsNullOrEmpty);
+
+            args.SearchKeywords = searchKeywords.Distinct().ToList();
 
             if (KissLogConfiguration.Listeners.Count == 1)
             {

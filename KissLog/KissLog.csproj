@@ -8,16 +8,15 @@
     <PackageProjectUrl>https://kisslog.net</PackageProjectUrl>
     <PackageIconUrl>https://kisslog.net/Content/images/kissLogLogos/logo_32.png</PackageIconUrl>
     <Description>KissLog core package. Contains the minimal components required to use ILogger in your application. Install this package in sub-modules.</Description>
-    <PackageReleaseNotes>Added Trace, Critical log level.
-Added LogListenerParser, so each ILogListener can filter the data it collects individually.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added Log files functionality.</PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>KissLog.net</Authors>
     <Company>KissLog.net</Company>
     <Product>KissLog.net</Product>
     <PackageTags>Logging, Management, Error, Exception, Tracing, KissLog, Diagnostics, Reporing</PackageTags>
-    <Version>2.5.2</Version>
-    <AssemblyVersion>2.5.2.0</AssemblyVersion>
-    <FileVersion>2.5.2.0</FileVersion>
+    <Version>2.5.3</Version>
+    <AssemblyVersion>2.5.3.0</AssemblyVersion>
+    <FileVersion>2.5.3.0</FileVersion>
     <PackageId>KissLog</PackageId>
   </PropertyGroup>
 
