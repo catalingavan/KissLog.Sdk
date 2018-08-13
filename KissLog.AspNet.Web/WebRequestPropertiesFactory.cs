@@ -11,7 +11,7 @@ namespace KissLog.AspNet.Web
     {
         private static readonly string[] ServerVariablesKeysToIgnore = {"all_http", "all_raw"};
 
-        public static WebRequestProperties Create(HttpRequest request)
+        public static WebRequestProperties Create(ILogger logger, HttpRequest request)
         {
             WebRequestProperties result = new WebRequestProperties();
 
@@ -50,7 +50,7 @@ namespace KissLog.AspNet.Web
             requestProperties.ServerVariables = serverVariables;
             requestProperties.Cookies = cookies;
 
-            if (KissLogConfiguration.ShouldReadInputStream(result))
+            if (ShouldLogRequestInputStream(logger, result))
             {
                 string inputStream = ReadInputStream(request);
                 if (string.IsNullOrEmpty(inputStream) == false)
@@ -84,6 +84,20 @@ namespace KissLog.AspNet.Web
             }
 
             return machineName;
+        }
+
+        private static bool ShouldLogRequestInputStream(ILogger logger, WebRequestProperties webRequestProperties)
+        {
+            if (logger is Logger theLogger)
+            {
+                var logResponse = theLogger.GetCustomProperty(InternalHelpers.LogRequestInputStreamProperty);
+                if (logResponse != null && logResponse is bool asBoolean)
+                {
+                    return asBoolean;
+                }
+            }
+
+            return KissLogConfiguration.ShouldLogRequestInputStream(webRequestProperties);
         }
 
         private static string ReadInputStream(HttpRequest request)
@@ -164,7 +178,7 @@ namespace KissLog.AspNet.Web
 
             foreach (var item in values)
             {
-                if(KissLogConfiguration.ShouldReadCookie(item.Key) == false)
+                if(KissLogConfiguration.ShouldLogCookie(item.Key) == false)
                     continue;
 
                 result.Add(InternalHelpers.TruncateRequestPropertyValue(item.Key, item.Value));

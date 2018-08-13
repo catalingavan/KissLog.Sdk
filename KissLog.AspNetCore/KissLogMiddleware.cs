@@ -24,7 +24,7 @@ namespace KissLog.AspNetCore
         {
             ILogger logger = LoggerFactory.GetInstance(context);
 
-            WebRequestProperties webRequestProperties = WebRequestPropertiesFactory.Create(context.Request);
+            WebRequestProperties webRequestProperties = WebRequestPropertiesFactory.Create(logger, context.Request);
 
             Exception ex = null;
             var originalBodyStream = context.Response.Body;
@@ -50,6 +50,8 @@ namespace KissLog.AspNetCore
             }
             finally
             {
+                context.Response.Body = originalBodyStream;
+
                 webRequestProperties.EndDateTime = DateTime.UtcNow;
 
                 HttpStatusCode statusCode = (HttpStatusCode)context.Response.StatusCode;
@@ -66,7 +68,7 @@ namespace KissLog.AspNetCore
                 responseProperties.HttpStatusCode = statusCode;
                 webRequestProperties.Response = responseProperties;
 
-                if (!string.IsNullOrEmpty(responseBody) && ShouldSaveResponse(logger, webRequestProperties))
+                if (!string.IsNullOrEmpty(responseBody) && ShouldLogResponseBody(logger, webRequestProperties))
                 {
                     string responseFileName = InternalHelpers.ResponseFileName(webRequestProperties.Response.Headers);
                     logger.LogAsFile(responseBody, responseFileName);
@@ -88,15 +90,18 @@ namespace KissLog.AspNetCore
             return text;
         }
 
-        private bool ShouldSaveResponse(ILogger logger, WebRequestProperties webRequestProperties)
+        private bool ShouldLogResponseBody(ILogger logger, WebRequestProperties webRequestProperties)
         {
             if (logger is Logger theLogger)
             {
-                if (theLogger.GetCustomProperty(InternalHelpers.SaveResponseBodyProperty) != null)
-                    return true;
+                var logResponse = theLogger.GetCustomProperty(InternalHelpers.LogResponseBodyProperty);
+                if (logResponse != null && logResponse is bool asBoolean)
+                {
+                    return asBoolean;
+                }
             }
 
-            return KissLogConfiguration.ShouldReadResponse(webRequestProperties);
+            return KissLogConfiguration.ShouldLogResponseBody(webRequestProperties);
         }
     }
 

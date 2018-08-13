@@ -32,7 +32,7 @@ namespace KissLog
             return request.Claims?.FirstOrDefault(p => AvatarClaims.Contains(p.Key.ToLower())).Value;
         };
 
-        public static Func<WebRequestProperties, bool> ShouldReadInputStream = (WebRequestProperties request) =>
+        public static Func<WebRequestProperties, bool> ShouldLogRequestInputStream = (WebRequestProperties request) =>
         {
             string contentType = request.Request.Headers.FirstOrDefault(p => string.Compare(p.Key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0).Value;
             if (string.IsNullOrEmpty(contentType))
@@ -43,7 +43,7 @@ namespace KissLog
             return InputStreamContentTypes.Any(p => contentType.Contains(p.ToLowerInvariant()));
         };
 
-        public static Func<WebRequestProperties, bool> ShouldReadResponse = (WebRequestProperties request) =>
+        public static Func<WebRequestProperties, bool> ShouldLogResponseBody = (WebRequestProperties request) =>
         {
             string contentType = request.Response.Headers.FirstOrDefault(p => string.Compare(p.Key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0).Value;
             if (string.IsNullOrEmpty(contentType))
@@ -54,12 +54,12 @@ namespace KissLog
             return ResponseBodyContentTypes.Any(p => contentType.Contains(p.ToLowerInvariant()));
         };
 
-        public static Func<string, bool> ShouldReadCookie = (string cookieName) =>
+        public static Func<string, bool> ShouldLogCookie = (string cookieName) =>
         {
             return false;
         };
 
-        public static Func<WebRequestProperties, IEnumerable<LogMessage>, IEnumerable<string>> AppendSearchKeywords = (WebRequestProperties request, IEnumerable<LogMessage> logMessages) => null;
+        public static Func<WebRequestProperties, IEnumerable<string>> AppendSearchKeywords = (WebRequestProperties request) => null;
 
         public static Func<Exception, string> AppendExceptionDetails = (Exception ex) => null;
     }

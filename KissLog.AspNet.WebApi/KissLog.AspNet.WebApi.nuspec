@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>KissLog.AspNet.WebApi</id>
-    <version>1.5.7</version>
+    <version>1.5.9</version>
     <authors>KissLog.net</authors>
     <owners>KissLog.net</owners>
     <licenseUrl>https://opensource.org/licenses/Apache-2.0</licenseUrl>
@@ -14,7 +14,7 @@
     <copyright>Copyright 2017</copyright>
     <tags>Logging, Management, Error, Exception, Tracing, KissLog, KissLog WebApi, Diagnostics, Reporing</tags>
     <dependencies>
-      <dependency id="KissLog.AspNet.Web" version="1.5.6" />
+      <dependency id="KissLog.AspNet.Web" version="1.5.8" />
       <dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.4" />
     </dependencies>
   </metadata>

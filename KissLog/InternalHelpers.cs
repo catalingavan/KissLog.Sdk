@@ -13,7 +13,8 @@ namespace KissLog
 
         private const string DefaultResponseFileName = "Response.txt";
 
-        public const string SaveResponseBodyProperty = "X-KissLog-SaveResponseBody";
+        public const string LogRequestInputStreamProperty = "X-KissLog-LogRequestInputStream";
+        public const string LogResponseBodyProperty = "X-KissLog-LogResponseBody";
 
         public static KeyValuePair<string, string> TruncateRequestPropertyValue(string key, string value)
         {
