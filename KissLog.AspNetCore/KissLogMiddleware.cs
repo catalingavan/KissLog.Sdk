@@ -27,8 +27,8 @@ namespace KissLog.AspNetCore
             WebRequestProperties webRequestProperties = WebRequestPropertiesFactory.Create(logger, context.Request);
 
             Exception ex = null;
-            var originalBodyStream = context.Response.Body;
-            string responseBody = null;
+            Stream originalBodyStream = context.Response.Body;
+            TemporaryFile responseBodyFile = null;
 
             try
             {
@@ -38,7 +38,8 @@ namespace KissLog.AspNetCore
 
                     await _next(context);
 
-                    responseBody = await ReadResponse(context.Response);
+                    responseBodyFile = new TemporaryFile();
+                    await ReadResponse(context.Response, responseBodyFile.FileName);
 
                     await responseStream.CopyToAsync(originalBodyStream);
                 }
@@ -68,13 +69,15 @@ namespace KissLog.AspNetCore
                 responseProperties.HttpStatusCode = statusCode;
                 webRequestProperties.Response = responseProperties;
 
-                if (!string.IsNullOrEmpty(responseBody) && ShouldLogResponseBody(logger, webRequestProperties))
+                if (responseBodyFile != null && ShouldLogResponseBody(logger, webRequestProperties))
                 {
                     string responseFileName = InternalHelpers.ResponseFileName(webRequestProperties.Response.Headers);
-                    logger.LogAsFile(responseBody, responseFileName);
+                    logger.LogFile(responseBodyFile.FileName, responseFileName);
                 }
 
                 ((Logger)logger).WebRequestProperties = webRequestProperties;
+
+                responseBodyFile?.Dispose();
 
                 IEnumerable<ILogger> loggers = LoggerFactory.GetAll(context);
 
@@ -82,12 +85,21 @@ namespace KissLog.AspNetCore
             }
         }
 
-        private async Task<string> ReadResponse(HttpResponse response)
+        private async Task ReadResponse(HttpResponse response, string destinationFilePath)
         {
-            response.Body.Seek(0, SeekOrigin.Begin);
-            string text = await new StreamReader(response.Body).ReadToEndAsync();
-            response.Body.Seek(0, SeekOrigin.Begin);
-            return text;
+            try
+            {
+                response.Body.Seek(0, SeekOrigin.Begin);
+
+                using (var fs = File.OpenWrite(destinationFilePath))
+                {
+                    await response.Body.CopyToAsync(fs);
+                }
+            }
+            finally
+            {
+                response.Body.Seek(0, SeekOrigin.Begin);
+            }
         }
 
         private bool ShouldLogResponseBody(ILogger logger, WebRequestProperties webRequestProperties)
