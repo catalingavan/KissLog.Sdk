@@ -40,7 +40,10 @@ namespace KissLog.AspNetCore
 
                     responseBody = await ReadResponse(context.Response);
 
-                    await responseStream.CopyToAsync(originalBodyStream);
+                    if (context.Response?.StatusCode != (int)HttpStatusCode.NoContent)
+                    {
+                        await responseStream.CopyToAsync(originalBodyStream);
+                    }
                 }
             }
             catch (Exception e)
