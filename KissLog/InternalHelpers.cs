@@ -10,6 +10,7 @@ namespace KissLog
         private const int RequestPropertyKeyLength = 100;
         private const int RequestPropertyValueLength = 1000;
         private const int RequestPropertyInputStreamLength = 2000;
+        private const int LogMessageMaxLength = 10000;
 
         private const string DefaultResponseFileName = "Response.txt";
 
@@ -96,6 +97,17 @@ namespace KissLog
                 return "Response.xml";
 
             return DefaultResponseFileName;
+        }
+
+        public static string TruncateLogMessage(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return value;
+
+            if (value.Length > LogMessageMaxLength)
+                return $"{value.Substring(0, LogMessageMaxLength - 3)}***";
+
+            return value;
         }
     }
 }

@@ -142,19 +142,18 @@ namespace KissLog.AspNet.Web
             {
                 logger.Log(LogLevel.Error, ex);
             }
-
-            string response = null;
-            var filter = ctx.Response.Filter as ResponseSniffer;
-            if (filter != null)
-            {
-                response = filter.GetContent();
-            }
+            
+            var sniffer = ctx.Response.Filter as ResponseSniffer;
 
             if (ctx.Response.StatusCode >= 400 && ex == null)
             {
-                if (string.IsNullOrEmpty(response) == false)
+                if (sniffer != null)
                 {
-                    logger.Log(LogLevel.Error, response);
+                    string response = sniffer.GetContent();
+                    if (string.IsNullOrEmpty(response) == false)
+                    {
+                        logger.Log(LogLevel.Error, response);
+                    }
                 }
             }
 
@@ -167,10 +166,24 @@ namespace KissLog.AspNet.Web
 
             webRequestProperties.Response = responseProperties;
 
-            if (!string.IsNullOrEmpty(response) && ShouldLogResponseBody(logger, webRequestProperties))
+            if (sniffer != null && ShouldLogResponseBody(logger, webRequestProperties))
             {
                 string responseFileName = InternalHelpers.ResponseFileName(webRequestProperties.Response.Headers);
-                logger.LogAsFile(response, responseFileName);
+
+                using (sniffer.MirrorStream)
+                {
+                    sniffer.MirrorStream.Position = 0;
+
+                    using (TemporaryFile tempFile = new TemporaryFile())
+                    {
+                        using (var fs = File.OpenWrite(tempFile.FileName))
+                        {
+                            sniffer.MirrorStream.CopyTo(fs);
+                        }
+
+                        logger.LogFile(tempFile.FileName, responseFileName);
+                    }
+                }
             }
 
             ((Logger) logger).WebRequestProperties = webRequestProperties;

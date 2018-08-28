@@ -11,10 +11,10 @@
     <PackageIconUrl>https://kisslog.net/Content/images/kissLogLogos/logo_32.png</PackageIconUrl>
     <PackageTags>Logging, Management, Error, Exception, Tracing, KissLog, KissLog Web AspNetCore, Core, Diagnostics, Reporing</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.4.5</Version>
-    <AssemblyVersion>1.4.5.0</AssemblyVersion>
-    <FileVersion>1.4.5.0</FileVersion>
-    <PackageReleaseNotes>Added session support. No code change is required.</PackageReleaseNotes>
+    <Version>1.4.6</Version>
+    <AssemblyVersion>1.4.6.0</AssemblyVersion>
+    <FileVersion>1.4.6.0</FileVersion>
+    <PackageReleaseNotes>Implemented Log files functionality</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

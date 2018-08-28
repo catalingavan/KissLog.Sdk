@@ -6,6 +6,7 @@ namespace KissLog.AspNet.Web
     internal class ResponseSniffer : Stream
     {
         private readonly Stream _streamToCapture;
+        private readonly MemoryStream _mirrorStream;
         private readonly Encoding _responseEncoding;
         private readonly StringBuilder _streamContent;
 
@@ -14,12 +15,15 @@ namespace KissLog.AspNet.Web
             _responseEncoding = responseEncoding;
             _streamToCapture = streamToCapture;
             _streamContent = new StringBuilder();
+            _mirrorStream = new MemoryStream();
         }
 
         public string GetContent()
         {
             return _streamContent.ToString();
         }
+
+        public Stream MirrorStream => _mirrorStream;
 
         public override bool CanRead => _streamToCapture.CanRead;
 
@@ -53,12 +57,15 @@ namespace KissLog.AspNet.Web
         public override void SetLength(long value)
         {
             _streamToCapture.SetLength(value);
+            _mirrorStream.SetLength(value);
         }
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            _streamContent.Append(_responseEncoding.GetString(buffer));
             _streamToCapture.Write(buffer, offset, count);
+
+            _streamContent.Append(_responseEncoding.GetString(buffer));
+            _mirrorStream.Write(buffer, offset, count);
         }
 
         public override void Close()
