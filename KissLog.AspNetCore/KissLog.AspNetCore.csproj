@@ -11,10 +11,10 @@
     <PackageIconUrl>https://kisslog.net/Content/images/kissLogLogos/logo_32.png</PackageIconUrl>
     <PackageTags>Logging, Management, Error, Exception, Tracing, KissLog, KissLog Web AspNetCore, Core, Diagnostics, Reporing</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.4.6</Version>
-    <AssemblyVersion>1.4.6.0</AssemblyVersion>
-    <FileVersion>1.4.6.0</FileVersion>
-    <PackageReleaseNotes>Implemented Log files functionality</PackageReleaseNotes>
+    <Version>1.4.7</Version>
+    <AssemblyVersion>1.4.7.0</AssemblyVersion>
+    <FileVersion>1.4.7.0</FileVersion>
+    <PackageReleaseNotes>Fixed KissLogMiddleware NoContent response HttpStatusCode bug.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
