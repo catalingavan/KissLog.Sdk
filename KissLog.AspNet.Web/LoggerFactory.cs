@@ -8,6 +8,13 @@ namespace KissLog.AspNet.Web
 {
     public static class LoggerFactory
     {
+        private static readonly ConcurrentDictionary<string, ILogger> StaticInstances = new ConcurrentDictionary<string, ILogger>();
+
+        private static ILogger GetStaticInstance(string categoryName)
+        {
+            return StaticInstances.GetOrAdd(categoryName, (key) => new Logger(key));
+        }
+
         public static ILogger GetInstance(string categoryName = Logger.DefaultCategoryName)
         {
             return GetInstance(HttpContext.Current, categoryName);
@@ -15,10 +22,12 @@ namespace KissLog.AspNet.Web
 
         public static ILogger GetInstance(HttpContext ctx, string categoryName = Logger.DefaultCategoryName)
         {
+            if (string.IsNullOrWhiteSpace(categoryName))
+                categoryName = Logger.DefaultCategoryName;
+
             if (ctx == null)
             {
-                Debug.WriteLine("HttpContext is null. Creating a new instance");
-                return new Logger(categoryName);
+                return GetStaticInstance(categoryName);
             }
 
             ConcurrentDictionary<string, ILogger> loggersDictionary = null;
@@ -32,15 +41,17 @@ namespace KissLog.AspNet.Web
                 ctx.Items[Constants.LoggersDictionaryKey] = loggersDictionary;
             }
 
-            return loggersDictionary.GetOrAdd(categoryName, new Logger(categoryName));
+            var logger = loggersDictionary.GetOrAdd(categoryName, (key) => new Logger(key));
+            (logger as Logger)?.AddCustomProperty(InternalHelpers.IsCreatedByHttpRequest, true);
+
+            return logger;
         }
 
         public static IEnumerable<ILogger> GetAll(HttpContext ctx)
         {
-            if (ctx == null || ctx.Items.Contains(Constants.LoggersDictionaryKey) == false)
+            if (ctx == null)
             {
-                Debug.WriteLine("HttpContext is null. Returning empty list");
-                return Enumerable.Empty<ILogger>();
+                return StaticInstances.Values.ToList();
             }
 
             if (ctx.Items.Contains(Constants.LoggersDictionaryKey) == false)

@@ -62,5 +62,19 @@ namespace KissLog
         public static Func<WebRequestProperties, IEnumerable<string>> AppendSearchKeywords = (WebRequestProperties request) => null;
 
         public static Func<Exception, string> AppendExceptionDetails = (Exception ex) => null;
+
+        static KissLogConfiguration()
+        {
+            Logger.OnMessage += (sender, args) =>
+            {
+                if (sender is ILogger logger)
+                {
+                    if (logger.IsCreatedByHttpRequest() == false)
+                    {
+                        Logger.NotifyListeners(logger);
+                    }
+                }
+            };
+        }
     }
 }

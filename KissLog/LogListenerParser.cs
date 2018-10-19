@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using Newtonsoft.Json;
 
 namespace KissLog
 {
@@ -21,51 +20,38 @@ namespace KissLog
         /// </summary>
         public List<string> KeysToObfuscate = new List<string> {"password"};
 
-        /// <summary>
-        /// Function which filters / returns the messages to log, which are initially groupped by CategoryName
-        /// </summary>
-        public Func<IEnumerable<LogMessagesGroup>, IEnumerable<LogMessage>> MergeLogMessages = (logMessagesGroups) =>
+        public virtual bool ShouldLog(FlushLogArgs args, ILogListener logListener)
         {
-            if (logMessagesGroups == null || logMessagesGroups.Any() == false)
-                return Enumerable.Empty<LogMessage>();
+            if (args.IsCreatedByHttpRequest == false)
+                return true;
 
-            if (logMessagesGroups.Count() == 1)
-                return logMessagesGroups.First().Messages;
+            if (args.WebRequestProperties?.Response == null)
+                return true;
 
-            return logMessagesGroups.SelectMany(p => p.Messages).OrderBy(p => p.DateTime).ToList();
-        };
-
-        public virtual bool ShouldLog(KissLog.Web.WebRequestProperties webRequestProperties, ILogListener logListener)
-        {
-            if (webRequestProperties == null)
-                return false;
+            int httpStatusCode = (int)args.WebRequestProperties.Response.HttpStatusCode;
+            string responseContentType = args.WebRequestProperties.Response.Headers.FirstOrDefault(p => string.Compare(p.Key, "content-type", StringComparison.OrdinalIgnoreCase) == 0).Value;
+            string localPath = args.WebRequestProperties.Url?.LocalPath.ToLowerInvariant();
 
             if (logListener.MinimumResponseHttpStatusCode > 0)
             {
-                HttpStatusCode httpStatusCode = webRequestProperties.Response?.HttpStatusCode ?? HttpStatusCode.OK;
-                if ((int) httpStatusCode < logListener.MinimumResponseHttpStatusCode)
+                if (httpStatusCode < logListener.MinimumResponseHttpStatusCode)
                     return false;
             }
 
-            if (ContentTypesToIgnore != null && ContentTypesToIgnore.Any())
+            if (string.IsNullOrEmpty(responseContentType) == false)
             {
-                if (webRequestProperties.Response != null)
+                if (ContentTypesToIgnore?.Any() == true)
                 {
-                    var contentType = webRequestProperties.Response.Headers.FirstOrDefault(p => p.Key.ToLowerInvariant() == "content-type");
-                    if (string.IsNullOrEmpty(contentType.Value) == false)
+                    if (ContentTypesToIgnore.Any(p => responseContentType.Contains(p.ToLowerInvariant())))
                     {
-                        if (ContentTypesToIgnore.Any(p => contentType.Value.Contains(p.ToLowerInvariant())))
-                        {
-                            return false;
-                        }
+                        return false;
                     }
                 }
             }
 
-            if (UrlsToIgnore != null && UrlsToIgnore.Any())
+            if (string.IsNullOrEmpty(localPath) == false)
             {
-                string localPath = webRequestProperties.Url?.LocalPath.ToLowerInvariant();
-                if (string.IsNullOrEmpty(localPath) == false)
+                if (UrlsToIgnore?.Any() == true)
                 {
                     if (UrlsToIgnore.Any(p => localPath.Contains(p.ToLowerInvariant())))
                         return false;

@@ -1193,5 +1193,15 @@ namespace KissLog
                 theLogger.AddCustomProperty(InternalHelpers.LogResponseBodyProperty, value);
             }
         }
+
+        public static bool IsCreatedByHttpRequest(this ILogger logger)
+        {
+            if (logger is Logger theLogger)
+            {
+                return theLogger.GetCustomProperty(InternalHelpers.IsCreatedByHttpRequest) != null;
+            }
+
+            return false;
+        }
     }
 }

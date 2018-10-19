@@ -14,6 +14,9 @@ namespace KissLog
 
         public const string DefaultCategoryName = "Default";
 
+        public string SdkName { get; set; }
+        public string SdkVersion { get; set; }
+
         protected List<LogMessage> _messages = null;
 
         internal LoggerFiles LoggerFiles = null;
@@ -362,6 +365,7 @@ namespace KissLog
 
             FlushLogArgs args = new FlushLogArgs
             {
+                IsCreatedByHttpRequest = defaultLogger.IsCreatedByHttpRequest(),
                 ErrorMessage = defaultLogger.ErrorMessage,
                 WebRequestProperties = webRequestProperties,
                 MessagesGroups = messagesGroups
@@ -374,6 +378,9 @@ namespace KissLog
             {
                 files = theLogger.LoggerFiles.GetFiles();
                 searchKeywords = (theLogger.SearchKeywords ?? Enumerable.Empty<string>()).ToList();
+
+                args.SdkName = theLogger.SdkName;
+                args.SdkVersion = theLogger.SdkVersion;
             }
 
             if(searchKeywords == null)

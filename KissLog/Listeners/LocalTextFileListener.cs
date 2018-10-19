@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace KissLog.Listeners
 {
@@ -28,13 +27,8 @@ namespace KissLog.Listeners
 
         public void OnFlush(FlushLogArgs args)
         {
-            // if this is a WebRequest, and we do not log the web request
-            // then, do not log the messages either
-            if (args.WebRequestProperties != null)
-            {
-                if(Parser.ShouldLog(args.WebRequestProperties, this) == false)
-                    return;
-            }
+            if (Parser.ShouldLog(args, this) == false)
+                return;
 
             lock (Locker)
             {
@@ -49,12 +43,12 @@ namespace KissLog.Listeners
 
         private void Write(StreamWriter sw, FlushLogArgs args)
         {
-            if (args.WebRequestProperties != null)
+            if (args.IsCreatedByHttpRequest == true)
             {
                 sw.WriteLine(Format(args.WebRequestProperties));
             }
 
-            IEnumerable<LogMessage> logMessages = Parser.MergeLogMessages(args.MessagesGroups);
+            IEnumerable<LogMessage> logMessages = InternalHelpers.MergeLogMessages(args.MessagesGroups);
 
             foreach (var logMessage in logMessages)
             {
@@ -67,6 +61,9 @@ namespace KissLog.Listeners
 
         private string Format(WebRequestProperties webRequestProperties)
         {
+            if (webRequestProperties == null)
+                return string.Empty;
+
             return _textFormatter.Format(webRequestProperties);
         }
 

@@ -16,6 +16,7 @@ namespace KissLog
 
         public const string LogRequestInputStreamProperty = "X-KissLog-LogRequestInputStream";
         public const string LogResponseBodyProperty = "X-KissLog-LogResponseBody";
+        public const string IsCreatedByHttpRequest = "X-KissLog-IsCreatedByHttpRequest";
 
         public static KeyValuePair<string, string> TruncateRequestPropertyValue(string key, string value)
         {
@@ -108,6 +109,17 @@ namespace KissLog
                 return $"{value.Substring(0, LogMessageMaxLength - 3)}***";
 
             return value;
+        }
+
+        public static IEnumerable<LogMessage> MergeLogMessages(IEnumerable<LogMessagesGroup> logMessagesGroups)
+        {
+            if (logMessagesGroups == null || logMessagesGroups.Any() == false)
+                return Enumerable.Empty<LogMessage>();
+
+            if (logMessagesGroups.Count() == 1)
+                return logMessagesGroups.First().Messages;
+
+            return logMessagesGroups.SelectMany(p => p.Messages).OrderBy(p => p.DateTime).ToList();
         }
     }
 }
