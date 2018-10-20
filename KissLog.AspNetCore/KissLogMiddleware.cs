@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using KissLog.Web;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -6,8 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using KissLog.Web;
-using Microsoft.Extensions.Logging;
 
 namespace KissLog.AspNetCore
 {
@@ -23,6 +22,7 @@ namespace KissLog.AspNetCore
         public async Task Invoke(HttpContext context)
         {
             ILogger logger = LoggerFactory.GetInstance(context);
+            (logger as Logger)?.AddCustomProperty(InternalHelpers.IsCreatedByHttpRequest, true);
 
             WebRequestProperties webRequestProperties = WebRequestPropertiesFactory.Create(logger, context.Request);
 
@@ -78,7 +78,7 @@ namespace KissLog.AspNetCore
                     logger.LogFile(responseBodyFile.FileName, responseFileName);
                 }
 
-                ((Logger)logger).WebRequestProperties = webRequestProperties;
+                ((Logger)logger).SetWebRequestProperties(webRequestProperties);
 
                 responseBodyFile?.Dispose();
 
@@ -122,6 +122,11 @@ namespace KissLog.AspNetCore
 
     public static class KissLogMiddlewareExtensions
     {
+        static KissLogMiddlewareExtensions()
+        {
+            PackageInit.Init();
+        }
+
         public static IApplicationBuilder UseKissLogMiddleware(this IApplicationBuilder builder)
         {
             return builder.UseMiddleware<KissLogMiddleware>();

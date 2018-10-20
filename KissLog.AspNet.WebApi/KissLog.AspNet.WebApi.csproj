@@ -53,6 +53,7 @@
     <Compile Include="HttpNotFoundAwareDefaultHttpControllerSelector.cs" />
     <Compile Include="KissLogExceptionLogger.cs" />
     <Compile Include="KissLogWebApiExceptionFilterAttribute.cs" />
+    <Compile Include="PackageInit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

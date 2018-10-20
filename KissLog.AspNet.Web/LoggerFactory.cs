@@ -25,7 +25,7 @@ namespace KissLog.AspNet.Web
             if (string.IsNullOrWhiteSpace(categoryName))
                 categoryName = Logger.DefaultCategoryName;
 
-            if (ctx == null)
+            if(IsRequestContext(ctx) == false)
             {
                 return GetStaticInstance(categoryName);
             }
@@ -41,10 +41,7 @@ namespace KissLog.AspNet.Web
                 ctx.Items[Constants.LoggersDictionaryKey] = loggersDictionary;
             }
 
-            var logger = loggersDictionary.GetOrAdd(categoryName, (key) => new Logger(key));
-            (logger as Logger)?.AddCustomProperty(InternalHelpers.IsCreatedByHttpRequest, true);
-
-            return logger;
+            return loggersDictionary.GetOrAdd(categoryName, (key) => new Logger(key));
         }
 
         public static IEnumerable<ILogger> GetAll(HttpContext ctx)
@@ -68,6 +65,21 @@ namespace KissLog.AspNet.Web
             }
 
             return dictionary.Select(p => p.Value).ToList();
+        }
+
+        private static bool IsRequestContext(HttpContext ctx)
+        {
+            if (ctx == null)
+                return false;
+
+            try
+            {
+                return ctx.Request != null;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

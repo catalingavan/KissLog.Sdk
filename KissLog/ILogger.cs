@@ -1,21 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using KissLog.Web;
 
 namespace KissLog
 {
     public interface ILogger
     {
         string CategoryName { get; }
-
-        IEnumerable<LogMessage> LogMessages { get; }
-
-        string ErrorMessage { get; }
-
-        WebRequestProperties  WebRequestProperties { get; }
-
-        HttpStatusCode? HttpStatusCode { get; }
 
 #if NET40
 
@@ -187,12 +176,5 @@ namespace KissLog
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null);
 #endif
-
-        /// <summary>
-        /// <para>Sets the KissLog HttpStatusCode regardless of the Response returned by the server</para>
-        /// <para>This is useful when you capture an error, log it, but return 200 to the client.</para>
-        /// <para>Setting httpStatusCode to >= 400 will make the request be identified as error instead of success</para>
-        /// </summary>
-        void SetHttpStatusCode(HttpStatusCode httpStatusCode);
     }
 }

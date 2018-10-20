@@ -11,18 +11,26 @@ namespace KissLog.WindowsApplication
             if (logger == null)
                 return;
 
-            if (logger.WebRequestProperties != null)
+            if(logger is Logger theLogger)
             {
-                if (logger.WebRequestProperties.Response == null)
-                    logger.WebRequestProperties.Response = new ResponseProperties();
+                WebRequestProperties webRequestProperties = theLogger.WebRequestProperties;
 
-                logger.WebRequestProperties.EndDateTime = DateTime.UtcNow;
-                logger.WebRequestProperties.Response.HttpStatusCode = HttpStatusCode.OK;
-
-                if (string.IsNullOrEmpty(logger.ErrorMessage) == false)
+                if(webRequestProperties.Response == null)
                 {
-                    logger.WebRequestProperties.Response.HttpStatusCode = HttpStatusCode.InternalServerError;
+                    webRequestProperties.Response = new ResponseProperties
+                    {
+                        HttpStatusCode = HttpStatusCode.OK
+                    };
                 }
+
+                if(!string.IsNullOrEmpty(theLogger.ErrorMessage))
+                {
+                    webRequestProperties.Response.HttpStatusCode = HttpStatusCode.InternalServerError;
+                }
+
+                webRequestProperties.EndDateTime = DateTime.UtcNow;
+
+                theLogger.SetWebRequestProperties(webRequestProperties);
             }
 
             Logger.NotifyListeners(logger);

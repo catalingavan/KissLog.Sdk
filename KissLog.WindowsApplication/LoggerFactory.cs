@@ -64,20 +64,20 @@ namespace KissLog.WindowsApplication
             if (string.IsNullOrEmpty(serviceName))
                 serviceName = nameof(serviceName);
 
-            Logger logger = new Logger
+            var webRequestProperties = new WebRequestProperties
             {
-                WebRequestProperties = new WebRequestProperties
-                {
-                    Url = new Uri(BuildUri(serviceName)),
-                    HttpMethod = DefaultHttpMethod,
-                    UserAgent = GetOsVersion(),
-                    MachineName = GetMachineName(),
-                    RemoteAddress = GetLocalIpAddress(),
-                    Request = new RequestProperties(),
-                    Response = new ResponseProperties(),
-                    StartDateTime = DateTime.UtcNow
-                }
+                Url = new Uri(BuildUri(serviceName)),
+                HttpMethod = DefaultHttpMethod,
+                UserAgent = GetOsVersion(),
+                MachineName = GetMachineName(),
+                RemoteAddress = GetLocalIpAddress(),
+                Request = new RequestProperties(),
+                Response = new ResponseProperties(),
+                StartDateTime = DateTime.UtcNow
             };
+
+            Logger logger = new Logger();
+            logger.SetWebRequestProperties(webRequestProperties);
 
             return logger;
         }

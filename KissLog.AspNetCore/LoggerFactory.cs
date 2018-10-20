@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
 using System.Diagnostics;
 using System.Linq;
 
@@ -15,11 +14,7 @@ namespace KissLog.AspNetCore
 
         private static ILogger GetStaticInstance(string categoryName)
         {
-            return StaticInstances.GetOrAdd(categoryName, (key) => new Logger(key)
-            {
-                SdkName = GetSdkName(),
-                SdkVersion = GetSdkVersion()
-            });
+            return StaticInstances.GetOrAdd(categoryName, (key) => new Logger(key));
         }
 
         public static ILogger GetInstance(IHttpContextAccessor httpContextAccessor, string categoryName = Logger.DefaultCategoryName)
@@ -42,7 +37,7 @@ namespace KissLog.AspNetCore
             if (string.IsNullOrWhiteSpace(categoryName))
                 categoryName = Logger.DefaultCategoryName;
 
-            if (ctx == null)
+            if (IsRequestContext(ctx) == false)
             {
                 Debug.WriteLine("HttpContext is null. Creating static instance");
                 return GetStaticInstance(categoryName);
@@ -59,12 +54,7 @@ namespace KissLog.AspNetCore
                 ctx.Items[Constants.LoggersDictionaryKey] = loggersDictionary;
             }
 
-            var logger = loggersDictionary.GetOrAdd(categoryName, (key) => new Logger(key)
-            {
-                SdkName = GetSdkName(),
-                SdkVersion = GetSdkVersion()
-            });
-            (logger as Logger)?.AddCustomProperty(InternalHelpers.IsCreatedByHttpRequest, true);
+            var logger = loggersDictionary.GetOrAdd(categoryName, (key) => new Logger(key));
 
             return logger;
         }
@@ -105,21 +95,18 @@ namespace KissLog.AspNetCore
             return dictionary.Select(p => p.Value).ToList();
         }
 
-        private static string GetSdkName()
+        private static bool IsRequestContext(HttpContext ctx)
         {
-            return SdkName;
-        }
+            if (ctx == null)
+                return false;
 
-        private static string GetSdkVersion()
-        {
             try
             {
-                Version version = typeof(LoggerFactory).Assembly.GetName().Version;
-                return $"{version.Major}.{version.Minor}.{version.Build}";
+                return ctx.Request != null;
             }
             catch
             {
-                return "1.0.0";
+                return false;
             }
         }
     }

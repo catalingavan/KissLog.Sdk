@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>KissLog.AspNet.Mvc</id>
-    <version>1.5.9</version>
+    <version>2.0.0</version>
     <authors>KissLog.net</authors>
     <owners>KissLog.net</owners>
     <licenseUrl>https://opensource.org/licenses/Apache-2.0</licenseUrl>
@@ -10,11 +10,11 @@
     <iconUrl>https://kisslog.net/Content/images/kissLogLogos/logo_32.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>KissLog AspNet Mvc package. Contains the components required to hook Asp.Net Mvc applications with KissLog. Install this package to Asp.Net MVC applications.</description>
-    <releaseNotes>Implemented Log files functionality</releaseNotes>
+    <releaseNotes>Improved application startup error handling.</releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>Logging, Management, Error, Exception, Tracing, KissLog, KissLog Web Mvc, Diagnostics, Reporing</tags>
     <dependencies>
-      <dependency id="KissLog.AspNet.Web" version="1.5.9" />
+      <dependency id="KissLog.AspNet.Web" version="2.0.0" />
       <dependency id="Microsoft.AspNet.Mvc" version="5.2.4" />
     </dependencies>
   </metadata>

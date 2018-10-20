@@ -1,21 +1,16 @@
-﻿using System;
+﻿using KissLog.Web;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Mime;
 using System.Security.Claims;
-using System.Text;
 using System.Web;
-using KissLog.Web;
-using KissLog;
 
 namespace KissLog.AspNet.Web
 {
     public class KissLogHttpModule : IHttpModule
     {
-        internal const string IsHandledByHttpModule = "X-KissLog-IsHandledByHttpModule";
-
         public void Init(HttpApplication context)
         {
             context.BeginRequest += BeginRequest;
@@ -107,7 +102,7 @@ namespace KissLog.AspNet.Web
             var request = ctx.Request;
 
             ILogger logger = LoggerFactory.GetInstance(ctx);
-            (logger as Logger)?.AddCustomProperty(IsHandledByHttpModule, true);
+            (logger as Logger)?.AddCustomProperty(InternalHelpers.IsCreatedByHttpRequest, true);
 
             WebRequestProperties requestProperties = WebRequestPropertiesFactory.Create(logger, request);
             ctx.Items[Constants.HttpRequestPropertiesKey] = requestProperties;
@@ -186,7 +181,7 @@ namespace KissLog.AspNet.Web
                 }
             }
 
-            ((Logger) logger).WebRequestProperties = webRequestProperties;
+            ((Logger) logger).SetWebRequestProperties(webRequestProperties);
 
             IEnumerable<ILogger> loggers = LoggerFactory.GetAll(ctx);
 

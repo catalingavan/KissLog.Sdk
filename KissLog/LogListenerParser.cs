@@ -72,19 +72,18 @@ namespace KissLog
             return true;
         }
 
-        public virtual void RemoveDataBeforePersisting(FlushLogArgs args)
+        public virtual void AlterDataBeforePersisting(FlushLogArgs args)
         {
-            if (args.WebRequestProperties?.Request != null)
+            if(args.WebRequestProperties?.Request != null)
             {
                 ObfuscateDictionary(args.WebRequestProperties.Request.Claims);
                 ObfuscateDictionary(args.WebRequestProperties.Request.FormData);
                 ObfuscateDictionary(args.WebRequestProperties.Request.QueryString);
-
                 ObfuscateInputStream(args.WebRequestProperties.Request);
             }
         }
 
-        public void ObfuscateDictionary(List<KeyValuePair<string, string>> dictionary)
+        private void ObfuscateDictionary(List<KeyValuePair<string, string>> dictionary)
         {
             if (dictionary == null)
                 return;
@@ -156,6 +155,51 @@ namespace KissLog
             {
                 // ignored
             }
+        }
+
+        [Obsolete("This method is deprecated. Use ShouldLog(FlushLogArgs args, ILogListener logListener) instead.")]
+        public virtual bool ShouldLog(KissLog.Web.WebRequestProperties webRequestProperties, ILogListener logListener)
+        {
+            if (webRequestProperties?.Response == null)
+                return true;
+
+            int httpStatusCode = (int)webRequestProperties.Response.HttpStatusCode;
+            string responseContentType = webRequestProperties.Response.Headers.FirstOrDefault(p => string.Compare(p.Key, "content-type", StringComparison.OrdinalIgnoreCase) == 0).Value;
+            string localPath = webRequestProperties.Url?.LocalPath.ToLowerInvariant();
+
+            if (logListener.MinimumResponseHttpStatusCode > 0)
+            {
+                if (httpStatusCode < logListener.MinimumResponseHttpStatusCode)
+                    return false;
+            }
+
+            if (string.IsNullOrEmpty(responseContentType) == false)
+            {
+                if (ContentTypesToIgnore?.Any() == true)
+                {
+                    if (ContentTypesToIgnore.Any(p => responseContentType.Contains(p.ToLowerInvariant())))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(localPath) == false)
+            {
+                if (UrlsToIgnore?.Any() == true)
+                {
+                    if (UrlsToIgnore.Any(p => localPath.Contains(p.ToLowerInvariant())))
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        [Obsolete("This method is deprecated. Use AlterDataBeforePersisting(FlushLogArgs args) instead.")]
+        public virtual void RemoveDataBeforePersisting(FlushLogArgs args)
+        {
+            AlterDataBeforePersisting(args);
         }
     }
 }

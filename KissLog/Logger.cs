@@ -11,23 +11,31 @@ namespace KissLog
     public class Logger : ILogger, IDisposable
     {
         private const string ExceptionLoggedKey = "KissLog-ExceptionLogged";
-
         public const string DefaultCategoryName = "Default";
 
-        public string SdkName { get; set; }
-        public string SdkVersion { get; set; }
-
-        protected List<LogMessage> _messages = null;
-
-        internal LoggerFiles LoggerFiles = null;
-
-        private List<string> _searchKeywords = null;
-
-        protected HttpStatusCode? _httpStatusCode;
+        public static event LogMessageCreatedEventHandler OnMessage;
 
         public string CategoryName { get; set; }
 
+        private WebRequestProperties _webRequestProperties = null;
+        private List<LogMessage> _messages = null;
+        private string _errorMessage = null;
+        private List<string> _searchKeywords = null;
+        private HttpStatusCode? _httpStatusCode;
         private Dictionary<string, object> _customProperties = null;
+
+        internal LoggerFiles LoggerFiles = null;
+
+        public WebRequestProperties WebRequestProperties => _webRequestProperties;
+        public string ErrorMessage => _errorMessage;
+        internal IEnumerable<LogMessage> LogMessages => _messages;
+        internal IEnumerable<string> SearchKeywords => _searchKeywords;
+        internal HttpStatusCode? HttpStatusCode => _httpStatusCode;
+
+        public void SetWebRequestProperties(WebRequestProperties webRequestProperties)
+        {
+            _webRequestProperties = webRequestProperties;
+        }
 
         public void AddCustomProperty(string key, object value)
         {
@@ -52,31 +60,10 @@ namespace KissLog
             return _customProperties[key];
         }
 
-        public void AddSearchKeyword(string keyword)
+        internal void SetHttpStatusCode(HttpStatusCode httpStatusCode)
         {
-            if(string.IsNullOrEmpty(keyword))
-                return;
-
-            if(_searchKeywords == null)
-                _searchKeywords = new List<string>();
-
-            if(_searchKeywords.Any(p => string.Compare(p, keyword, StringComparison.OrdinalIgnoreCase) == 0))
-                return;
-
-            _searchKeywords.Add(keyword);
+            _httpStatusCode = httpStatusCode;
         }
-
-        public IEnumerable<LogMessage> LogMessages => _messages;
-
-        public IEnumerable<string> SearchKeywords => _searchKeywords;
-
-        public HttpStatusCode? HttpStatusCode => _httpStatusCode;
-
-        public WebRequestProperties WebRequestProperties { get; set; }
-
-        public string ErrorMessage { get; set; }
-
-        public static event LogMessageCreatedEventHandler OnMessage;
 
         public Logger() : this(DefaultCategoryName)
         {
@@ -84,7 +71,7 @@ namespace KissLog
 
         public Logger(string categoryName)
         {
-            if (string.IsNullOrEmpty(categoryName))
+            if (string.IsNullOrWhiteSpace(categoryName))
                 categoryName = DefaultCategoryName;
 
             _messages = new List<LogMessage>();
@@ -92,7 +79,7 @@ namespace KissLog
 
             CategoryName = categoryName;
 
-            WebRequestProperties = WebRequestPropertiesFactory.CreateDefault();
+            _webRequestProperties = WebRequestPropertiesFactory.CreateDefault();
         }
 
         public void Log(LogLevel logLevel, string message, Action<LogMessage> action = null, string memberName = null, int lineNumber = 0, string memberType = null)
@@ -134,7 +121,7 @@ namespace KissLog
                 return;
 
             if(string.Compare(CategoryName, DefaultCategoryName, StringComparison.OrdinalIgnoreCase) == 0)
-                ErrorMessage = ex.Message;
+                _errorMessage = ex.Message;
 
             string formatted = FormatMessage(ex);
             Log(logLevel, formatted, action, memberName, lineNumber, memberType);
@@ -176,11 +163,6 @@ namespace KissLog
             }
 
             Log(logLevel, sb.ToString(), action, memberName, lineNumber, memberType);
-        }
-
-        public void SetHttpStatusCode(HttpStatusCode httpStatusCode)
-        {
-            _httpStatusCode = httpStatusCode;
         }
 
         protected virtual string FormatMessage(Exception ex)
@@ -238,6 +220,20 @@ namespace KissLog
             {
                 FormatException(baseException, sb, "Base Exception:", exMessages);
             }
+        }
+
+        private void AddSearchKeyword(string keyword)
+        {
+            if (string.IsNullOrEmpty(keyword))
+                return;
+
+            if (_searchKeywords == null)
+                _searchKeywords = new List<string>();
+
+            if (_searchKeywords.Any(p => string.Compare(p, keyword, StringComparison.OrdinalIgnoreCase) == 0))
+                return;
+
+            _searchKeywords.Add(keyword);
         }
 
         private void Reset()
@@ -316,85 +312,99 @@ namespace KissLog
             return memberType;
         }
 
+        public void Dispose()
+        {
+            LoggerFiles.Dispose();
+            LoggerFiles = new LoggerFiles(this);
+        }
+
         public static void NotifyListeners(ILogger logger)
         {
-            if(logger == null)
+            if (logger == null)
                 return;
 
-            NotifyListeners(new [] { logger });
+            NotifyListeners(new[] { logger });
         }
         public static void NotifyListeners(ILogger[] loggers)
         {
-            if(loggers == null || !loggers.Any())
+            if (loggers == null || !loggers.Any())
                 return;
 
-            if(KissLogConfiguration.Listeners == null || KissLogConfiguration.Listeners.Any() == false)
+            if (KissLogConfiguration.Listeners == null || KissLogConfiguration.Listeners.Any() == false)
                 return;
 
             ILogger defaultLogger = loggers.FirstOrDefault(p => p.CategoryName == DefaultCategoryName) ?? loggers.First();
 
-            WebRequestProperties webRequestProperties = defaultLogger.WebRequestProperties;
-            if (webRequestProperties == null)
-            {
-                webRequestProperties = WebRequestPropertiesFactory.CreateDefault();
-            }
-
-            if (defaultLogger.HttpStatusCode.HasValue && webRequestProperties != null)
-                webRequestProperties.Response.HttpStatusCode = defaultLogger.HttpStatusCode.Value;
-
-            if (!defaultLogger.HttpStatusCode.HasValue)
-            {
-                var lastMessage = defaultLogger.LogMessages.LastOrDefault();
-
-                bool isLastMessageError = lastMessage != null && (lastMessage.LogLevel == LogLevel.Critical || lastMessage.LogLevel == LogLevel.Error);
-                if (isLastMessageError && webRequestProperties.Response.HttpStatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    webRequestProperties.Response.HttpStatusCode = System.Net.HttpStatusCode.InternalServerError;
-                }
-            }
-
-            webRequestProperties.EndDateTime = DateTime.UtcNow;
-
-            IEnumerable<LogMessagesGroup> messagesGroups = loggers.Select(p =>
-                new LogMessagesGroup
-                {
-                    CategoryName = p.CategoryName,
-                    Messages = p.LogMessages.ToList()
-                })
-                .ToList();
-
-            FlushLogArgs args = new FlushLogArgs
-            {
-                IsCreatedByHttpRequest = defaultLogger.IsCreatedByHttpRequest(),
-                ErrorMessage = defaultLogger.ErrorMessage,
-                WebRequestProperties = webRequestProperties,
-                MessagesGroups = messagesGroups
-            };
-
             IEnumerable<LoggerFile> files = null;
             List<string> searchKeywords = null;
+            WebRequestProperties webRequestProperties = null;
+            string errorMessage = null;
 
             if (defaultLogger is Logger theLogger)
             {
+                webRequestProperties = theLogger.WebRequestProperties ?? WebRequestPropertiesFactory.CreateDefault();
+                errorMessage = theLogger.ErrorMessage;
                 files = theLogger.LoggerFiles.GetFiles();
                 searchKeywords = (theLogger.SearchKeywords ?? Enumerable.Empty<string>()).ToList();
 
-                args.SdkName = theLogger.SdkName;
-                args.SdkVersion = theLogger.SdkVersion;
+                if (theLogger.HttpStatusCode.HasValue)
+                {
+                    webRequestProperties.Response.HttpStatusCode = theLogger.HttpStatusCode.Value;
+                }
+                else if (webRequestProperties.Response.HttpStatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    var lastMessage = theLogger.LogMessages.LastOrDefault();
+                    bool isLastMessageError = lastMessage != null && (lastMessage.LogLevel == LogLevel.Critical || lastMessage.LogLevel == LogLevel.Error);
+
+                    if (isLastMessageError)
+                    {
+                        webRequestProperties.Response.HttpStatusCode = System.Net.HttpStatusCode.InternalServerError;
+                    }
+                }
             }
 
-            if(searchKeywords == null)
+            if(webRequestProperties == null)
+                webRequestProperties = WebRequestPropertiesFactory.CreateDefault();
+
+            if (searchKeywords == null)
                 searchKeywords = new List<string>();
 
-            IEnumerable<string> appendSearchKeywords = KissLogConfiguration.AppendSearchKeywords(args.WebRequestProperties);
+            webRequestProperties.EndDateTime = DateTime.UtcNow;
+
+            IEnumerable<string> appendSearchKeywords = KissLogConfiguration.AppendSearchKeywords(webRequestProperties);
             if (appendSearchKeywords != null && appendSearchKeywords.Any())
             {
                 searchKeywords.AddRange(appendSearchKeywords);
             }
 
-            searchKeywords.RemoveAll(string.IsNullOrEmpty);
+            searchKeywords = searchKeywords.Where(p => !string.IsNullOrWhiteSpace(p)).Distinct().ToList();
 
-            args.SearchKeywords = searchKeywords.Distinct().ToList();
+            List<LogMessagesGroup> messagesGroups = new List<LogMessagesGroup>();
+            foreach(ILogger logger in loggers)
+            {
+                string categoryName = logger.CategoryName;
+                List<LogMessage> logMessages = new List<LogMessage>();
+
+                if(logger is Logger _logger)
+                {
+                    logMessages = _logger.LogMessages.ToList();
+                }
+
+                messagesGroups.Add(new LogMessagesGroup
+                {
+                    CategoryName = categoryName,
+                    Messages = logMessages
+                });
+            }
+
+            FlushLogArgs args = new FlushLogArgs
+            {
+                IsCreatedByHttpRequest = defaultLogger.IsCreatedByHttpRequest(),
+                ErrorMessage = errorMessage,
+                WebRequestProperties = webRequestProperties,
+                MessagesGroups = messagesGroups,
+                SearchKeywords = searchKeywords
+            };
 
             if (KissLogConfiguration.Listeners.Count == 1)
             {
@@ -415,7 +425,7 @@ namespace KissLog
                     listener.OnFlush(theArgs);
                 }
             }
-            
+
             foreach (ILogger logger in loggers)
             {
                 if (logger is Logger myLogger)
@@ -423,12 +433,6 @@ namespace KissLog
                     myLogger.Reset();
                 }
             }
-        }
-
-        public void Dispose()
-        {
-            LoggerFiles.Dispose();
-            LoggerFiles = new LoggerFiles(this);
         }
     }
 }

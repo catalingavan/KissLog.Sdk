@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 
 namespace KissLog
 {
@@ -1154,6 +1155,22 @@ namespace KissLog
 
     public static partial class ExtensionMethods
     {
+        /// <summary>
+        /// <para>Sets the KissLog HttpStatusCode regardless of the Response returned by the server</para>
+        /// <para>This is useful when you capture an error, log it, but return 200 to the client.</para>
+        /// <para>Setting httpStatusCode to >= 400 will make the request be identified as error instead of success</para>
+        /// </summary>
+        public static void SetHttpStatusCode(this ILogger logger, HttpStatusCode httpStatusCode)
+        {
+            if (logger is Logger theLogger)
+            {
+                theLogger.SetHttpStatusCode(httpStatusCode);
+            }
+        }
+
+        /// <summary>
+        /// <para>Logs a file</para>
+        /// </summary>
         public static void LogFile(this ILogger logger, string sourceFilePath, string fileName)
         {
             if (logger is Logger theLogger)
@@ -1162,6 +1179,9 @@ namespace KissLog
             }
         }
 
+        /// <summary>
+        /// <para>Logs a file</para>
+        /// </summary>
         public static void LogAsFile(this ILogger logger, byte[] content, string fileName)
         {
             if (logger is Logger theLogger)
@@ -1170,6 +1190,9 @@ namespace KissLog
             }
         }
 
+        /// <summary>
+        /// <para>Logs a file</para>
+        /// </summary>
         public static void LogAsFile(this ILogger logger, string content, string fileName)
         {
             if (logger is Logger theLogger)
@@ -1178,6 +1201,9 @@ namespace KissLog
             }
         }
 
+        /// <summary>
+        /// <para>Explicitly instruct logger to capture the Request.InputStream property</para>
+        /// </summary>
         public static void LogRequestInputStreamBody(this ILogger logger, bool value = true)
         {
             if (logger is Logger theLogger)
@@ -1186,6 +1212,9 @@ namespace KissLog
             }
         }
 
+        /// <summary>
+        /// <para>Explicitly instruct logger to capture the Response Body value</para>
+        /// </summary>
         public static void LogResponseBody(this ILogger logger, bool value = true)
         {
             if (logger is Logger theLogger)
@@ -1194,6 +1223,9 @@ namespace KissLog
             }
         }
 
+        /// <summary>
+        /// <para>Returns true if the ILogger is created and handled automatically by the HttpRequest.</para>
+        /// </summary>
         public static bool IsCreatedByHttpRequest(this ILogger logger)
         {
             if (logger is Logger theLogger)

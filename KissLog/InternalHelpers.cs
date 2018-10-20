@@ -121,5 +121,8 @@ namespace KissLog
 
             return logMessagesGroups.SelectMany(p => p.Messages).OrderBy(p => p.DateTime).ToList();
         }
+
+        public static string SdkName { get; set; }
+        public static string SdkVersion { get; set; }
     }
 }

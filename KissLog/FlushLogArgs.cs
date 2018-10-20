@@ -5,9 +5,6 @@ namespace KissLog
 {
     public class FlushLogArgs
     {
-        public string SdkName { get; set; }
-        public string SdkVersion { get; set; }
-
         public bool IsCreatedByHttpRequest { get; set; }
         public WebRequestProperties WebRequestProperties { get; set; }
         public IEnumerable<LogMessagesGroup> MessagesGroups { get; set; }

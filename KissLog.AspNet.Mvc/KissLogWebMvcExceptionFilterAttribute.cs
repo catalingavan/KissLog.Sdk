@@ -7,6 +7,11 @@ namespace KissLog.AspNet.Mvc
 {
     public class KissLogWebMvcExceptionFilterAttribute : HandleErrorAttribute
     {
+        static KissLogWebMvcExceptionFilterAttribute()
+        {
+            PackageInit.Init();
+        }
+
         public override void OnException(ExceptionContext filterContext)
         {
             ILogger logger = LoggerFactory.GetInstance();

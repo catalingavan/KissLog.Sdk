@@ -5,6 +5,11 @@ namespace KissLog.AspNet.WebApi
 {
     public class KissLogWebApiExceptionFilterAttribute : ExceptionFilterAttribute
     {
+        static KissLogWebApiExceptionFilterAttribute()
+        {
+            PackageInit.Init();
+        }
+
         public override void OnException(HttpActionExecutedContext actionExecutedContext)
         {
             ILogger logger = LoggerFactory.GetInstance();
