@@ -8,14 +8,14 @@ namespace KissLog
         public bool IsCreatedByHttpRequest { get; set; }
         public WebRequestProperties WebRequestProperties { get; set; }
         public IEnumerable<LogMessagesGroup> MessagesGroups { get; set; }
+        public IEnumerable<CapturedException> CapturedExceptions { get; set; }
         public string ErrorMessage { get; set; }
-        public IEnumerable<string> SearchKeywords { get; set; }
         public IEnumerable<LoggerFile> Files { get; set; }
 
         public FlushLogArgs()
         {
             MessagesGroups = new List<LogMessagesGroup>();
-            SearchKeywords = new List<string>();
+            CapturedExceptions = new List<CapturedException>();
             Files = new List<LoggerFile>();
         }
     }

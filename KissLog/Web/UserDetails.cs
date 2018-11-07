@@ -1,4 +1,4 @@
-﻿namespace KissLog
+﻿namespace KissLog.Web
 {
     public class UserDetails
     {

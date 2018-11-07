@@ -1,4 +1,5 @@
-﻿using KissLog.Web;
+﻿using KissLog.Listeners;
+using KissLog.Web;
 using System;
 
 namespace KissLog.HandlebarsNet

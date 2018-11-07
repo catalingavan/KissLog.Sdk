@@ -12,10 +12,9 @@ namespace KissLog
         private static readonly string[] AvatarClaims = new[] {"avatar", "picture", "image"};
         private static readonly string[] InputStreamContentTypes = { "text/plain", "application/json", "application/xml", "text/xml", "text/html" };
         private static readonly string[] ResponseBodyContentTypes = { "application/json" };
+        public static string ObfuscatedValue = "***obfuscated***";
 
         public static List<ILogListener> Listeners = new List<ILogListener>();
-
-        public static string ObfuscatedValue = "***obfuscated***";
 
         public static Func<RequestProperties, string> GetLoggedInUserName = (RequestProperties request) =>
         {
@@ -54,12 +53,7 @@ namespace KissLog
             return ResponseBodyContentTypes.Any(p => contentType.Contains(p.ToLowerInvariant()));
         };
 
-        public static Func<string, bool> ShouldLogCookie = (string cookieName) =>
-        {
-            return false;
-        };
-
-        public static Func<WebRequestProperties, IEnumerable<string>> AppendSearchKeywords = (WebRequestProperties request) => null;
+        public static Func<string, bool> ShouldLogCookie = (string cookieName) => false;
 
         public static Func<Exception, string> AppendExceptionDetails = (Exception ex) => null;
 

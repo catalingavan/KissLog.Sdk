@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace KissLog.Listeners
 {
@@ -27,9 +28,6 @@ namespace KissLog.Listeners
 
         public void OnFlush(FlushLogArgs args)
         {
-            if (Parser.ShouldLog(args, this) == false)
-                return;
-
             lock (Locker)
             {
                 string filePath = GetFileName(_logsDirectoryFullPath);
@@ -48,14 +46,11 @@ namespace KissLog.Listeners
                 sw.WriteLine(Format(args.WebRequestProperties));
             }
 
-            IEnumerable<LogMessage> logMessages = InternalHelpers.MergeLogMessages(args.MessagesGroups);
+            IEnumerable<LogMessage> logMessages = args.MessagesGroups.SelectMany(p => p.Messages).OrderBy(p => p.DateTime).ToList();
 
             foreach (var logMessage in logMessages)
             {
-                if (Parser.ShouldLog(logMessage, this))
-                {
-                    sw.WriteLine(Format(logMessage));
-                }
+                sw.WriteLine(Format(logMessage));
             }
         }
 

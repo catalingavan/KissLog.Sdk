@@ -14,9 +14,9 @@
     <Company>KissLog.net</Company>
     <Product>KissLog.net</Product>
     <PackageTags>Logging, Management, Error, Exception, Tracing, KissLog, Diagnostics, Reporing</PackageTags>
-    <Version>2.6.0</Version>
-    <AssemblyVersion>2.6.0.0</AssemblyVersion>
-    <FileVersion>2.5.4.0</FileVersion>
+    <Version>2.7.0</Version>
+    <AssemblyVersion>2.7.0.0</AssemblyVersion>
+    <FileVersion>2.7.0.0</FileVersion>
     <PackageId>KissLog</PackageId>
   </PropertyGroup>
 

@@ -1,5 +1,6 @@
 ﻿using KissLog.Web;
 using System;
+using System.Linq;
 using System.Net;
 
 namespace KissLog.WindowsApplication
@@ -23,7 +24,7 @@ namespace KissLog.WindowsApplication
                     };
                 }
 
-                if(!string.IsNullOrEmpty(theLogger.ErrorMessage))
+                if(theLogger.CapturedExceptions.Any())
                 {
                     webRequestProperties.Response.HttpStatusCode = HttpStatusCode.InternalServerError;
                 }

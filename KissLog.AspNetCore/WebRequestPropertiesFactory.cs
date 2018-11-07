@@ -165,7 +165,7 @@ namespace KissLog.AspNetCore
         {
             if (logger is Logger theLogger)
             {
-                var logResponse = theLogger.GetCustomProperty(InternalHelpers.LogRequestInputStreamProperty);
+                var logResponse = theLogger.GetProperty(InternalHelpers.LogRequestInputStreamProperty);
                 if (logResponse != null && logResponse is bool asBoolean)
                 {
                     return asBoolean;

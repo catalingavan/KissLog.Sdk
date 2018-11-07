@@ -22,7 +22,7 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        void Log(LogLevel logLevel, string message, Action<LogMessage> action = null,
+        void Log(LogLevel logLevel, string message,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null);
@@ -41,7 +41,7 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        void Log(LogLevel logLevel, object json, Action<LogMessage> action = null,
+        void Log(LogLevel logLevel, object json,
             string memberName = "",
             int lineNumber = 0,
             string memberType = null);
@@ -60,7 +60,7 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        void Log(LogLevel logLevel, Exception ex, Action<LogMessage> action = null,
+        void Log(LogLevel logLevel, Exception ex,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null);
@@ -82,7 +82,7 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        void Log(LogLevel logLevel, KissLog.Args args, Action<LogMessage> action = null,
+        void Log(LogLevel logLevel, KissLog.Args args,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null);
@@ -104,7 +104,7 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        void Log(LogLevel logLevel, string message, Action<LogMessage> action = null,
+        void Log(LogLevel logLevel, string message,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null);
@@ -125,7 +125,7 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        void Log(LogLevel logLevel, object json, Action<LogMessage> action = null,
+        void Log(LogLevel logLevel, object json,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null);
@@ -147,7 +147,7 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        void Log(LogLevel logLevel, Exception ex, Action<LogMessage> action = null,
+        void Log(LogLevel logLevel, Exception ex,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null);
@@ -171,7 +171,7 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        void Log(LogLevel logLevel, KissLog.Args args, Action<LogMessage> action = null,
+        void Log(LogLevel logLevel, KissLog.Args args,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null);

@@ -22,7 +22,7 @@ namespace KissLog.AspNetCore
         public async Task Invoke(HttpContext context)
         {
             ILogger logger = LoggerFactory.GetInstance(context);
-            (logger as Logger)?.AddCustomProperty(InternalHelpers.IsCreatedByHttpRequest, true);
+            (logger as Logger)?.AddProperty(InternalHelpers.IsCreatedByHttpRequest, true);
 
             WebRequestProperties webRequestProperties = WebRequestPropertiesFactory.Create(logger, context.Request);
 
@@ -109,7 +109,7 @@ namespace KissLog.AspNetCore
         {
             if (logger is Logger theLogger)
             {
-                var logResponse = theLogger.GetCustomProperty(InternalHelpers.LogResponseBodyProperty);
+                var logResponse = theLogger.GetProperty(InternalHelpers.LogResponseBodyProperty);
                 if (logResponse != null && logResponse is bool asBoolean)
                 {
                     return asBoolean;

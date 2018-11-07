@@ -7,7 +7,7 @@ namespace KissLog.AspNet.Web
         [Obsolete("Use logger.IsCreatedByHttpRequest() instead", true)]
         public static bool WillHandleTheRequest(this ILogger logger)
         {
-            return (logger as Logger)?.GetCustomProperty(InternalHelpers.IsCreatedByHttpRequest) != null;
+            return (logger as Logger)?.GetProperty(InternalHelpers.IsCreatedByHttpRequest) != null;
         }
     }
 }

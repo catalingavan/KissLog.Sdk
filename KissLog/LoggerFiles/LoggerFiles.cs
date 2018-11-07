@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace KissLog
 {
-    public class LoggerFiles : IDisposable
+    internal class LoggerFiles : IDisposable
     {
         private const long MaxFileSizeBytes = 5 * 1024 * 1024;
 

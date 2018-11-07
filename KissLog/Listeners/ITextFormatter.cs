@@ -1,6 +1,6 @@
 ﻿using KissLog.Web;
 
-namespace KissLog
+namespace KissLog.Listeners
 {
     public interface ITextFormatter
     {

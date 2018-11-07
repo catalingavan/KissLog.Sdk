@@ -102,7 +102,7 @@ namespace KissLog.AspNet.Web
             var request = ctx.Request;
 
             ILogger logger = LoggerFactory.GetInstance(ctx);
-            (logger as Logger)?.AddCustomProperty(InternalHelpers.IsCreatedByHttpRequest, true);
+            (logger as Logger)?.AddProperty(InternalHelpers.IsCreatedByHttpRequest, true);
 
             WebRequestProperties requestProperties = WebRequestPropertiesFactory.Create(logger, request);
             ctx.Items[Constants.HttpRequestPropertiesKey] = requestProperties;
@@ -197,7 +197,7 @@ namespace KissLog.AspNet.Web
         {
             if (logger is Logger theLogger)
             {
-                var logResponse = theLogger.GetCustomProperty(InternalHelpers.LogResponseBodyProperty);
+                var logResponse = theLogger.GetProperty(InternalHelpers.LogResponseBodyProperty);
                 if (logResponse != null && logResponse is bool asBoolean)
                 {
                     return asBoolean;

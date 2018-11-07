@@ -20,12 +20,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Trace(this ILogger logger, string message, Action<LogMessage> action = null,
+        public static void Trace(this ILogger logger, string message,
 	        string memberName = null,
 	        int lineNumber = 0,
 	        string memberType = null)
         {
-	        logger.Log(LogLevel.Trace, message, action, memberName, lineNumber, memberType);
+	        logger.Log(LogLevel.Trace, message, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -42,12 +42,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Trace(this ILogger logger, object json, Action<LogMessage> action = null,
+        public static void Trace(this ILogger logger, object json,
 	        string memberName = null,
 	        int lineNumber = 0,
 	        string memberType = null)
         {
-	        logger.Log(LogLevel.Trace, json, action, memberName, lineNumber, memberType);
+	        logger.Log(LogLevel.Trace, json, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -64,12 +64,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Trace(this ILogger logger, Exception ex, Action<LogMessage> action = null,
+        public static void Trace(this ILogger logger, Exception ex,
 	        string memberName = null,
 	        int lineNumber = 0,
 	        string memberType = null)
         {
-	        logger.Log(LogLevel.Trace, ex, action, memberName, lineNumber, memberType);
+	        logger.Log(LogLevel.Trace, ex, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -89,12 +89,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Trace(this ILogger logger, KissLog.Args args, Action<LogMessage> action = null,
+        public static void Trace(this ILogger logger, KissLog.Args args,
 	        string memberName = null,
 	        int lineNumber = 0,
 	        string memberType = null)
         {
-	        logger.Log(LogLevel.Trace, args, action, memberName, lineNumber, memberType);
+	        logger.Log(LogLevel.Trace, args, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -111,12 +111,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Debug(this ILogger logger, string message, Action<LogMessage> action = null,
+        public static void Debug(this ILogger logger, string message,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null)
         {
-            logger.Log(LogLevel.Debug, message, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Debug, message, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -133,12 +133,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Debug(this ILogger logger, object json, Action<LogMessage> action = null,
+        public static void Debug(this ILogger logger, object json,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null)
         {
-            logger.Log(LogLevel.Debug, json, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Debug, json, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -155,12 +155,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Debug(this ILogger logger, Exception ex, Action<LogMessage> action = null,
+        public static void Debug(this ILogger logger, Exception ex,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null)
         {
-            logger.Log(LogLevel.Debug, ex, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Debug, ex, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -180,12 +180,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Debug(this ILogger logger, KissLog.Args args, Action<LogMessage> action = null,
+        public static void Debug(this ILogger logger, KissLog.Args args,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null)
         {
-            logger.Log(LogLevel.Debug, args, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Debug, args, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -202,12 +202,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Info(this ILogger logger, string message, Action<LogMessage> action = null,
+        public static void Info(this ILogger logger, string message,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null)
         {
-            logger.Log(LogLevel.Information, message, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Information, message, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -224,12 +224,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Info(this ILogger logger, object json, Action<LogMessage> action = null,
+        public static void Info(this ILogger logger, object json,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null)
         {
-            logger.Log(LogLevel.Information, json, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Information, json, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -246,12 +246,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Info(this ILogger logger, Exception ex, Action<LogMessage> action = null,
+        public static void Info(this ILogger logger, Exception ex,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null)
         {
-            logger.Log(LogLevel.Information, ex, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Information, ex, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -271,12 +271,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Info(this ILogger logger, KissLog.Args args, Action<LogMessage> action = null,
+        public static void Info(this ILogger logger, KissLog.Args args,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null)
         {
-            logger.Log(LogLevel.Information, args, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Information, args, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -293,12 +293,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Warn(this ILogger logger, string message, Action<LogMessage> action = null,
+        public static void Warn(this ILogger logger, string message,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null)
         {
-            logger.Log(LogLevel.Warning, message, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Warning, message, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -315,12 +315,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Warn(this ILogger logger, object json, Action<LogMessage> action = null,
+        public static void Warn(this ILogger logger, object json,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null)
         {
-            logger.Log(LogLevel.Warning, json, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Warning, json, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -337,12 +337,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Warn(this ILogger logger, Exception ex, Action<LogMessage> action = null,
+        public static void Warn(this ILogger logger, Exception ex,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null)
         {
-            logger.Log(LogLevel.Warning, ex, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Warning, ex, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -362,12 +362,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Warn(this ILogger logger, KissLog.Args args, Action<LogMessage> action = null,
+        public static void Warn(this ILogger logger, KissLog.Args args,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null)
         {
-            logger.Log(LogLevel.Warning, args, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Warning, args, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -384,12 +384,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Error(this ILogger logger, string message, Action<LogMessage> action = null,
+        public static void Error(this ILogger logger, string message,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null)
         {
-            logger.Log(LogLevel.Error, message, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Error, message, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -406,12 +406,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Error(this ILogger logger, object json, Action<LogMessage> action = null,
+        public static void Error(this ILogger logger, object json,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null)
         {
-            logger.Log(LogLevel.Error, json, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Error, json, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -428,12 +428,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Error(this ILogger logger, Exception ex, Action<LogMessage> action = null,
+        public static void Error(this ILogger logger, Exception ex,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null)
         {
-            logger.Log(LogLevel.Error, ex, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Error, ex, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -453,12 +453,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Error(this ILogger logger, KissLog.Args args, Action<LogMessage> action = null,
+        public static void Error(this ILogger logger, KissLog.Args args,
             string memberName = null,
             int lineNumber = 0,
             string memberType = null)
         {
-            logger.Log(LogLevel.Error, args, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Error, args, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -475,12 +475,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Critical(this ILogger logger, string message, Action<LogMessage> action = null,
+        public static void Critical(this ILogger logger, string message,
 	        string memberName = null,
 	        int lineNumber = 0,
 	        string memberType = null)
         {
-	        logger.Log(LogLevel.Critical, message, action, memberName, lineNumber, memberType);
+	        logger.Log(LogLevel.Critical, message, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -497,12 +497,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Critical(this ILogger logger, object json, Action<LogMessage> action = null,
+        public static void Critical(this ILogger logger, object json,
 	        string memberName = null,
 	        int lineNumber = 0,
 	        string memberType = null)
         {
-	        logger.Log(LogLevel.Critical, json, action, memberName, lineNumber, memberType);
+	        logger.Log(LogLevel.Critical, json, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -519,12 +519,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Critical(this ILogger logger, Exception ex, Action<LogMessage> action = null,
+        public static void Critical(this ILogger logger, Exception ex,
 	        string memberName = null,
 	        int lineNumber = 0,
 	        string memberType = null)
         {
-	        logger.Log(LogLevel.Critical, ex, action, memberName, lineNumber, memberType);
+	        logger.Log(LogLevel.Critical, ex, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -544,12 +544,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Critical(this ILogger logger, KissLog.Args args, Action<LogMessage> action = null,
+        public static void Critical(this ILogger logger, KissLog.Args args,
 	        string memberName = null,
 	        int lineNumber = 0,
 	        string memberType = null)
         {
-	        logger.Log(LogLevel.Critical, args, action, memberName, lineNumber, memberType);
+	        logger.Log(LogLevel.Critical, args, memberName, lineNumber, memberType);
         }
     }
 #else
@@ -571,12 +571,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Trace(this ILogger logger, string message, Action<LogMessage> action = null,
+        public static void Trace(this ILogger logger, string message,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Trace, message, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Trace, message, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -595,12 +595,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Trace(this ILogger logger, object json, Action<LogMessage> action = null,
+        public static void Trace(this ILogger logger, object json,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Trace, json, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Trace, json, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -619,12 +619,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Trace(this ILogger logger, Exception ex, Action<LogMessage> action = null,
+        public static void Trace(this ILogger logger, Exception ex,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Trace, ex, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Trace, ex, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -646,12 +646,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Trace(this ILogger logger, KissLog.Args args, Action<LogMessage> action = null,
+        public static void Trace(this ILogger logger, KissLog.Args args,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Trace, args, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Trace, args, memberName, lineNumber, memberType);
         }
 
 
@@ -671,12 +671,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Debug(this ILogger logger, string message, Action<LogMessage> action = null,
+        public static void Debug(this ILogger logger, string message,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Debug, message, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Debug, message, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -695,12 +695,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Debug(this ILogger logger, object json, Action<LogMessage> action = null,
+        public static void Debug(this ILogger logger, object json,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Debug, json, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Debug, json, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -719,12 +719,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Debug(this ILogger logger, Exception ex, Action<LogMessage> action = null,
+        public static void Debug(this ILogger logger, Exception ex,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Debug, ex, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Debug, ex, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -746,12 +746,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Debug(this ILogger logger, KissLog.Args args, Action<LogMessage> action = null,
+        public static void Debug(this ILogger logger, KissLog.Args args,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Debug, args, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Debug, args, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -770,12 +770,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Info(this ILogger logger, string message, Action<LogMessage> action = null,
+        public static void Info(this ILogger logger, string message,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Information, message, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Information, message, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -794,12 +794,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Info(this ILogger logger, object json, Action<LogMessage> action = null,
+        public static void Info(this ILogger logger, object json,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Information, json, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Information, json, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -818,12 +818,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Info(this ILogger logger, Exception ex, Action<LogMessage> action = null,
+        public static void Info(this ILogger logger, Exception ex,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Information, ex, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Information, ex, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -845,12 +845,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Info(this ILogger logger, KissLog.Args args, Action<LogMessage> action = null,
+        public static void Info(this ILogger logger, KissLog.Args args,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Information, args, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Information, args, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -869,12 +869,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Warn(this ILogger logger, string message, Action<LogMessage> action = null,
+        public static void Warn(this ILogger logger, string message,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Warning, message, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Warning, message, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -893,12 +893,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Warn(this ILogger logger, object json, Action<LogMessage> action = null,
+        public static void Warn(this ILogger logger, object json,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Warning, json, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Warning, json, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -917,12 +917,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Warn(this ILogger logger, Exception ex, Action<LogMessage> action = null,
+        public static void Warn(this ILogger logger, Exception ex,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Warning, ex, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Warning, ex, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -944,12 +944,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Warn(this ILogger logger, KissLog.Args args, Action<LogMessage> action = null,
+        public static void Warn(this ILogger logger, KissLog.Args args,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Warning, args, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Warning, args, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -968,12 +968,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Error(this ILogger logger, string message, Action<LogMessage> action = null,
+        public static void Error(this ILogger logger, string message,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Error, message, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Error, message, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -992,12 +992,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Error(this ILogger logger, object json, Action<LogMessage> action = null,
+        public static void Error(this ILogger logger, object json,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Error, json, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Error, json, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -1016,12 +1016,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Error(this ILogger logger, Exception ex, Action<LogMessage> action = null,
+        public static void Error(this ILogger logger, Exception ex,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Error, ex, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Error, ex, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -1043,12 +1043,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Error(this ILogger logger, KissLog.Args args, Action<LogMessage> action = null,
+        public static void Error(this ILogger logger, KissLog.Args args,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Error, args, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Error, args, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -1067,12 +1067,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Critical(this ILogger logger, string message, Action<LogMessage> action = null,
+        public static void Critical(this ILogger logger, string message,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Critical, message, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Critical, message, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -1091,12 +1091,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Critical(this ILogger logger, object json, Action<LogMessage> action = null,
+        public static void Critical(this ILogger logger, object json,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Critical, json, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Critical, json, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -1115,12 +1115,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param> 
-        public static void Critical(this ILogger logger, Exception ex, Action<LogMessage> action = null,
+        public static void Critical(this ILogger logger, Exception ex,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Critical, ex, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Critical, ex, memberName, lineNumber, memberType);
         }
 
         /// <summary>
@@ -1142,12 +1142,12 @@ namespace KissLog
         ///     <para>If ILogger is an instance of LoggerMemberTypeDecorator, it will be automatically populated</para>
         ///     <para>Eg: MyProject.Domain.ProductsRepository</para>
         /// </param>
-        public static void Critical(this ILogger logger, KissLog.Args args, Action<LogMessage> action = null,
+        public static void Critical(this ILogger logger, KissLog.Args args,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0,
             [System.Runtime.CompilerServices.CallerFilePath] string memberType = null)
         {
-            logger.Log(LogLevel.Critical, args, action, memberName, lineNumber, memberType);
+            logger.Log(LogLevel.Critical, args, memberName, lineNumber, memberType);
         }
 
     }
@@ -1204,11 +1204,11 @@ namespace KissLog
         /// <summary>
         /// <para>Explicitly instruct logger to capture the Request.InputStream property</para>
         /// </summary>
-        public static void LogRequestInputStreamBody(this ILogger logger, bool value = true)
+        public static void LogRequestInputStream(this ILogger logger, bool value = true)
         {
             if (logger is Logger theLogger)
             {
-                theLogger.AddCustomProperty(InternalHelpers.LogRequestInputStreamProperty, value);
+                theLogger.AddProperty(InternalHelpers.LogRequestInputStreamProperty, value);
             }
         }
 
@@ -1219,7 +1219,7 @@ namespace KissLog
         {
             if (logger is Logger theLogger)
             {
-                theLogger.AddCustomProperty(InternalHelpers.LogResponseBodyProperty, value);
+                theLogger.AddProperty(InternalHelpers.LogResponseBodyProperty, value);
             }
         }
 
@@ -1230,7 +1230,7 @@ namespace KissLog
         {
             if (logger is Logger theLogger)
             {
-                return theLogger.GetCustomProperty(InternalHelpers.IsCreatedByHttpRequest) != null;
+                return theLogger.GetProperty(InternalHelpers.IsCreatedByHttpRequest) != null;
             }
 
             return false;

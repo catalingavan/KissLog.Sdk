@@ -111,17 +111,6 @@ namespace KissLog
             return value;
         }
 
-        public static IEnumerable<LogMessage> MergeLogMessages(IEnumerable<LogMessagesGroup> logMessagesGroups)
-        {
-            if (logMessagesGroups == null || logMessagesGroups.Any() == false)
-                return Enumerable.Empty<LogMessage>();
-
-            if (logMessagesGroups.Count() == 1)
-                return logMessagesGroups.First().Messages;
-
-            return logMessagesGroups.SelectMany(p => p.Messages).OrderBy(p => p.DateTime).ToList();
-        }
-
         public static string SdkName { get; set; }
         public static string SdkVersion { get; set; }
     }
