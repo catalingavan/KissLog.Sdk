@@ -1,172 +1,86 @@
-# KissLog.Net
+# KissLog.net
 
-KissLog represents a lightweight, adaptive and straightforward solution to integrate logging and error handling in .NET applications.
-
-<br>
+KissLog represents a complete logging and monitoring solution for .NET applications.
 
 Some of the main features of KissLog are:
 
-:small_blue_diamond: Centralized Logging, Diagnostics and Exceptions Handling
+&#128313; Centralized Logging, Diagnostics and Error Reporting
 
-:small_blue_diamond: Automatically captures all the the requests, including unhandled exceptions.
+&#128313; Automatically captures all the exceptions
 
-:small_blue_diamond: It is easy to install and configure, even for existing - legacy applications.
+&#128313; Provides a lightweight, yet powerfull logging interface for developers
 
-:small_blue_diamond: Provides ready-to-use [KissLog.net](https://kisslog.net) cloud or on-premises integration.
-
-<br>
+&#128313; Provides ready-to-use [KissLog.net](https://kisslog.net) cloud or on-premises integration
 
 Please check the [Wiki page](https://github.com/catalingavan/KissLog-net/wiki) for a complete documentation.
 
 <br>
 
-[![KissLog](https://img.shields.io/nuget/v/KissLog.svg?style=flat-square&label=KissLog)](https://www.nuget.org/packages/KissLog/) 
-[![KissLog.AspNetCore](https://img.shields.io/nuget/v/KissLog.AspNetCore.svg?style=flat-square&label=KissLog.AspNetCore)](https://www.nuget.org/packages/KissLog.AspNetCore/) 
-[![KissLog.AspNet.Mvc](https://img.shields.io/nuget/v/KissLog.AspNet.Mvc.svg?style=flat-square&label=KissLog.AspNet.Mvc)](https://www.nuget.org/packages/KissLog.AspNet.Mvc/) 
-[![KissLog.AspNet.WebApi](https://img.shields.io/nuget/v/KissLog.AspNet.WebApi.svg?style=flat-square&label=KissLog.AspNet.WebApi)](https://www.nuget.org/packages/KissLog.AspNet.WebApi/) 
-[![KissLog.WindowsApplication](https://img.shields.io/nuget/v/KissLog.WindowsApplication.svg?style=flat-square&label=KissLog.WindowsApplication)](https://www.nuget.org/packages/KissLog.WindowsApplication/) 
+**Checklist**
+
+* [Framework support](#Framework-support)
+* [Logging interface](#Logging-interface)
+* [Logging files](#Logging-files)
+* [Error reporting](#Error-reporting)
+* [Requests-tracking](#Requests-tracking)
+* [Logs target](#Logs-target)
+* [Focused for developers](#Focused-for-developers)
 
 <br>
 
-**[Basic Usage](https://github.com/catalingavan/KissLog-net/wiki/Basic-Usage)**
+## Framework support
 
-| Level  | Usage |
-| :--- | :--- |
-| Trace  | `_logger.Trace("Database connection opened");`  |
-| Debug  | `_logger.Debug("Two factor authentication started");`  |
-| Information  | `_logger.Info($"Recover password email sent for email {emailAddress}");`  |
-| Warning  | `_logger.Warn($"Cache entry for {key} was not found");`  |
-| Error  | `_logger.Error($"User with Id = {userId} was not found");` <br> `_logger.Error(ex);`  |
-| Critical  | `_logger.Critical("There is not enough space on the disk. Save failed.");`  |
+- [.NET Core](https://github.com/catalingavan/KissLog-net/wiki/Install-Net-Core)
+- [AspNet WebApi](https://github.com/catalingavan/KissLog-net/wiki/Install-AspNet-WebApi)
+- [AspNet MVC](https://github.com/catalingavan/KissLog-net/wiki/Install-AspNet-Mvc)
 
-When a Log message is created, source file, method name and line number are automatically captured.
-
-Example:
-
-```C
-MyApplication.Services.ProductsService.cs CreateProduct : 17
-[Info] Product inserted in database
-
-MyApplication.Services.ProductsService.cs CreateProduct : 21
-[Info] Sending confirmation email to user demo@example.com
-
-MyApplication.Services.ProductsService.cs CreateProduct : 25
-[Info] Confirmation email successfully sent
-```
-
-<br>
-
-**[Requests Tracking](https://github.com/catalingavan/KissLog-net/wiki/Requests-Tracking)**
-
-Logging only Exceptions is not always a complete solution.
-
-Inconsistent application behaviour can be determined by observing all the requests, in general.
-
-KissLog captures all the information for a specific HttpRequest, regardless if it was successful or not.
-
-For each requst, we capture all the relevant information required to debug an issue.
-
-| General | Request | Response | Log Messages |
-| :--- | :--- | :--- | :--- |
-| UserAgent <br> HttpMethod <br> Uri <br> IP Address <br> MachineName <br> StartTime <br> EndTime <br>Duration | Headers <br> Cookies <br> QueryString <br> FormData <br> InputStream <br> ServerVariables <br> Claims | HttpStatusCode <br> Headers | _Log messages_ <br> _Unhandled Exceptions_ |
-
-<br>
-
-**[Frameworks support](https://github.com/catalingavan/KissLog-net/wiki/Install-Instructions)**
-
-- AspNetCore
-- AspNet Mvc
-- AspNet WebApi
-- Windows Services / Console Applications
-
-<br>
-
-**[Log Targets](https://github.com/catalingavan/KissLog-net/wiki/Listeners)**
-
-You can have any number of Log targets for an application.
-
-A LogListener represents a class which persists the log messages to a storage location (Text File, Database, Cloud etc).
-
-KissLog comes with built-in listeners to save the data on **Text Files** and on **Cloud**, but, if required, it is easy to create your own custom Listeners.
+## Logging interface
 
 ```csharp
-public class MvcApplication : System.Web.HttpApplication
-{
-    protected void Application_Start()
-    {
-        KissLogConfiguration.Listeners.AddRange(
-        
-            // writes on Text Files
-            new LocalTextFileListener(),
-            
-            // writes on Databse, only if request was unsuccessful 
-            new DatabaseListener
-            {
-                MinimumResponseHttpStatusCode = 400
-            },
-            
-            // logs on cloud
-            new KissLogApiListener("applicationId")
-        );
-    }
-}
+_logger.Info($"Recover password email sent for email {emailAddress}");
+
+_logger.Debug(new { Id = 10, Price = 100.4M, Name = "Product 1" });
 ```
 
-Text File
+## Logging files
 
-![Text Log output](https://preview.ibb.co/nw9cad/3.png)
-
-Cloud
-
-![Cloud output](https://preview.ibb.co/b7Styy/frame_2.png)
-
-<br>
-
-**[IoC Integration](https://github.com/catalingavan/KissLog-net/wiki/IoC)**
-
-KissLog supports easily integration with most of the IoC frameworks available.
-
-- Ninject
-
-- Autofac
-
-- Unity
-
-<br>
-
-**In code**
+KissLog exposes methods which allows developers to save and log raw data as files.
 
 ```csharp
-using KissLog;
+byte[] archive = File.ReadAllBytes(@"C:\Files\bootstrap.zip");
+_logger.LogAsFile(archive, "Bootstrap.zip");
 
-public class ProductsService : IProductsService
-{
-    private readonly ILogger _logger;
-    private readonly IProductsRepository _productsRepository;
-    public ProductsService(ILogger logger, IProductsRepository productsRepository)
-    {
-        _logger = logger;
-        _productsRepository = productsRepository;
-    }
-
-    public void CreateProduct(Product product, User createdBy)
-    {
-        _productsRepository.Insert(product);
-        
-        _logger.Info("Product inserted in database");
-    
-        try
-        {
-            _logger.Info($"Sending confirmation email to user {createdBy.EmailAddress}");
-
-            EmailNotifications.SendConfirmation(createdBy.EmailAddress, product);
-
-            _logger.Info("Confirmation email successfully sent");
-        }
-        catch(Exception ex)
-        {
-            _logger.Error(new Args("Send confirmation email failed with exception", ex));
-        }
-    }
-}
+string path = @"C:\Files\Invoice-16-11-2017.pdf";
+_logger.LogFile(path, "Invoice.pdf");
 ```
+
+## Error reporting
+
+KissLog captures all the unhandled exceptions.
+
+## Requests tracking
+
+KissLog monitors all the Http requests, regardless if they are successful or not.
+
+## Logs target
+
+KissLog comes with built-in log targets, saving the logs on:
+
+- Local text files
+- KissLog cloud / on-premises
+
+Additionally, developers can create [custom output targets](https://github.com/catalingavan/KissLog-net/wiki/Custom-output) for saving the logs.
+
+## Focused for developers
+
+KissLog abition is to create an unobtrusive logging solution for .NET applications.
+
+With this in mind, KissLog is built with the following principles:
+
+* it is easy to install for existing, legacy applications
+
+* it is lightweight, and it does not bring unnecessary dependencies
+
+* transparent configuration (we try to avoid confusing xml settings)
+
+* it is highly customisable, being adaptive to application changes and specific scenarios
