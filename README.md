@@ -1,6 +1,6 @@
 # KissLog.net
 
-KissLog represents a complete logging and monitoring solution for .NET applications.
+KissLog represents a powerful logging and monitoring solution for .NET applications.
 
 Some of the main features of KissLog are:
 
