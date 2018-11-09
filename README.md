@@ -1,4 +1,4 @@
-# KissLog.net
+# ![KissLog logo](https://kisslog.net/content/images/kissLogLogos/logo_32.png) KissLog.net
 
 KissLog represents a powerful logging and monitoring solution for .NET applications.
 
@@ -16,7 +16,7 @@ Please check the [Wiki page](https://github.com/catalingavan/KissLog-net/wiki) f
 
 <br>
 
-**Checklist**
+**Quick guide**
 
 * [Framework support](#Framework-support)
 * [Logging interface](#Logging-interface)
@@ -73,14 +73,14 @@ Additionally, developers can create [custom output targets](https://github.com/c
 
 ## Focused for developers
 
-KissLog abition is to create an unobtrusive logging solution for .NET applications.
+KissLog goal is to create an unobtrusive logging framework for .NET.
 
-With this in mind, KissLog is built with the following principles:
+With this in mind, KissLog is built on the following principles:
 
-* it is easy to install for existing, legacy applications
+* It is easy to install for existing, legacy applications
 
-* it is lightweight, and it does not bring unnecessary dependencies
+* It is lightweight, and it does not bring unnecessary dependencies
 
-* transparent configuration (we try to avoid confusing xml settings)
+* Transparent configuration (we try to avoid confusing xml settings)
 
-* it is highly customisable, being adaptive to application changes and specific scenarios
+* It is highly customisable, being adaptive to application changes and specific scenarios
