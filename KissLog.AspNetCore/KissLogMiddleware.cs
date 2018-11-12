@@ -41,7 +41,7 @@ namespace KissLog.AspNetCore
                     responseBodyFile = new TemporaryFile();
                     await ReadResponse(context.Response, responseBodyFile.FileName);
 
-                    if (context.Response?.StatusCode != (int)HttpStatusCode.NoContent)
+                    if(CanWriteToResponseBody(context.Response))
                     {
                         await responseStream.CopyToAsync(originalBodyStream);
                     }
@@ -117,6 +117,21 @@ namespace KissLog.AspNetCore
             }
 
             return KissLogConfiguration.ShouldLogResponseBody(webRequestProperties);
+        }
+
+        private bool CanWriteToResponseBody(HttpResponse response)
+        {
+            if (response == null)
+                return false;
+
+            if(response.StatusCode < 200 ||
+               response.StatusCode == (int)HttpStatusCode.NoContent ||
+               response.StatusCode == (int)HttpStatusCode.NotModified)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 
