@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>KissLog.AspNet.WebApi</id>
-    <version>2.1.0</version>
+    <version>2.2.0</version>
     <authors>KissLog.net</authors>
     <owners>KissLog.net</owners>
     <licenseUrl>https://opensource.org/licenses/Apache-2.0</licenseUrl>
@@ -10,11 +10,12 @@
     <iconUrl>https://kisslog.net/Content/images/kissLogLogos/logo_32.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>KissLog AspNet WebApi package. Contains the components required to hook Asp.Net WebApi applications with KissLog. Install this package to Asp.Net WebApi applications.</description>
-    <releaseNotes>Improved application startup error handling.</releaseNotes>
+    <releaseNotes>Improved and decoupled ILoggerFactory.</releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>Logging, Management, Error, Exception, Tracing, KissLog, KissLog WebApi, Diagnostics, Reporing</tags>
+    <repository type="git" url="https://github.com/catalingavan/KissLog-net" />
     <dependencies>
-      <dependency id="KissLog.AspNet.Web" version="2.1.0" />
+      <dependency id="KissLog.AspNet.Web" version="2.2.0" />
       <dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.4" />
     </dependencies>
   </metadata>

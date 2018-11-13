@@ -11,11 +11,13 @@
     <PackageIconUrl>https://kisslog.net/Content/images/kissLogLogos/logo_32.png</PackageIconUrl>
     <PackageTags>Logging, Management, Error, Exception, Tracing, KissLog, KissLog Web AspNetCore, Core, Diagnostics, Reporing</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.6.2</Version>
-    <AssemblyVersion>1.6.2.0</AssemblyVersion>
-    <FileVersion>1.6.2.0</FileVersion>
-    <PackageReleaseNotes>Fixed "Writing to the response body is invalid for responses with status code 204/304" error.</PackageReleaseNotes>
+    <Version>1.7.0</Version>
+    <AssemblyVersion>1.7.0.0</AssemblyVersion>
+    <FileVersion>1.7.0.0</FileVersion>
+    <PackageReleaseNotes>Improved and decoupled ILoggerFactory.</PackageReleaseNotes>
     <PackageId>KissLog.AspNetCore</PackageId>
+    <RepositoryUrl>https://github.com/catalingavan/KissLog-net</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>

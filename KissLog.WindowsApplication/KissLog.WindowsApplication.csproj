@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
-    <Version>1.3.0</Version>
+    <Version>1.3.1</Version>
     <Authors>KissLog.net</Authors>
     <Company>KissLog.net</Company>
     <Product>KissLog.net</Product>
@@ -11,10 +11,12 @@
     <PackageProjectUrl>https://kisslog.net</PackageProjectUrl>
     <PackageIconUrl>https://kisslog.net/Content/images/kissLogLogos/logo_32.png</PackageIconUrl>
     <PackageTags>Logging, Management, Error, Exception, Tracing, KissLog, KissLog Windows, KissLog Console, KissLog Windows Service, Diagnostics, Reporing</PackageTags>
-    <PackageReleaseNotes>Adapted to KissLog.ILogger improvements.</PackageReleaseNotes>
-    <AssemblyVersion>1.3.0.0</AssemblyVersion>
-    <FileVersion>1.3.0.0</FileVersion>
+    <PackageReleaseNotes>Improved and decoupled ILoggerFactory.</PackageReleaseNotes>
+    <AssemblyVersion>1.3.1.0</AssemblyVersion>
+    <FileVersion>1.3.1.0</FileVersion>
     <AssemblyName>KissLog.WindowsApplication</AssemblyName>
+    <RepositoryUrl>https://github.com/catalingavan/KissLog-net</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
