@@ -10,6 +10,8 @@ namespace KissLog
 {
     public class Logger : ILogger
     {
+        public static IKissLoggerFactory Factory { get; private set; } = new DefaultLoggerFactory();
+
         public const string DefaultCategoryName = "Default";
 
         private const string ExceptionLoggedKey = "KissLog-ExceptionLogged";

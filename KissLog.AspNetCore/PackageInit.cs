@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
+using System.Reflection;
 
 namespace KissLog.AspNetCore
 {
@@ -21,8 +23,18 @@ namespace KissLog.AspNetCore
 
         public static void Init()
         {
+            SetFactory();
+
             InternalHelpers.SdkName = SdkName;
             InternalHelpers.SdkVersion = GetSdkVersion();
+        }
+
+        private static void SetFactory()
+        {
+            IKissLoggerFactory loggerFactory = new AspNetCoreLoggerFactory();
+
+            PropertyInfo factoryProperty = typeof(Logger).GetProperty("Factory");
+            factoryProperty.SetValue(Logger.Factory, loggerFactory, null);
         }
     }
 }

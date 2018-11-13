@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System;
-using Microsoft.AspNetCore.Http;
 
 namespace KissLog.AspNetCore
 {
@@ -14,7 +14,7 @@ namespace KissLog.AspNetCore
             _categoryName = categoryName;
         }
 
-        private ILogger GetLogger() => LoggerFactory.GetInstance(_httpContextAccessor, _categoryName);
+        private ILogger GetLogger() => Logger.Factory.Get(_categoryName);
 
         public void Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {

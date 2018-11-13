@@ -14,7 +14,7 @@ namespace KissLog.AspNet.Mvc
 
         public override void OnException(ExceptionContext filterContext)
         {
-            ILogger logger = LoggerFactory.GetInstance();
+            ILogger logger = Logger.Factory.Get();
             logger.Log(LogLevel.Error, filterContext.Exception);
 
             if (filterContext.Exception is HttpException)

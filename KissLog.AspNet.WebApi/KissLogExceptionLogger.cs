@@ -9,13 +9,13 @@ namespace KissLog.AspNet.WebApi
     {
         public override void Log(ExceptionLoggerContext context)
         {
-            ILogger logger = LoggerFactory.GetInstance();
+            ILogger logger = Logger.Factory.Get();
             logger.Error(context.Exception);
         }
 
         public override Task LogAsync(ExceptionLoggerContext context, CancellationToken cancellationToken)
         {
-            ILogger logger = LoggerFactory.GetInstance();
+            ILogger logger = Logger.Factory.Get();
             logger.Error(context.Exception);
 
             return Task.FromResult(true);

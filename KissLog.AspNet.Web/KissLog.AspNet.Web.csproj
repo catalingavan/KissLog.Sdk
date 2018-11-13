@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AspNetWebLoggerFactory.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="ResponseSniffer.cs" />
     <Compile Include="Constants.cs" />

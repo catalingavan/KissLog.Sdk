@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Security.Claims;
 using System.Web;
 
@@ -101,7 +102,7 @@ namespace KissLog.AspNet.Web
             HttpContext ctx = HttpContext.Current;
             var request = ctx.Request;
 
-            ILogger logger = LoggerFactory.GetInstance(ctx);
+            ILogger logger = Logger.Factory.Get();
             (logger as Logger)?.AddProperty(InternalHelpers.IsCreatedByHttpRequest, true);
 
             WebRequestProperties requestProperties = WebRequestPropertiesFactory.Create(logger, request);
@@ -112,7 +113,7 @@ namespace KissLog.AspNet.Web
         {
             HttpContext ctx = HttpContext.Current;
 
-            ILogger logger = LoggerFactory.GetInstance(ctx);
+            ILogger logger = Logger.Factory.Get();
 
             if (logger == null)
                 return;
@@ -128,7 +129,7 @@ namespace KissLog.AspNet.Web
         {
             HttpContext ctx = HttpContext.Current;
 
-            ILogger logger = LoggerFactory.GetInstance(ctx);
+            ILogger logger = Logger.Factory.Get();
             if (logger == null)
                 return;
 
@@ -183,7 +184,7 @@ namespace KissLog.AspNet.Web
 
             ((Logger) logger).SetWebRequestProperties(webRequestProperties);
 
-            IEnumerable<ILogger> loggers = LoggerFactory.GetAll(ctx);
+            IEnumerable<ILogger> loggers = Logger.Factory.GetAll();
 
             Logger.NotifyListeners(loggers.ToArray());
         }
@@ -205,6 +206,19 @@ namespace KissLog.AspNet.Web
             }
 
             return KissLogConfiguration.ShouldLogResponseBody(webRequestProperties);
+        }
+
+        static KissLogHttpModule()
+        {
+            SetFactory();
+        }
+
+        private static void SetFactory()
+        {
+            IKissLoggerFactory loggerFactory = new AspNetWebLoggerFactory();
+
+            PropertyInfo factoryProperty = typeof(Logger).GetProperty("Factory");
+            factoryProperty.SetValue(Logger.Factory, loggerFactory, null);
         }
     }
 }

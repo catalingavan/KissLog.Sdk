@@ -21,7 +21,7 @@ namespace KissLog.AspNetCore
 
         public async Task Invoke(HttpContext context)
         {
-            ILogger logger = LoggerFactory.GetInstance(context);
+            ILogger logger = Logger.Factory.Get();
             (logger as Logger)?.AddProperty(InternalHelpers.IsCreatedByHttpRequest, true);
 
             WebRequestProperties webRequestProperties = WebRequestPropertiesFactory.Create(logger, context.Request);
@@ -82,7 +82,7 @@ namespace KissLog.AspNetCore
 
                 responseBodyFile?.Dispose();
 
-                IEnumerable<ILogger> loggers = LoggerFactory.GetAll(context);
+                IEnumerable<ILogger> loggers = Logger.Factory.GetAll();
 
                 Logger.NotifyListeners(loggers.ToArray());
             }

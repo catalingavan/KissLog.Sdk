@@ -12,7 +12,7 @@ namespace KissLog.AspNet.WebApi
 
         public override void OnException(HttpActionExecutedContext actionExecutedContext)
         {
-            ILogger logger = LoggerFactory.GetInstance();
+            ILogger logger = Logger.Factory.Get();
             logger.Log(LogLevel.Error, actionExecutedContext.Exception);
 
             base.OnException(actionExecutedContext);
