@@ -19,7 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.HandlebarsNet", "Ki
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.WindowsApplication", "KissLog.WindowsApplication\KissLog.WindowsApplication.csproj", "{9B7E78B9-6A52-411C-8C1A-F64E761A5E73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KissLog.Adapters.log4net", "KissLog.Adapters.log4net\KissLog.Adapters.log4net.csproj", "{6665AFB2-F772-4E7B-8C2B-B281C722A85E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.Adapters.log4net", "KissLog.Adapters.log4net\KissLog.Adapters.log4net.csproj", "{6665AFB2-F772-4E7B-8C2B-B281C722A85E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KissLog.Adapters.NLog", "KissLog.Adapters.NLog\KissLog.Adapters.NLog.csproj", "{EB0F32E6-FDE7-407C-820E-75E8FCF9EF57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{6665AFB2-F772-4E7B-8C2B-B281C722A85E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6665AFB2-F772-4E7B-8C2B-B281C722A85E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6665AFB2-F772-4E7B-8C2B-B281C722A85E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB0F32E6-FDE7-407C-820E-75E8FCF9EF57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB0F32E6-FDE7-407C-820E-75E8FCF9EF57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB0F32E6-FDE7-407C-820E-75E8FCF9EF57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB0F32E6-FDE7-407C-820E-75E8FCF9EF57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

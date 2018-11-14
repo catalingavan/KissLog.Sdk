@@ -33,7 +33,7 @@ namespace KissLog.Adapters.log4net
 
             ILogger logger = Logger.Factory.Get();
 
-            if (string.Compare(memberType, "?", StringComparison.OrdinalIgnoreCase) != 0)
+            if (!string.IsNullOrEmpty(memberType) && string.Compare(memberType, "?", StringComparison.OrdinalIgnoreCase) != 0)
             {
                 logger.Log(logLevel, message, memberName, lineNumber, memberType);
             }
