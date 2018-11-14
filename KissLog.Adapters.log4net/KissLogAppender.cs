@@ -30,7 +30,7 @@ namespace KissLog.Adapters.log4net
             string memberType = loggingEvent.LocationInformation?.ClassName;
             int lineNumber = 0;
             int.TryParse(loggingEvent.LocationInformation?.LineNumber, out lineNumber);
-
+            
             ILogger logger = Logger.Factory.Get();
 
             if (!string.IsNullOrEmpty(memberType) && string.Compare(memberType, "?", StringComparison.OrdinalIgnoreCase) != 0)
