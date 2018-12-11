@@ -36,11 +36,16 @@ Please check the [Wiki page](https://github.com/catalingavan/KissLog-net/wiki) f
 
 ## Logging interface
 
-```csharp
-_logger.Info($"Recover password email sent for email {emailAddress}");
+KissLog exposes all the log levels used by [.NET Framework](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-2.1#log-level).
 
-_logger.Debug(new { Id = 10, Price = 100.4M, Name = "Product 1" });
-```
+| Level | Usage |
+| :--- | :--- |
+| Trace | _logger.Trace("Database connection opened"); |
+| Debug | _logger.Debug("Two factor authentication started"); |
+| Information | _logger.Info($"Recover password email sent for email {emailAddress}"); |
+| Warning | _logger.Warn($"Cache entry for {key} was not found"); |
+| Error | _logger.Error($"User with Id = {userId} was not found"); <br> _logger.Error(ex); |
+| Critical | _logger.Critical("There is not enough space on the disk. Save failed."); |
 
 ## Logging files
 
