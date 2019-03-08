@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using KissLog.Internal;
 
 namespace KissLog.AspNetCore
 {
@@ -75,7 +76,7 @@ namespace KissLog.AspNetCore
 
             foreach (string key in request.Cookies.Keys)
             {
-                if (KissLogConfiguration.ShouldLogCookie(key) == false)
+                if (KissLogConfiguration.Options.ApplyShouldLogCookie(result, key) == false)
                     continue;
 
                 string value = request.Cookies[key];
@@ -131,17 +132,10 @@ namespace KissLog.AspNetCore
             List<KeyValuePair<string, string>> claims = ToDictionary(identity);
             properties.Request.Claims = claims;
 
-            string userName = KissLogConfiguration.GetLoggedInUserName(properties.Request);
-            string emailAddress = KissLogConfiguration.GetLoggedInUserEmailAddress(properties.Request);
-            string avatar = KissLogConfiguration.GetLoggedInUserAvatar(properties.Request);
-
             properties.IsAuthenticated = true;
-            properties.User = new UserDetails
-            {
-                Name = userName,
-                EmailAddress = emailAddress,
-                Avatar = avatar
-            };
+
+            UserDetails user = KissLogConfiguration.Options.ApplyGetUser(properties.Request);
+            properties.User = user;
         }
 
         private static string GetMachineName()
@@ -172,7 +166,7 @@ namespace KissLog.AspNetCore
                 }
             }
 
-            return KissLogConfiguration.ShouldLogRequestInputStream(webRequestProperties);
+            return KissLogConfiguration.Options.ApplyShouldLogRequestInputStream(webRequestProperties);
         }
 
         private static string ReadInputStream(HttpRequest request)

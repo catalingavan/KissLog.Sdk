@@ -7,6 +7,7 @@ using System.Net;
 using System.Reflection;
 using System.Security.Claims;
 using System.Web;
+using KissLog.Internal;
 
 namespace KissLog.AspNet.Web
 {
@@ -84,16 +85,13 @@ namespace KissLog.AspNet.Web
                 List<KeyValuePair<string, string>> claims = DataParser.ToDictionary(claimsIdentity);
                 requestProperties.Request.Claims = claims;
 
-                string userName = KissLogConfiguration.GetLoggedInUserName(requestProperties.Request);
-                string emailAddress = KissLogConfiguration.GetLoggedInUserEmailAddress(requestProperties.Request);
-                string avatar = KissLogConfiguration.GetLoggedInUserAvatar(requestProperties.Request);
-
-                requestProperties.User = new UserDetails
+                UserDetails user = KissLogConfiguration.Options.ApplyGetUser(requestProperties.Request);
+                if (user != null)
                 {
-                    Name = userName ?? claimsIdentity.Name,
-                    EmailAddress = emailAddress,
-                    Avatar = avatar
-                };
+                    user.Name = user.Name ?? claimsIdentity.Name;
+                }
+
+                requestProperties.User = user;
             }
         }
 
@@ -205,7 +203,7 @@ namespace KissLog.AspNet.Web
                 }
             }
 
-            return KissLogConfiguration.ShouldLogResponseBody(webRequestProperties);
+            return KissLogConfiguration.Options.ApplyLogResponseBody(webRequestProperties);
         }
 
         static KissLogHttpModule()

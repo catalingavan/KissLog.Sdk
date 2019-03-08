@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace KissLog
+namespace KissLog.Internal
 {
     public static class InternalHelpers
     {
@@ -17,6 +17,7 @@ namespace KissLog
         public const string LogRequestInputStreamProperty = "X-KissLog-LogRequestInputStream";
         public const string LogResponseBodyProperty = "X-KissLog-LogResponseBody";
         public const string IsCreatedByHttpRequest = "X-KissLog-IsCreatedByHttpRequest";
+        public const string ObfuscatedPlaceholder = "***obfuscated***";
 
         public static KeyValuePair<string, string> TruncateRequestPropertyValue(string key, string value)
         {

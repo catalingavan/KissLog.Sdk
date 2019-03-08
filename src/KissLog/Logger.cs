@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using KissLog.Internal;
 
 namespace KissLog
 {
@@ -134,7 +135,7 @@ namespace KissLog
             if (json == null)
                 return "null";
 
-            return JsonConvert.SerializeObject(json, Formatting.Indented);
+            return JsonConvert.SerializeObject(json, KissLogConfiguration.Options.JsonSerializerSettings);
         }
 
         private string FormatMessage(Exception ex)
@@ -146,7 +147,7 @@ namespace KissLog
 
             FormatException(ex, sb, "Exception:", new List<string>());
 
-            string exceptionDetails = KissLogConfiguration.AppendExceptionDetails(ex);
+            string exceptionDetails = KissLogConfiguration.Options.ApplyAppendExceptionDetails(ex);
             if (string.IsNullOrEmpty(exceptionDetails) == false)
             {
                 sb.AppendLine();

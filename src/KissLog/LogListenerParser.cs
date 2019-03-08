@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using KissLog.Internal;
 
 namespace KissLog
 {
@@ -103,7 +104,7 @@ namespace KissLog
                     if (KeysToObfuscate.Any(p => key.Contains(p.ToLowerInvariant())))
                     {
                         dictionary.RemoveAt(i);
-                        dictionary.Insert(i, new KeyValuePair<string, string>(item.Key, KissLogConfiguration.ObfuscatedValue));
+                        dictionary.Insert(i, new KeyValuePair<string, string>(item.Key, KissLogConfiguration.Options.GetObfuscatedPlaceholder()));
                     }
                 }
             }
@@ -140,7 +141,7 @@ namespace KissLog
                     {
                         if (KeysToObfuscate.Any(p => key.ToLower().Contains(p)))
                         {
-                            asDictionary[key] = KissLogConfiguration.ObfuscatedValue;
+                            asDictionary[key] = KissLogConfiguration.Options.GetObfuscatedPlaceholder();
                             updated = true;
                         }
                     }

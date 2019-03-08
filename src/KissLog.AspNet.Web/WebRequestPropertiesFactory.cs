@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
+using KissLog.Internal;
 
 namespace KissLog.AspNet.Web
 {
@@ -97,7 +98,7 @@ namespace KissLog.AspNet.Web
                 }
             }
 
-            return KissLogConfiguration.ShouldLogRequestInputStream(webRequestProperties);
+            return KissLogConfiguration.Options.ApplyLogRequestInputStream(webRequestProperties);
         }
 
         private static string ReadInputStream(HttpRequest request)
@@ -169,7 +170,7 @@ namespace KissLog.AspNet.Web
             return result;
         }
 
-        private static List<KeyValuePair<string, string>> FilterCookies(List<KeyValuePair<string, string>> values)
+        private static List<KeyValuePair<string, string>> FilterCookies(List<KeyValuePair<string, string>> values, RequestProperties request)
         {
             if (values == null || !values.Any())
                 return values;
@@ -178,7 +179,7 @@ namespace KissLog.AspNet.Web
 
             foreach (var item in values)
             {
-                if(KissLogConfiguration.ShouldLogCookie(item.Key) == false)
+                if(KissLogConfiguration.Options.ApplyLogCookie(request, item.Key) == false)
                     continue;
 
                 result.Add(InternalHelpers.TruncateRequestPropertyValue(item.Key, item.Value));

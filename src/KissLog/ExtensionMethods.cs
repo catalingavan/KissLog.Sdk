@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KissLog.Internal;
+using System;
 using System.Net;
 
 namespace KissLog

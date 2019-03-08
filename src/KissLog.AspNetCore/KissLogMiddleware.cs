@@ -66,6 +66,8 @@ namespace KissLog.AspNetCore
                     logger.Log(LogLevel.Error, ex);
                 }
 
+                // need to comment this line of code, because it overwrites the pre-defined StatusCode set by user
+                // (if he/she called the same method prior)
                 logger.SetHttpStatusCode(statusCode);
 
                 ResponseProperties responseProperties = ResponsePropertiesFactory.Create(context.Response);
