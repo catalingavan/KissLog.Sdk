@@ -1,4 +1,5 @@
-﻿using KissLog.Web;
+﻿using KissLog.Internal;
+using KissLog.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -74,7 +75,7 @@ namespace KissLog.AspNetCore
                 responseProperties.HttpStatusCode = statusCode;
                 webRequestProperties.Response = responseProperties;
 
-                if (responseBodyFile != null && ShouldLogResponseBody(logger, webRequestProperties))
+                if (responseBodyFile != null && KissLogConfiguration.Options.ApplyShouldLogResponseBody(logger, webRequestProperties))
                 {
                     string responseFileName = InternalHelpers.ResponseFileName(webRequestProperties.Response.Headers);
                     logger.LogFile(responseBodyFile.FileName, responseFileName);
@@ -105,20 +106,6 @@ namespace KissLog.AspNetCore
             {
                 response.Body.Seek(0, SeekOrigin.Begin);
             }
-        }
-
-        private bool ShouldLogResponseBody(ILogger logger, WebRequestProperties webRequestProperties)
-        {
-            if (logger is Logger theLogger)
-            {
-                var logResponse = theLogger.GetProperty(InternalHelpers.LogResponseBodyProperty);
-                if (logResponse != null && logResponse is bool asBoolean)
-                {
-                    return asBoolean;
-                }
-            }
-
-            return KissLogConfiguration.ShouldLogResponseBody(webRequestProperties);
         }
 
         private bool CanWriteToResponseBody(HttpResponse response)

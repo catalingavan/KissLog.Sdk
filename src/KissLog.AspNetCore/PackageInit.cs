@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using KissLog.Internal;
 using System;
 using System.Reflection;
 

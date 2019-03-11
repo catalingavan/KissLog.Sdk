@@ -1,4 +1,5 @@
-﻿using KissLog.Web;
+﻿using KissLog.Internal;
+using KissLog.Web;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +8,6 @@ using System.Net;
 using System.Reflection;
 using System.Security.Claims;
 using System.Web;
-using KissLog.Internal;
 
 namespace KissLog.AspNet.Web
 {
@@ -160,7 +160,7 @@ namespace KissLog.AspNet.Web
 
             webRequestProperties.Response = responseProperties;
 
-            if (sniffer != null && ShouldLogResponseBody(logger, webRequestProperties))
+            if (sniffer != null && KissLogConfiguration.Options.ApplyShouldLogResponseBody(logger, webRequestProperties))
             {
                 string responseFileName = InternalHelpers.ResponseFileName(webRequestProperties.Response.Headers);
 
@@ -190,20 +190,6 @@ namespace KissLog.AspNet.Web
         public void Dispose()
         {
 
-        }
-
-        private bool ShouldLogResponseBody(ILogger logger, WebRequestProperties webRequestProperties)
-        {
-            if (logger is Logger theLogger)
-            {
-                var logResponse = theLogger.GetProperty(InternalHelpers.LogResponseBodyProperty);
-                if (logResponse != null && logResponse is bool asBoolean)
-                {
-                    return asBoolean;
-                }
-            }
-
-            return KissLogConfiguration.Options.ApplyLogResponseBody(webRequestProperties);
         }
 
         static KissLogHttpModule()

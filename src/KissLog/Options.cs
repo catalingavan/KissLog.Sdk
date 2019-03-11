@@ -13,12 +13,13 @@ namespace KissLog
         private static readonly string[] InputStreamContentTypes = { "text/plain", "application/json", "application/xml", "text/xml", "text/html" };
         private static readonly string[] ResponseBodyContentTypes = { "application/json" };
 
+        private static readonly string[] DoNotLogContentTypes = { "text/javascript", "application/javascript", "text/css", "image/" };
+
         internal JsonSerializerSettings JsonSerializerSettingsValue = new JsonSerializerSettings
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             Formatting = Formatting.Indented
         };
-
         internal Func<RequestProperties, UserDetails> GetUserFn = (RequestProperties request) =>
         {
             string userName = request.Claims?.FirstOrDefault(p => UserNameClaims.Contains(p.Key.ToLower())).Value;
@@ -32,6 +33,7 @@ namespace KissLog
                 Avatar = avatar
             };
         };
+
         internal Predicate<WebRequestProperties> ShouldLogRequestInputStreamFn = (WebRequestProperties request) =>
         {
             string contentType = request.Request.Headers.FirstOrDefault(p => string.Compare(p.Key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0).Value;
@@ -41,6 +43,10 @@ namespace KissLog
             contentType = contentType.ToLowerInvariant();
             return InputStreamContentTypes.Any(p => contentType.Contains(p.ToLowerInvariant()));
         };
+        internal Func<WebRequestProperties, string, bool> ShouldLogRequestHeaderFn = (WebRequestProperties request, string name) => true;
+        internal Func<WebRequestProperties, string, bool> ShouldLogRequestCookieFn = (WebRequestProperties request, string cookieName) => false;
+
+        internal Func<WebRequestProperties, string, bool> ShouldLogResponseHeaderFn = (WebRequestProperties request, string name) => true;
         internal Predicate<WebRequestProperties> ShouldLogResponseBodyFn = (WebRequestProperties request) =>
         {
             string contentType = request.Response.Headers.FirstOrDefault(p => string.Compare(p.Key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0).Value;
@@ -51,9 +57,21 @@ namespace KissLog
 
             return ResponseBodyContentTypes.Any(p => contentType.Contains(p.ToLowerInvariant()));
         };
-        internal Func<WebRequestProperties, string, bool> ShouldLogCookieFn = (WebRequestProperties request, string cookieName) => false;
+
         internal Func<Exception, string> AppendExceptionDetailsFn = (Exception ex) => null;
-        internal Func<ILogListener, WebRequestProperties, bool> ToggleListenerFn = (ILogListener listener, WebRequestProperties request) => true;
+
+        internal Func<ILogListener, FlushLogArgs, bool> ShouldUseListenerFn = (ILogListener listener, FlushLogArgs args) =>
+        {
+            string responseContentType = args.WebRequestProperties.Response.Headers.FirstOrDefault(p => string.Compare(p.Key, "content-type", StringComparison.OrdinalIgnoreCase) == 0).Value;
+
+            if (string.IsNullOrEmpty(responseContentType) == false)
+            {
+                if (DoNotLogContentTypes.Any(p => responseContentType.Contains(p.ToLowerInvariant())))
+                {
+                    return false;
+                }
+            }
+        };
 
         public JsonSerializerSettings JsonSerializerSettings => JsonSerializerSettingsValue;
 
@@ -69,26 +87,40 @@ namespace KissLog
             return this;
         }
 
+        public Options ShouldLogRequestHeader(Func<WebRequestProperties, string, bool> handler)
+        {
+            ShouldLogRequestHeaderFn = handler;
+            return this;
+        }
+
+        public Options ShouldLogRequestCookie(Func<WebRequestProperties, string, bool> handler)
+        {
+            ShouldLogRequestCookieFn = handler;
+            return this;
+        }
+
         public Options ShouldLogResponseBody(Predicate<WebRequestProperties> handler)
         {
             ShouldLogResponseBodyFn = handler;
             return this;
+
         }
 
-        public Options ShouldLogCookie(Func<WebRequestProperties, string, bool> handler)
+        public Options ShouldLogResponseHeader(Func<WebRequestProperties, string, bool> handler)
         {
-            ShouldLogCookieFn = handler;
+            ShouldLogResponseHeaderFn = handler;
+            return this;
+        }
+
+        public Options ShouldUseListener(Func<ILogListener, FlushLogArgs, bool> handler)
+        {
+            ShouldUseListenerFn = handler;
             return this;
         }
 
         public Options AppendExceptionDetails(Func<Exception, string> handler)
         {
             AppendExceptionDetailsFn = handler;
-            return this;
-        }
-
-        public Options ToggleListener(Func<ILogListener, WebRequestProperties> handler)
-        {
             return this;
         }
     }

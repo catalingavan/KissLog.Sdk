@@ -63,6 +63,9 @@ namespace KissLog.AspNetCore
                 if(string.Compare(key, "Cookie", StringComparison.OrdinalIgnoreCase) == 0)
                     continue;
 
+                if (KissLogConfiguration.Options.ApplyShouldLogRequestHeader(result, key) == false)
+                    continue;
+
                 StringValues values;
                 request.Headers.TryGetValue(key, out values);
 
@@ -76,7 +79,7 @@ namespace KissLog.AspNetCore
 
             foreach (string key in request.Cookies.Keys)
             {
-                if (KissLogConfiguration.Options.ApplyShouldLogCookie(result, key) == false)
+                if (KissLogConfiguration.Options.ApplyShouldLogRequestCookie(result, key) == false)
                     continue;
 
                 string value = request.Cookies[key];
@@ -103,7 +106,7 @@ namespace KissLog.AspNetCore
                 }
             }
 
-            if (ShouldLogRequestInputStream(logger, result))
+            if(KissLogConfiguration.Options.ApplyShouldLogRequestInputStream(logger, result))
             {
                 string inputStream = ReadInputStream(request);
                 if (string.IsNullOrEmpty(inputStream) == false)
@@ -153,20 +156,6 @@ namespace KissLog.AspNetCore
             { }
 
             return name;
-        }
-
-        private static bool ShouldLogRequestInputStream(ILogger logger, WebRequestProperties webRequestProperties)
-        {
-            if (logger is Logger theLogger)
-            {
-                var logResponse = theLogger.GetProperty(InternalHelpers.LogRequestInputStreamProperty);
-                if (logResponse != null && logResponse is bool asBoolean)
-                {
-                    return asBoolean;
-                }
-            }
-
-            return KissLogConfiguration.Options.ApplyShouldLogRequestInputStream(webRequestProperties);
         }
 
         private static string ReadInputStream(HttpRequest request)

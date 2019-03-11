@@ -104,7 +104,7 @@ namespace KissLog
                     if (KeysToObfuscate.Any(p => key.Contains(p.ToLowerInvariant())))
                     {
                         dictionary.RemoveAt(i);
-                        dictionary.Insert(i, new KeyValuePair<string, string>(item.Key, KissLogConfiguration.Options.GetObfuscatedPlaceholder()));
+                        dictionary.Insert(i, new KeyValuePair<string, string>(item.Key, InternalHelpers.ObfuscatedPlaceholder));
                     }
                 }
             }
@@ -141,7 +141,7 @@ namespace KissLog
                     {
                         if (KeysToObfuscate.Any(p => key.ToLower().Contains(p)))
                         {
-                            asDictionary[key] = KissLogConfiguration.Options.GetObfuscatedPlaceholder();
+                            asDictionary[key] = InternalHelpers.ObfuscatedPlaceholder;
                             updated = true;
                         }
                     }
