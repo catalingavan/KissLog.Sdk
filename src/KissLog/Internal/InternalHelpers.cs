@@ -7,6 +7,8 @@ namespace KissLog.Internal
 {
     public static class InternalHelpers
     {
+        public static readonly string[] InputStreamContentTypes = { "text/plain", "application/json", "application/xml", "text/xml", "text/html" };
+
         private const int RequestPropertyKeyLength = 100;
         private const int RequestPropertyValueLength = 1000;
         private const int RequestPropertyInputStreamLength = 2000;

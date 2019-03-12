@@ -6,6 +6,12 @@ using System.Linq;
 
 namespace KissLog
 {
+    class ArgsResult
+    {
+        public FlushLogArgs Args { get; set; }
+        public List<LoggerFile> Files { get; set; }
+    }
+
     internal static class NotifyListenersV2
     {
         public static void Notify(ILogger[] loggers)
@@ -16,20 +22,39 @@ namespace KissLog
             if (KissLogConfiguration.Listeners == null || KissLogConfiguration.Listeners.Any() == false)
                 return;
 
-            Logger[] theLoggers = loggers.Where(p => p is Logger).Select(p => p as Logger).ToArray();
+            Logger[] theLoggers = loggers.OfType<Logger>().ToArray();
 
-            if (theLoggers == null || !theLoggers.Any())
+            if (!theLoggers.Any())
                 return;
 
-            FlushLogArgs defaultArgs = CreateFlushArgs(theLoggers);
+            Logger defaultLogger = theLoggers.FirstOrDefault(p => p.CategoryName == Logger.DefaultCategoryName) ?? theLoggers.First();
+
+            ArgsResult argsResult = CreateArgs(theLoggers);
+
+            FlushLogArgs defaultArgs = argsResult.Args;
+            string defaultArgsJsonJson = JsonConvert.SerializeObject(defaultArgs);
 
             foreach (ILogListener listener in KissLogConfiguration.Listeners)
             {
+                FlushLogArgs args = CreateFlushArgsForListener(defaultLogger, listener, defaultArgs, defaultArgsJsonJson);
+                args.Files = argsResult.Files.ToList();
 
+                if (KissLogConfiguration.Options.ApplyToggleListener(listener, args) == false)
+                    continue;
+
+                if(ShouldUseListener(listener, args) == false)
+                    continue;
+
+                listener.OnFlush(args);
+            }
+
+            foreach (Logger logger in theLoggers)
+            {
+                logger.Reset();
             }
         }
 
-        private static FlushLogArgs CreateFlushArgs(Logger[] loggers)
+        private static ArgsResult CreateArgs(Logger[] loggers)
         {
             Logger defaultLogger = loggers.FirstOrDefault(p => p.CategoryName == Logger.DefaultCategoryName) ?? loggers.First();
 
@@ -47,10 +72,11 @@ namespace KissLog
                 });
 
                 exceptions.AddRange(logger.CapturedExceptions);
-
-                exceptions = exceptions.Distinct(new CapturedExceptionComparer()).ToList();
             }
 
+            exceptions = exceptions.Distinct(new CapturedExceptionComparer()).ToList();
+
+            List<LoggerFile> files = defaultLogger.LoggerFiles.GetFiles().ToList();
             FlushLogArgs args = new FlushLogArgs
             {
                 IsCreatedByHttpRequest = defaultLogger.IsCreatedByHttpRequest(),
@@ -60,41 +86,49 @@ namespace KissLog
                 CapturedExceptions = exceptions
             };
 
-            return args;
+            return new ArgsResult
+            {
+                Args = args,
+                Files = files
+            };
         }
 
-        private static FlushLogArgs CreateFlushArgsForListener(ILogListener listener, FlushLogArgs defaultArgs)
+        private static FlushLogArgs CreateFlushArgsForListener(Logger defaultLogger, ILogListener listener, FlushLogArgs defaultArgs, string defaultArgsJson)
         {
-            FlushLogArgs args = JsonConvert.DeserializeObject<FlushLogArgs>(JsonConvert.SerializeObject(defaultArgs));
+            FlushLogArgs args = JsonConvert.DeserializeObject<FlushLogArgs>(defaultArgsJson);
 
-            var requestHeaders = defaultArgs.WebRequestProperties.Request.Headers.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestHeader(defaultArgs.WebRequestProperties, p.Key)).ToList();
-            var requestCookies = defaultArgs.WebRequestProperties.Request.Cookies.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestCookie(defaultArgs.WebRequestProperties, p.Key)).ToList();
-            string requestInputStream = null;
-
-            if(!string.IsNullOrEmpty(defaultArgs.WebRequestProperties.Request.InputStream) && KissLogConfiguration.Options.ApplyShouldLogRequestInputStream(null, defaultArgs.WebRequestProperties))
+            string inputStream = null;
+            if (!string.IsNullOrEmpty(defaultArgs.WebRequestProperties.Request.InputStream) && KissLogConfiguration.Options.ApplyShouldLogRequestInputStream(defaultLogger, listener, defaultArgs.WebRequestProperties))
             {
-                requestInputStream = defaultArgs.WebRequestProperties.Request.InputStream;
+                inputStream = defaultArgs.WebRequestProperties.Request.InputStream;
             }
 
-            args.WebRequestProperties.Request.Headers = requestHeaders;
-            args.WebRequestProperties.Request.Cookies = requestCookies;
-            args.WebRequestProperties.Request.InputStream = requestInputStream;
+            args.WebRequestProperties.Request.Headers = defaultArgs.WebRequestProperties.Request.Headers.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestHeader(listener, defaultArgs.WebRequestProperties, p.Key)).ToList();
+            args.WebRequestProperties.Request.Cookies = defaultArgs.WebRequestProperties.Request.Cookies.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestCookie(listener, defaultArgs.WebRequestProperties, p.Key)).ToList();
+            args.WebRequestProperties.Request.InputStream = inputStream;
+
+            List<LogMessagesGroup> messages = new List<LogMessagesGroup>();
+            foreach (var group in defaultArgs.MessagesGroups)
+            {
+                messages.Add(new LogMessagesGroup
+                {
+                    CategoryName = group.CategoryName,
+                    Messages = group.Messages.Where(p => listener.Parser.ShouldLog(p, listener)).ToList()
+                });
+            }
+
+            args.MessagesGroups = messages;
 
             return args;
         }
 
         private static bool ShouldUseListener(ILogListener listener, FlushLogArgs args)
         {
-            if (args.IsCreatedByHttpRequest == false)
-                return true;
-
-            int statusCode = (int)args.WebRequestProperties.Response.HttpStatusCode;
-            if (statusCode < listener.MinimumResponseHttpStatusCode)
-                return false;
-
             LogListenerParser parser = listener.Parser;
             if (parser == null)
                 return true;
+
+            return parser.ShouldLog(args, listener);
         }
     }
 }

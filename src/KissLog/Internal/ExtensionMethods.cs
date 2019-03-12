@@ -10,17 +10,17 @@ namespace KissLog.Internal
             return options.GetUserFn(request);
         }
 
-        public static bool ApplyShouldLogRequestHeader(this Options options, WebRequestProperties request, string name)
+        public static bool ApplyShouldLogRequestHeader(this Options options, ILogListener listener, WebRequestProperties request, string name)
         {
-            return options.ShouldLogRequestHeaderFn(request, name);
+            return options.ShouldLogRequestHeaderFn(listener, request, name);
         }
 
-        public static bool ApplyShouldLogRequestCookie(this Options options, WebRequestProperties request, string cookieName)
+        public static bool ApplyShouldLogRequestCookie(this Options options, ILogListener listener, WebRequestProperties request, string cookieName)
         {
-            return options.ShouldLogRequestCookieFn(request, cookieName);
+            return options.ShouldLogRequestCookieFn(listener, request, cookieName);
         }
 
-        public static bool ApplyShouldLogRequestInputStream(this Options options, ILogger logger, WebRequestProperties request)
+        public static bool ApplyShouldLogRequestInputStream(this Options options, ILogger logger, ILogListener listener, WebRequestProperties request)
         {
             if (logger is Logger theLogger)
             {
@@ -31,15 +31,15 @@ namespace KissLog.Internal
                 }
             }
 
-            return options.ShouldLogRequestInputStreamFn(request);
+            return options.ShouldLogRequestInputStreamFn(listener, request);
         }
 
-        public static bool ApplyShouldLogResponseHeader(this Options options, WebRequestProperties request, string name)
+        public static bool ApplyShouldLogResponseHeader(this Options options, ILogListener listener, WebRequestProperties request, string name)
         {
-            return options.ShouldLogResponseHeaderFn(request, name);
+            return options.ShouldLogResponseHeaderFn(listener, request, name);
         }
 
-        public static bool ApplyShouldLogResponseBody(this Options options, ILogger logger, WebRequestProperties request)
+        public static bool ApplyShouldLogResponseBody(this Options options, ILogger logger, ILogListener listener, WebRequestProperties request)
         {
             if (logger is Logger theLogger)
             {
@@ -50,7 +50,7 @@ namespace KissLog.Internal
                 }
             }
 
-            return options.ShouldLogResponseBodyFn(request);
+            return options.ShouldLogResponseBodyFn(listener, request);
         }
 
         public static string ApplyAppendExceptionDetails(this Options options, Exception ex)
@@ -58,9 +58,9 @@ namespace KissLog.Internal
             return options.AppendExceptionDetailsFn(ex);
         }
 
-        public static bool ApplyToggleListener(this Options options, ILogListener listener, WebRequestProperties request)
+        public static bool ApplyToggleListener(this Options options, ILogListener listener, FlushLogArgs args)
         {
-            return options.ToggleListenerFn(listener, request);
+            return options.ToggleListenerFn(listener, args);
         }
     }
 }
