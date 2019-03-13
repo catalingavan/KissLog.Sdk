@@ -16,7 +16,7 @@ namespace KissLog.AspNetCore
 {
     internal static class WebRequestPropertiesFactory
     {
-        public static WebRequestProperties Create(ILogger logger, HttpRequest request)
+        public static WebRequestProperties Create(HttpRequest request)
         {
             WebRequestProperties result = new WebRequestProperties();
 

@@ -1,11 +1,9 @@
-﻿using KissLog.Web;
+﻿using KissLog.Internal;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text;
-using KissLog.Internal;
 
 namespace KissLog
 {
@@ -19,18 +17,7 @@ namespace KissLog
 
         public static event LogMessageCreatedEventHandler OnMessage;
 
-        private WebRequestProperties _webRequestProperties = null;
-        private List<LogMessage> _messages = null;
-        private List<CapturedException> _capturedExceptions = null;
-        private Dictionary<string, object> _customProperties = null;
-        private HttpStatusCode? _httpStatusCode;
-
-        internal LoggerFiles LoggerFiles = null;
-
-        public WebRequestProperties WebRequestProperties => _webRequestProperties;
-        internal IEnumerable<LogMessage> LogMessages => _messages;
-        public IEnumerable<CapturedException> CapturedExceptions => _capturedExceptions;
-        internal HttpStatusCode? HttpStatusCode => _httpStatusCode;
+        public LoggerDataContainer DataContainer { get; }
 
         public Logger() : this(DefaultCategoryName)
         {
@@ -43,11 +30,7 @@ namespace KissLog
 
             CategoryName = categoryName;
 
-            _webRequestProperties = WebRequestPropertiesFactory.CreateDefault();
-            _messages = new List<LogMessage>();
-            _capturedExceptions = new List<CapturedException>();
-
-            LoggerFiles = new LoggerFiles(this);
+            DataContainer = new LoggerDataContainer(this);
         }
 
         public string CategoryName { get; set; }
@@ -75,7 +58,7 @@ namespace KissLog
                 LineNumber = lineNumber
             };
 
-            _messages.Add(logMessage);
+            DataContainer.LogMessages.Add(logMessage);
 
             OnMessage?.Invoke(this, new LogMessageCreatedEventArgs { LogMessage = logMessage });
         }
@@ -169,7 +152,7 @@ namespace KissLog
 
                 exMessages.Add(exString);
 
-                _capturedExceptions.Add(new CapturedException
+                DataContainer.Exceptions.Add(new CapturedException
                 {
                     ExceptionType = ex.GetType().Name,
                     ExceptionMessage = ex.Message,
@@ -249,50 +232,9 @@ namespace KissLog
             return memberType;
         }
 
-        public void AddProperty(string key, object value)
-        {
-            if (_customProperties == null)
-                _customProperties = new Dictionary<string, object>();
-
-            if (_customProperties.ContainsKey(key))
-            {
-                _customProperties[key] = value;
-            }
-            else
-            {
-                _customProperties.Add(key, value);
-            }
-        }
-        public object GetProperty(string key)
-        {
-            if (_customProperties == null || !_customProperties.ContainsKey(key))
-                return null;
-
-            return _customProperties[key];
-        }
-
-        public void SetWebRequestProperties(WebRequestProperties webRequestProperties)
-        {
-            _webRequestProperties = webRequestProperties;
-        }
-
-        public void SetHttpStatusCode(HttpStatusCode httpStatusCode)
-        {
-            _httpStatusCode = httpStatusCode;
-        }
-
         internal void Reset()
         {
-            _messages.Clear();
-            _messages = new List<LogMessage>();
-
-            _capturedExceptions.Clear();
-            _capturedExceptions = new List<CapturedException>();
-
-            _httpStatusCode = null;
-
-            LoggerFiles.Dispose();
-            LoggerFiles = new LoggerFiles(this);
+            DataContainer.Reset();
         }
 
         public static void NotifyListeners(ILogger logger)
@@ -306,6 +248,20 @@ namespace KissLog
         public static void NotifyListeners(ILogger[] loggers)
         {
             KissLog.NotifyListeners.Notify(loggers);
+        }
+
+        public static FlushLogArgs CreateFlushArgs(ILogger logger)
+        {
+            if (logger == null)
+                return null;
+
+            return CreateFlushArgs(new[] {logger});
+        }
+
+        public static FlushLogArgs CreateFlushArgs(ILogger[] loggers)
+        {
+            ArgsResult args = KissLog.NotifyListeners.CreateArgs(loggers);
+            return args?.Args;
         }
     }
 }

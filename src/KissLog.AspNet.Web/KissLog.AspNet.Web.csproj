@@ -49,6 +49,7 @@
     <Compile Include="KissLogHttpModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebRequestPropertiesFactory.cs" />
+    <Compile Include="WebResponsePropertiesFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\KissLog\KissLog.Apis.v1\KissLog.Apis.v1.csproj">

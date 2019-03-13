@@ -1,11 +1,17 @@
-﻿using KissLog.Web;
+﻿using KissLog.Internal;
+using KissLog.Web;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 
 namespace KissLog
 {
+    class ArgsResult
+    {
+        public FlushLogArgs Args { get; set; }
+        public List<LoggerFile> Files { get; set; } = new List<LoggerFile>();
+    }
+
     internal static class NotifyListeners
     {
         public static void Notify(ILogger[] loggers)
@@ -16,160 +22,139 @@ namespace KissLog
             if (KissLogConfiguration.Listeners == null || KissLogConfiguration.Listeners.Any() == false)
                 return;
 
-            ILogger defaultLogger = loggers.FirstOrDefault(p => p.CategoryName == Logger.DefaultCategoryName) ?? loggers.First();
-            Logger logger = null;
+            Logger[] theLoggers = loggers.OfType<Logger>().ToArray();
 
-            if ((defaultLogger is Logger) == false)
+            if (!theLoggers.Any())
                 return;
 
-            logger = defaultLogger as Logger;
+            Logger defaultLogger = theLoggers.FirstOrDefault(p => p.CategoryName == Logger.DefaultCategoryName) ?? theLoggers.First();
 
-            FlushLogArgs args = CreateFlushLogArgs(logger, loggers);
-            List<LoggerFile> files = logger.LoggerFiles.GetFiles().ToList();
+            ArgsResult argsResult = CreateArgs(theLoggers);
 
-            string argsJson = JsonConvert.SerializeObject(args);
+            FlushLogArgs defaultArgs = argsResult.Args;
+            string defaultArgsJsonJson = JsonConvert.SerializeObject(defaultArgs);
 
             foreach (ILogListener listener in KissLogConfiguration.Listeners)
             {
-                // we make a clone of FlushLogArgs, because each ILogListener can alter the parameters
-                FlushLogArgs listenerArgs = JsonConvert.DeserializeObject<FlushLogArgs>(argsJson);
+                FlushLogArgs args = CreateFlushArgsForListener(defaultLogger, listener, defaultArgs, defaultArgsJsonJson);
+                args.Files = argsResult.Files.ToList();
 
-                if(ShouldLog(listener, listenerArgs) == false)
+                if(ShouldUseListener(listener, args) == false)
                     continue;
 
-                PrepareArgsForListener(listener, listenerArgs);
+                listener.Parser?.BeforeFlush(args, listener);
 
-                listenerArgs.Files = files.ToList();
-
-                listener.OnFlush(listenerArgs);
+                listener.OnFlush(args);
             }
 
-            foreach (ILogger ilogger in loggers)
+            foreach (Logger logger in theLoggers)
             {
-                if (ilogger is Logger myLogger)
-                {
-                    myLogger.Reset();
-                }
+                logger.Reset();
             }
         }
 
-        private static FlushLogArgs CreateFlushLogArgs(Logger logger, ILogger[] loggers)
+        public static ArgsResult CreateArgs(ILogger[] loggers)
         {
-            WebRequestProperties webRequestProperties = logger.WebRequestProperties ?? WebRequestPropertiesFactory.CreateDefault();
-            IEnumerable<LogMessagesGroup> logMessages = GetLogMessages(loggers);
-            IEnumerable<CapturedException> capturedExceptions = GetCapturedExceptions(loggers);
+            if (loggers == null || !loggers.Any())
+                return null;
 
-            if (logger.HttpStatusCode.HasValue)
+            Logger[] theLoggers = loggers.OfType<Logger>().ToArray();
+
+            if (!theLoggers.Any())
+                return null;
+
+            return CreateArgs(theLoggers);
+        }
+
+        private static ArgsResult CreateArgs(Logger[] loggers)
+        {
+            Logger defaultLogger = loggers.FirstOrDefault(p => p.CategoryName == Logger.DefaultCategoryName) ?? loggers.First();
+
+            LoggerDataContainer dataContainer = defaultLogger.DataContainer;
+
+            WebRequestProperties webRequestProperties = dataContainer.WebRequestProperties;
+            string errorMessage = dataContainer.Exceptions.LastOrDefault()?.ExceptionMessage;
+            List<LogMessagesGroup> logMessages = new List<LogMessagesGroup>();
+            List<CapturedException> exceptions = new List<CapturedException>();
+
+            foreach (Logger logger in loggers)
             {
-                webRequestProperties.Response.HttpStatusCode = logger.HttpStatusCode.Value;
-            }
-            else if (webRequestProperties.Response.HttpStatusCode == HttpStatusCode.OK && IsLastMessageError(logger))
-            {
-                webRequestProperties.Response.HttpStatusCode = HttpStatusCode.InternalServerError;
+                logMessages.Add(new LogMessagesGroup
+                {
+                    CategoryName = logger.CategoryName,
+                    Messages = dataContainer.LogMessages.ToList()
+                });
+
+                exceptions.AddRange(dataContainer.Exceptions);
             }
 
+            exceptions = exceptions.Distinct(new CapturedExceptionComparer()).ToList();
+
+            List<LoggerFile> files = dataContainer.LoggerFiles.GetFiles().ToList();
             FlushLogArgs args = new FlushLogArgs
             {
-                IsCreatedByHttpRequest = logger.IsCreatedByHttpRequest(),
-                ErrorMessage = GetErrorMessage(logger),
+                IsCreatedByHttpRequest = defaultLogger.IsCreatedByHttpRequest(),
+                ErrorMessage = errorMessage,
                 WebRequestProperties = webRequestProperties,
                 MessagesGroups = logMessages,
-                CapturedExceptions = capturedExceptions
+                CapturedExceptions = exceptions
             };
+
+            return new ArgsResult
+            {
+                Args = args,
+                Files = files
+            };
+        }
+
+        private static FlushLogArgs CreateFlushArgsForListener(Logger defaultLogger, ILogListener listener, FlushLogArgs defaultArgs, string defaultArgsJson)
+        {
+            FlushLogArgs args = JsonConvert.DeserializeObject<FlushLogArgs>(defaultArgsJson);
+
+            string inputStream = null;
+            if (!string.IsNullOrEmpty(defaultArgs.WebRequestProperties.Request.InputStream))
+            {
+                if(KissLogConfiguration.Options.ApplyShouldLogRequestInputStream(defaultLogger, listener, defaultArgs))
+                {
+                    inputStream = defaultArgs.WebRequestProperties.Request.InputStream;
+                }
+            }
+
+            args.WebRequestProperties.Request.Headers = defaultArgs.WebRequestProperties.Request.Headers.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestHeader(listener, defaultArgs, p.Key)).ToList();
+            args.WebRequestProperties.Request.Cookies = defaultArgs.WebRequestProperties.Request.Cookies.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestCookie(listener, defaultArgs, p.Key)).ToList();
+            args.WebRequestProperties.Request.QueryString = defaultArgs.WebRequestProperties.Request.QueryString.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestQueryString(listener, defaultArgs, p.Key)).ToList();
+            args.WebRequestProperties.Request.FormData = defaultArgs.WebRequestProperties.Request.FormData.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestFormData(listener, defaultArgs, p.Key)).ToList();
+            args.WebRequestProperties.Request.ServerVariables = defaultArgs.WebRequestProperties.Request.ServerVariables.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestServerVariable(listener, defaultArgs, p.Key)).ToList();
+            args.WebRequestProperties.Request.Claims = defaultArgs.WebRequestProperties.Request.Claims.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestClaim(listener, defaultArgs, p.Key)).ToList();
+            args.WebRequestProperties.Request.InputStream = inputStream;
+
+            args.WebRequestProperties.Response.Headers = defaultArgs.WebRequestProperties.Response.Headers.Where(p => KissLogConfiguration.Options.ApplyShouldLogResponseHeader(listener, defaultArgs, p.Key)).ToList();
+
+            List<LogMessagesGroup> messages = new List<LogMessagesGroup>();
+            foreach (var group in defaultArgs.MessagesGroups)
+            {
+                messages.Add(new LogMessagesGroup
+                {
+                    CategoryName = group.CategoryName,
+                    Messages = group.Messages.Where(p => listener.Parser.ShouldLog(p, listener)).ToList()
+                });
+            }
+
+            args.MessagesGroups = messages;
 
             return args;
         }
 
-        private static IEnumerable<LogMessagesGroup> GetLogMessages(ILogger[] loggers)
+        private static bool ShouldUseListener(ILogListener listener, FlushLogArgs args)
         {
-            List<LogMessagesGroup> messages = new List<LogMessagesGroup>();
+            if (KissLogConfiguration.Options.ApplyToggleListener(listener, args) == false)
+                return false;
 
-            foreach (var ilogger in loggers)
-            {
-                List<LogMessage> logMessages = new List<LogMessage>();
-
-                if (ilogger is Logger logger)
-                {
-                    logMessages = logger.LogMessages.ToList();
-                }
-
-                messages.Add(new LogMessagesGroup
-                {
-                    CategoryName = ilogger.CategoryName,
-                    Messages = logMessages
-                });
-            }
-
-            return messages;
-        }
-
-        private static IEnumerable<CapturedException> GetCapturedExceptions(ILogger[] loggers)
-        {
-            List<CapturedException> exceptions = new List<CapturedException>();
-
-            foreach (var ilogger in loggers)
-            {
-                if (ilogger is Logger logger)
-                {
-                    exceptions.AddRange(logger.CapturedExceptions);
-                }
-            }
-
-            return exceptions.Distinct(new CapturedExceptionComparer()).ToList();
-        }
-
-        private static bool IsLastMessageError(Logger logger)
-        {
-            LogMessage message = logger.LogMessages.LastOrDefault();
-
-            if (message?.LogLevel >= LogLevel.Error)
-                return true;
-
-            return false;
-        }
-
-        private static string GetErrorMessage(Logger logger)
-        {
-            IEnumerable<CapturedException> capturedExceptions = logger.CapturedExceptions;
-            return capturedExceptions.LastOrDefault()?.ExceptionMessage;
-        }
-
-        private static bool ShouldLog(ILogListener listener, FlushLogArgs args)
-        {
             LogListenerParser parser = listener.Parser;
             if (parser == null)
                 return true;
 
             return parser.ShouldLog(args, listener);
-        }
-
-        private static IEnumerable<LogMessagesGroup> FilterMessagesForListener(ILogListener listener, IEnumerable<LogMessagesGroup> messageGroups)
-        {
-            List<LogMessagesGroup> result = new List<LogMessagesGroup>();
-
-            foreach (var group in messageGroups)
-            {
-                List<LogMessage> filtered = group.Messages.Where(p => listener.Parser.ShouldLog(p, listener)).ToList();
-
-                result.Add(new LogMessagesGroup
-                {
-                    CategoryName = group.CategoryName,
-                    Messages = filtered
-                });
-            }
-
-            return result;
-        }
-
-        private static void PrepareArgsForListener(ILogListener listener, FlushLogArgs args)
-        {
-            LogListenerParser parser = listener.Parser;
-            if (parser == null)
-                return;
-
-            parser.AlterDataBeforePersisting(args);
-
-            args.MessagesGroups = FilterMessagesForListener(listener, args.MessagesGroups);
         }
     }
 }

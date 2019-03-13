@@ -23,9 +23,12 @@ namespace KissLog.AspNetCore
         public async Task Invoke(HttpContext context)
         {
             Logger logger = Logger.Factory.Get() as Logger;
-            logger.AddProperty(InternalHelpers.IsCreatedByHttpRequest, true);
+            if(logger == null)
+                return;
 
-            WebRequestProperties webRequestProperties = WebRequestPropertiesFactory.Create(logger, context.Request);
+            logger.DataContainer.AddProperty(InternalHelpers.IsCreatedByHttpRequest, true);
+
+            WebRequestProperties properties = WebRequestPropertiesFactory.Create(context.Request);
 
             Exception ex = null;
             Stream originalBodyStream = context.Response.Body;
@@ -57,7 +60,7 @@ namespace KissLog.AspNetCore
             {
                 context.Response.Body = originalBodyStream;
 
-                webRequestProperties.EndDateTime = DateTime.UtcNow;
+                properties.EndDateTime = DateTime.UtcNow;
 
                 HttpStatusCode statusCode = (HttpStatusCode)context.Response.StatusCode;
 
@@ -67,13 +70,14 @@ namespace KissLog.AspNetCore
                     logger.Log(LogLevel.Error, ex);
                 }
 
-                // need to comment this line of code, because it overwrites the pre-defined StatusCode set by user
-                // (if he/she called the same method prior)
-                logger.SetHttpStatusCode(statusCode);
+                if (logger.DataContainer.ExplicitHttpStatusCode.HasValue)
+                {
+                    statusCode = logger.DataContainer.ExplicitHttpStatusCode.Value;
+                }
 
                 ResponseProperties response = ResponsePropertiesFactory.Create(context.Response);
                 response.HttpStatusCode = statusCode;
-                webRequestProperties.Response = response;
+                properties.Response = response;
 
                 if(responseBodyFile != null && InternalHelpers.ShouldLogResponseBody(logger, response))
                 {
@@ -81,7 +85,7 @@ namespace KissLog.AspNetCore
                     logger.LogFile(responseBodyFile.FileName, responseFileName);
                 }
 
-                ((Logger)logger).SetWebRequestProperties(webRequestProperties);
+                logger.DataContainer.WebRequestProperties = properties;
 
                 responseBodyFile?.Dispose();
 

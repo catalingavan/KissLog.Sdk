@@ -42,15 +42,6 @@ namespace KissLog.Internal
 
         public static bool ApplyShouldLogRequestInputStream(this Options options, ILogger logger, ILogListener listener, FlushLogArgs args)
         {
-            if (logger is Logger theLogger)
-            {
-                var logResponse = theLogger.GetProperty(InternalHelpers.LogRequestInputStreamProperty);
-                if (logResponse != null && logResponse is bool asBoolean)
-                {
-                    return asBoolean;
-                }
-            }
-
             return options.ShouldLogRequestInputStreamFn(listener, args);
         }
 

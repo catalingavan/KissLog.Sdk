@@ -1,10 +1,10 @@
-﻿using KissLog.Web;
+﻿using KissLog.Internal;
+using KissLog.Web;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
-using KissLog.Internal;
 
 namespace KissLog.AspNet.Web
 {
@@ -12,7 +12,7 @@ namespace KissLog.AspNet.Web
     {
         private static readonly string[] ServerVariablesKeysToIgnore = {"all_http", "all_raw"};
 
-        public static WebRequestProperties Create(ILogger logger, HttpRequest request)
+        public static WebRequestProperties Create(HttpRequest request)
         {
             WebRequestProperties result = new WebRequestProperties();
 
@@ -34,11 +34,7 @@ namespace KissLog.AspNet.Web
             headers = FilterHeaders(headers);
 
             var queryString = DataParser.ToDictionary(request.Unvalidated.QueryString);
-            queryString = queryString.Select(p => InternalHelpers.TruncateRequestPropertyValue(p.Key, p.Value)).ToList();
-
             var formData = DataParser.ToDictionary(request.Unvalidated.Form);
-            formData = formData.Select(p => InternalHelpers.TruncateRequestPropertyValue(p.Key, p.Value)).ToList();
-
             var serverVariables = DataParser.ToDictionary(request.ServerVariables);
             serverVariables = FilterServerVariables(serverVariables);
 
@@ -119,7 +115,7 @@ namespace KissLog.AspNet.Web
                 if (string.IsNullOrEmpty(item.Key))
                     continue;
 
-                if(string.Compare(item.Key, "Cookie", StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(item.Key, "Cookie", StringComparison.OrdinalIgnoreCase) == 0)
                     continue;
 
                 result.Add(new KeyValuePair<string, string>(item.Key, item.Value));
@@ -137,32 +133,17 @@ namespace KissLog.AspNet.Web
 
             foreach (var item in values)
             {
-                if(string.IsNullOrEmpty(item.Key))
+                if (string.IsNullOrEmpty(item.Key))
                     continue;
 
                 string key = item.Key.ToLower();
 
-                if(ServerVariablesKeysToIgnore.Contains(key))
+                if (ServerVariablesKeysToIgnore.Contains(key))
                     continue;
 
-                if(key.StartsWith("http_"))
+                if (key.StartsWith("http_"))
                     continue;
 
-                result.Add(new KeyValuePair<string, string>(item.Key, item.Value));
-            }
-
-            return result;
-        }
-
-        private static List<KeyValuePair<string, string>> FilterCookies(List<KeyValuePair<string, string>> values, WebRequestProperties request)
-        {
-            if (values == null || !values.Any())
-                return values;
-
-            List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
-
-            foreach (var item in values)
-            {
                 result.Add(new KeyValuePair<string, string>(item.Key, item.Value));
             }
 
