@@ -109,14 +109,9 @@ namespace KissLog.AspNetCore
                 }
             }
 
-            if (!string.IsNullOrEmpty(requestContentType))
+            if (InternalHelpers.ShouldLogInputStream(requestProperties.Headers))
             {
-                requestContentType = requestContentType.ToLowerInvariant();
-
-                if (InternalHelpers.InputStreamContentTypes?.Any(p => requestContentType.Contains(p.ToLowerInvariant())) == true)
-                {
-                    inputStream = ReadInputStream(request);
-                }
+                inputStream = ReadInputStream(request);
             }
 
             result.HttpReferer = httpReferer;

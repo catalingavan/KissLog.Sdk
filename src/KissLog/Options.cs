@@ -10,8 +10,6 @@ namespace KissLog
         private static readonly string[] UserNameClaims = { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", "name", "email" };
         private static readonly string[] EmailClaims = { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress", "email", "emailaddress" };
         private static readonly string[] AvatarClaims = { "avatar", "picture", "image" };
-        private static readonly string[] InputStreamContentTypes = { "text/plain", "application/json", "application/xml", "text/xml", "text/html" };
-        private static readonly string[] ResponseBodyContentTypes = { "application/json" };
 
         internal JsonSerializerSettings JsonSerializerSettingsValue = new JsonSerializerSettings
         {
@@ -32,29 +30,15 @@ namespace KissLog
             };
         };
 
-        internal Func<ILogListener, WebRequestProperties, bool> ShouldLogRequestInputStreamFn = (ILogListener listener, WebRequestProperties request) =>
-        {
-            string contentType = request.Request.Headers.FirstOrDefault(p => string.Compare(p.Key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0).Value;
-            if (string.IsNullOrEmpty(contentType))
-                return false;
+        internal Func<ILogListener, FlushLogArgs, bool> ShouldLogRequestInputStreamFn = (ILogListener listener, FlushLogArgs args) => true;
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestHeaderFn = (ILogListener listener, FlushLogArgs args, string name) => true;
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestCookieFn = (ILogListener listener, FlushLogArgs args, string name) => false;
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestQueryStringFn = (ILogListener listener, FlushLogArgs args, string name) => true;
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestFormDataFn = (ILogListener listener, FlushLogArgs args, string name) => true;
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestServerVariableFn = (ILogListener listener, FlushLogArgs args, string name) => true;
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestClaimFn = (ILogListener listener, FlushLogArgs args, string name) => true;
 
-            contentType = contentType.ToLowerInvariant();
-            return InputStreamContentTypes.Any(p => contentType.Contains(p.ToLowerInvariant()));
-        };
-        internal Func<ILogListener, WebRequestProperties, string, bool> ShouldLogRequestHeaderFn = (ILogListener listener, WebRequestProperties request, string name) => true;
-        internal Func<ILogListener, WebRequestProperties, string, bool> ShouldLogRequestCookieFn = (ILogListener listener, WebRequestProperties request, string cookieName) => false;
-
-        internal Func<ILogListener, WebRequestProperties, string, bool> ShouldLogResponseHeaderFn = (ILogListener listener, WebRequestProperties request, string name) => true;
-        internal Func<ILogListener, WebRequestProperties, bool> ShouldLogResponseBodyFn = (ILogListener listener, WebRequestProperties request) =>
-        {
-            string contentType = request.Response.Headers.FirstOrDefault(p => string.Compare(p.Key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0).Value;
-            if (string.IsNullOrEmpty(contentType))
-                return false;
-
-            contentType = contentType.ToLowerInvariant();
-
-            return ResponseBodyContentTypes.Any(p => contentType.Contains(p.ToLowerInvariant()));
-        };
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogResponseHeaderFn = (ILogListener listener, FlushLogArgs args, string name) => true;
 
         internal Func<Exception, string> AppendExceptionDetailsFn = (Exception ex) => null;
 
@@ -68,31 +52,49 @@ namespace KissLog
             return this;
         }
 
-        public Options ShouldLogRequestInputStream(Func<ILogListener, WebRequestProperties, bool> handler)
-        {
-            ShouldLogRequestInputStreamFn = handler;
-            return this;
-        }
-
-        public Options ShouldLogRequestHeader(Func<ILogListener, WebRequestProperties, string, bool> handler)
+        public Options ShouldLogRequestHeader(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
             ShouldLogRequestHeaderFn = handler;
             return this;
         }
 
-        public Options ShouldLogRequestCookie(Func<ILogListener, WebRequestProperties, string, bool> handler)
+        public Options ShouldLogRequestCookie(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
             ShouldLogRequestCookieFn = handler;
             return this;
         }
 
-        public Options ShouldLogResponseBody(Func<ILogListener, WebRequestProperties, bool> handler)
+        public Options ShouldLogRequestQueryString(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
-            ShouldLogResponseBodyFn = handler;
+            ShouldLogRequestQueryStringFn = handler;
             return this;
         }
 
-        public Options ShouldLogResponseHeader(Func<ILogListener, WebRequestProperties, string, bool> handler)
+        public Options ShouldLogRequestFormData(Func<ILogListener, FlushLogArgs, string, bool> handler)
+        {
+            ShouldLogRequestFormDataFn = handler;
+            return this;
+        }
+
+        public Options ShouldLogRequestServerVariable(Func<ILogListener, FlushLogArgs, string, bool> handler)
+        {
+            ShouldLogRequestServerVariableFn = handler;
+            return this;
+        }
+
+        public Options ShouldLogRequestClaim(Func<ILogListener, FlushLogArgs, string, bool> handler)
+        {
+            ShouldLogRequestClaimFn = handler;
+            return this;
+        }
+
+        public Options ShouldLogRequestInputStream(Func<ILogListener, FlushLogArgs, bool> handler)
+        {
+            ShouldLogRequestInputStreamFn = handler;
+            return this;
+        }
+
+        public Options ShouldLogResponseHeader(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
             ShouldLogResponseHeaderFn = handler;
             return this;

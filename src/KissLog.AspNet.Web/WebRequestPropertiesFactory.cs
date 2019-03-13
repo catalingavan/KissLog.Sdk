@@ -49,18 +49,11 @@ namespace KissLog.AspNet.Web
             requestProperties.FormData = formData;
             requestProperties.ServerVariables = serverVariables;
             requestProperties.Cookies = cookies;
-
-            string requestContentType = headers.FirstOrDefault(p => string.Compare(p.Key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0).Value;
             string inputStream = null;
 
-            if (!string.IsNullOrEmpty(requestContentType))
+            if (InternalHelpers.ShouldLogInputStream(headers))
             {
-                requestContentType = requestContentType.ToLowerInvariant();
-
-                if (InternalHelpers.InputStreamContentTypes?.Any(p => requestContentType.Contains(p.ToLowerInvariant())) == true)
-                {
-                    inputStream = ReadInputStream(request);
-                }
+                inputStream = ReadInputStream(request);
             }
 
             requestProperties.InputStream = inputStream;

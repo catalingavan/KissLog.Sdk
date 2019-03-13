@@ -98,14 +98,23 @@ namespace KissLog
             FlushLogArgs args = JsonConvert.DeserializeObject<FlushLogArgs>(defaultArgsJson);
 
             string inputStream = null;
-            if (!string.IsNullOrEmpty(defaultArgs.WebRequestProperties.Request.InputStream) && KissLogConfiguration.Options.ApplyShouldLogRequestInputStream(defaultLogger, listener, defaultArgs.WebRequestProperties))
+            if (!string.IsNullOrEmpty(defaultArgs.WebRequestProperties.Request.InputStream))
             {
-                inputStream = defaultArgs.WebRequestProperties.Request.InputStream;
+                if(KissLogConfiguration.Options.ApplyShouldLogRequestInputStream(defaultLogger, listener, defaultArgs))
+                {
+                    inputStream = defaultArgs.WebRequestProperties.Request.InputStream;
+                }
             }
 
-            args.WebRequestProperties.Request.Headers = defaultArgs.WebRequestProperties.Request.Headers.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestHeader(listener, defaultArgs.WebRequestProperties, p.Key)).ToList();
-            args.WebRequestProperties.Request.Cookies = defaultArgs.WebRequestProperties.Request.Cookies.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestCookie(listener, defaultArgs.WebRequestProperties, p.Key)).ToList();
+            args.WebRequestProperties.Request.Headers = defaultArgs.WebRequestProperties.Request.Headers.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestHeader(listener, defaultArgs, p.Key)).ToList();
+            args.WebRequestProperties.Request.Cookies = defaultArgs.WebRequestProperties.Request.Cookies.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestCookie(listener, defaultArgs, p.Key)).ToList();
+            args.WebRequestProperties.Request.QueryString = defaultArgs.WebRequestProperties.Request.QueryString.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestQueryString(listener, defaultArgs, p.Key)).ToList();
+            args.WebRequestProperties.Request.FormData = defaultArgs.WebRequestProperties.Request.FormData.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestFormData(listener, defaultArgs, p.Key)).ToList();
+            args.WebRequestProperties.Request.ServerVariables = defaultArgs.WebRequestProperties.Request.ServerVariables.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestServerVariable(listener, defaultArgs, p.Key)).ToList();
+            args.WebRequestProperties.Request.Claims = defaultArgs.WebRequestProperties.Request.Claims.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestClaim(listener, defaultArgs, p.Key)).ToList();
             args.WebRequestProperties.Request.InputStream = inputStream;
+
+            args.WebRequestProperties.Response.Headers = defaultArgs.WebRequestProperties.Response.Headers.Where(p => KissLogConfiguration.Options.ApplyShouldLogResponseHeader(listener, defaultArgs, p.Key)).ToList();
 
             List<LogMessagesGroup> messages = new List<LogMessagesGroup>();
             foreach (var group in defaultArgs.MessagesGroups)

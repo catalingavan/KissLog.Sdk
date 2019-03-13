@@ -10,17 +10,37 @@ namespace KissLog.Internal
             return options.GetUserFn(request);
         }
 
-        public static bool ApplyShouldLogRequestHeader(this Options options, ILogListener listener, WebRequestProperties request, string name)
+        public static bool ApplyShouldLogRequestHeader(this Options options, ILogListener listener, FlushLogArgs args, string name)
         {
-            return options.ShouldLogRequestHeaderFn(listener, request, name);
+            return options.ShouldLogRequestHeaderFn(listener, args, name);
         }
 
-        public static bool ApplyShouldLogRequestCookie(this Options options, ILogListener listener, WebRequestProperties request, string cookieName)
+        public static bool ApplyShouldLogRequestCookie(this Options options, ILogListener listener, FlushLogArgs args, string cookieName)
         {
-            return options.ShouldLogRequestCookieFn(listener, request, cookieName);
+            return options.ShouldLogRequestCookieFn(listener, args, cookieName);
         }
 
-        public static bool ApplyShouldLogRequestInputStream(this Options options, ILogger logger, ILogListener listener, WebRequestProperties request)
+        public static bool ApplyShouldLogRequestQueryString(this Options options, ILogListener listener, FlushLogArgs args, string cookieName)
+        {
+            return options.ShouldLogRequestQueryStringFn(listener, args, cookieName);
+        }
+
+        public static bool ApplyShouldLogRequestFormData(this Options options, ILogListener listener, FlushLogArgs args, string cookieName)
+        {
+            return options.ShouldLogRequestFormDataFn(listener, args, cookieName);
+        }
+
+        public static bool ApplyShouldLogRequestServerVariable(this Options options, ILogListener listener, FlushLogArgs args, string cookieName)
+        {
+            return options.ShouldLogRequestServerVariableFn(listener, args, cookieName);
+        }
+
+        public static bool ApplyShouldLogRequestClaim(this Options options, ILogListener listener, FlushLogArgs args, string cookieName)
+        {
+            return options.ShouldLogRequestClaimFn(listener, args, cookieName);
+        }
+
+        public static bool ApplyShouldLogRequestInputStream(this Options options, ILogger logger, ILogListener listener, FlushLogArgs args)
         {
             if (logger is Logger theLogger)
             {
@@ -31,26 +51,12 @@ namespace KissLog.Internal
                 }
             }
 
-            return options.ShouldLogRequestInputStreamFn(listener, request);
+            return options.ShouldLogRequestInputStreamFn(listener, args);
         }
 
-        public static bool ApplyShouldLogResponseHeader(this Options options, ILogListener listener, WebRequestProperties request, string name)
+        public static bool ApplyShouldLogResponseHeader(this Options options, ILogListener listener, FlushLogArgs args, string name)
         {
-            return options.ShouldLogResponseHeaderFn(listener, request, name);
-        }
-
-        public static bool ApplyShouldLogResponseBody(this Options options, ILogger logger, ILogListener listener, WebRequestProperties request)
-        {
-            if (logger is Logger theLogger)
-            {
-                var logResponse = theLogger.GetProperty(InternalHelpers.LogResponseBodyProperty);
-                if (logResponse != null && logResponse is bool asBoolean)
-                {
-                    return asBoolean;
-                }
-            }
-
-            return options.ShouldLogResponseBodyFn(listener, request);
+            return options.ShouldLogResponseHeaderFn(listener, args, name);
         }
 
         public static string ApplyAppendExceptionDetails(this Options options, Exception ex)

@@ -22,8 +22,8 @@ namespace KissLog.AspNetCore
 
         public async Task Invoke(HttpContext context)
         {
-            ILogger logger = Logger.Factory.Get();
-            (logger as Logger)?.AddProperty(InternalHelpers.IsCreatedByHttpRequest, true);
+            Logger logger = Logger.Factory.Get() as Logger;
+            logger.AddProperty(InternalHelpers.IsCreatedByHttpRequest, true);
 
             WebRequestProperties webRequestProperties = WebRequestPropertiesFactory.Create(logger, context.Request);
 
@@ -71,13 +71,13 @@ namespace KissLog.AspNetCore
                 // (if he/she called the same method prior)
                 logger.SetHttpStatusCode(statusCode);
 
-                ResponseProperties responseProperties = ResponsePropertiesFactory.Create(context.Response);
-                responseProperties.HttpStatusCode = statusCode;
-                webRequestProperties.Response = responseProperties;
+                ResponseProperties response = ResponsePropertiesFactory.Create(context.Response);
+                response.HttpStatusCode = statusCode;
+                webRequestProperties.Response = response;
 
-                if (responseBodyFile != null && KissLogConfiguration.Options.ApplyShouldLogResponseBody(logger, webRequestProperties))
+                if(responseBodyFile != null && InternalHelpers.ShouldLogResponseBody(logger, response))
                 {
-                    string responseFileName = InternalHelpers.ResponseFileName(webRequestProperties.Response.Headers);
+                    string responseFileName = InternalHelpers.ResponseFileName(response.Headers);
                     logger.LogFile(responseBodyFile.FileName, responseFileName);
                 }
 

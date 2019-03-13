@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using KissLog.Web;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ namespace KissLog.Internal
     public static class InternalHelpers
     {
         public static readonly string[] InputStreamContentTypes = { "text/plain", "application/json", "application/xml", "text/xml", "text/html" };
+        public static readonly string[] LogResponseBodyContentTypes = { "application/json" };
 
         private const int RequestPropertyKeyLength = 100;
         private const int RequestPropertyValueLength = 1000;
@@ -20,6 +22,31 @@ namespace KissLog.Internal
         public const string LogResponseBodyProperty = "X-KissLog-LogResponseBody";
         public const string IsCreatedByHttpRequest = "X-KissLog-IsCreatedByHttpRequest";
         public const string ObfuscatedPlaceholder = "***obfuscated***";
+
+        public static bool ShouldLogInputStream(IEnumerable<KeyValuePair<string, string>> requestHeaders)
+        {
+            string contentType = requestHeaders.FirstOrDefault(p => string.Compare(p.Key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0).Value;
+            if (string.IsNullOrEmpty(contentType))
+                return false;
+
+            contentType = contentType.ToLowerInvariant();
+            return InputStreamContentTypes.Any(p => contentType.Contains(p.ToLowerInvariant()));
+        }
+        public static bool ShouldLogResponseBody(Logger logger, ResponseProperties response)
+        {
+            var logResponse = logger.GetProperty(LogResponseBodyProperty);
+            if (logResponse != null && logResponse is bool asBoolean)
+            {
+                return asBoolean;
+            }
+
+            string contentType = response.Headers.FirstOrDefault(p => string.Compare(p.Key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0).Value;
+            if (string.IsNullOrEmpty(contentType))
+                return false;
+
+            contentType = contentType.ToLowerInvariant();
+            return LogResponseBodyContentTypes.Any(p => contentType.Contains(p.ToLowerInvariant()));
+        }
 
         public static KeyValuePair<string, string> TruncateRequestPropertyValue(string key, string value)
         {

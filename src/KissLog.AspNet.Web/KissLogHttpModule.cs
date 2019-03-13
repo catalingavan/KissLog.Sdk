@@ -127,7 +127,7 @@ namespace KissLog.AspNet.Web
         {
             HttpContext ctx = HttpContext.Current;
 
-            ILogger logger = Logger.Factory.Get();
+            Logger logger = Logger.Factory.Get() as Logger;
             if (logger == null)
                 return;
 
@@ -143,10 +143,10 @@ namespace KissLog.AspNet.Web
             {
                 if (sniffer != null)
                 {
-                    string response = sniffer.GetContent();
-                    if (string.IsNullOrEmpty(response) == false)
+                    string responseContent = sniffer.GetContent();
+                    if (string.IsNullOrEmpty(responseContent) == false)
                     {
-                        logger.Log(LogLevel.Error, response);
+                        logger.Log(LogLevel.Error, responseContent);
                     }
                 }
             }
@@ -154,13 +154,13 @@ namespace KissLog.AspNet.Web
             WebRequestProperties webRequestProperties = (WebRequestProperties)HttpContext.Current.Items[Constants.HttpRequestPropertiesKey];
             webRequestProperties.EndDateTime = DateTime.UtcNow;
 
-            ResponseProperties responseProperties = new ResponseProperties();
-            responseProperties.HttpStatusCode = (HttpStatusCode)ctx.Response.StatusCode;
-            responseProperties.Headers = DataParser.ToDictionary(ctx.Response.Headers);
+            ResponseProperties response = new ResponseProperties();
+            response.HttpStatusCode = (HttpStatusCode)ctx.Response.StatusCode;
+            response.Headers = DataParser.ToDictionary(ctx.Response.Headers);
 
-            webRequestProperties.Response = responseProperties;
+            webRequestProperties.Response = response;
 
-            if (sniffer != null && KissLogConfiguration.Options.ApplyShouldLogResponseBody(logger, webRequestProperties))
+            if (sniffer != null && InternalHelpers.ShouldLogResponseBody(logger, response))
             {
                 string responseFileName = InternalHelpers.ResponseFileName(webRequestProperties.Response.Headers);
 
@@ -180,7 +180,7 @@ namespace KissLog.AspNet.Web
                 }
             }
 
-            ((Logger) logger).SetWebRequestProperties(webRequestProperties);
+            logger.SetWebRequestProperties(webRequestProperties);
 
             IEnumerable<ILogger> loggers = Logger.Factory.GetAll();
 
@@ -191,7 +191,7 @@ namespace KissLog.AspNet.Web
         {
 
         }
-
+        
         static KissLogHttpModule()
         {
             SetFactory();
