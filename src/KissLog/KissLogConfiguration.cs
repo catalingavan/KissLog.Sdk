@@ -6,7 +6,7 @@ namespace KissLog
 {
     public static class KissLogConfiguration
     {
-        #region Obsolete >= 08-04-2019
+        #region Obsolete >= 14-04-2019
 
         [Obsolete("Use Options.GetUser() handler", true)]
         public static Func<RequestProperties, string> GetLoggedInUserName = (RequestProperties request) => null;

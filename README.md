@@ -12,7 +12,7 @@ Some of the main features of KissLog are:
 
 &#128313; Provides ready-to-use [KissLog.net](https://kisslog.net) cloud or on-premises integration
 
-Please check the [Wiki page](https://github.com/catalingavan/KissLog-net/wiki) for a complete documentation.
+Please check the [Wiki page](https://github.com/KissLog-net/KissLog.Sdk/wiki) for a complete documentation.
 
 <br>
 
@@ -30,9 +30,9 @@ Please check the [Wiki page](https://github.com/catalingavan/KissLog-net/wiki) f
 
 ## Framework support
 
-- [.NET Core](https://github.com/catalingavan/KissLog-net/wiki/Install-Net-Core)
-- [AspNet WebApi](https://github.com/catalingavan/KissLog-net/wiki/Install-AspNet-WebApi)
-- [AspNet MVC](https://github.com/catalingavan/KissLog-net/wiki/Install-AspNet-Mvc)
+- [.NET Core](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-Net-Core)
+- [AspNet WebApi](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-AspNet-WebApi)
+- [AspNet MVC](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-AspNet-Mvc)
 
 ## Logging interface
 
@@ -74,7 +74,7 @@ KissLog comes with built-in log targets, saving the logs on:
 - Local text files
 - KissLog cloud / on-premises
 
-Additionally, developers can create [custom output targets](https://github.com/catalingavan/KissLog-net/wiki/Custom-output) for saving the logs.
+Additionally, developers can create [custom output targets](https://github.com/KissLog-net/KissLog.Sdk/wiki/Custom-output) for saving the logs.
 
 ## Focused for developers
 
@@ -89,3 +89,23 @@ With this in mind, KissLog is built on the following principles:
 * Transparent configuration (we try to avoid confusing xml settings)
 
 * It is highly customisable, being adaptive to application changes and specific scenarios
+
+## User interface
+
+Captured errors, logs and other metrics can be visualised on [KissLog.net](https://kisslog.net) cloud or on-premises application.
+
+* Website analytics
+
+![Website analytics](https://kisslog.net/Content/images/app-screens/website-analytics-framed.png)
+
+* Centralized logging
+
+![Centralized logging](https://kisslog.net/Content/images/app-screens/centralized-logging-framed.png)
+
+* Request details
+
+![Logs details](https://kisslog.net/Content/images/app-screens/logs-details-framed.png)
+
+* Slack integration
+
+![Logs details](https://kisslog.net/Content/images/app-screens/slack-integration-framed.png)
