@@ -12,9 +12,10 @@
     <RepositoryUrl>https://github.com/catalingavan/KissLog-net</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>NLog, KissLog</PackageTags>
-    <PackageReleaseNotes>Initial commit.</PackageReleaseNotes>
+    <PackageReleaseNotes>Adapted to KissLog improvements</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.0</Version>
+    <Version>2.0.0</Version>
+    <PackageId>KissLog.Adapters.NLog</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

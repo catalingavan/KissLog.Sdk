@@ -12,9 +12,11 @@
     <RepositoryUrl>https://github.com/catalingavan/KissLog-net</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>log4net, KissLog</PackageTags>
-    <PackageReleaseNotes>Small improvements.</PackageReleaseNotes>
+    <PackageReleaseNotes>Adapted to KissLog improvements</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.1</Version>
+    <Version>2.0.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
