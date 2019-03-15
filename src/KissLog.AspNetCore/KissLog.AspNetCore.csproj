@@ -14,9 +14,9 @@
     <Version>2.0.0</Version>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <FileVersion>2.0.0.0</FileVersion>
-    <PackageReleaseNotes>Adapted to KissLog improvements</PackageReleaseNotes>
+    <PackageReleaseNotes>Adapted to KissLog 3.0.0 improvements</PackageReleaseNotes>
     <PackageId>KissLog.AspNetCore</PackageId>
-    <RepositoryUrl>https://github.com/catalingavan/KissLog-net</RepositoryUrl>
+    <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
