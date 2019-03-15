@@ -10,12 +10,13 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using KissLog.Internal;
 
 namespace KissLog.AspNetCore
 {
     internal static class WebRequestPropertiesFactory
     {
-        public static WebRequestProperties Create(ILogger logger, HttpRequest request)
+        public static WebRequestProperties Create(HttpRequest request)
         {
             WebRequestProperties result = new WebRequestProperties();
 
@@ -39,7 +40,10 @@ namespace KissLog.AspNetCore
                     result.SessionId = request.HttpContext.Session.Id;
                 }
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
 
             result.StartDateTime = DateTime.UtcNow;
             result.UserAgent = request.Headers[HeaderNames.UserAgent].ToString();
@@ -57,6 +61,10 @@ namespace KissLog.AspNetCore
             result.RemoteAddress = request.HttpContext.Connection?.RemoteIpAddress?.ToString();
             result.HttpMethod = request.Method;
 
+            string httpReferer = null;
+            string requestContentType = null;
+            string inputStream = null;
+
             foreach (string key in request.Headers.Keys)
             {
                 if(string.Compare(key, "Cookie", StringComparison.OrdinalIgnoreCase) == 0)
@@ -67,20 +75,20 @@ namespace KissLog.AspNetCore
 
                 string value = values.ToString();
 
-                requestProperties.Headers.Add(InternalHelpers.TruncateRequestPropertyValue(key, value));
+                requestProperties.Headers.Add(new KeyValuePair<string, string>(key, value));
 
                 if (string.Compare(key, "Referer", StringComparison.OrdinalIgnoreCase) == 0)
-                    result.HttpReferer = value;
+                    httpReferer = value;
+
+                if (string.Compare(key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0)
+                    requestContentType = value;
             }
 
             foreach (string key in request.Cookies.Keys)
             {
-                if (KissLogConfiguration.ShouldLogCookie(key) == false)
-                    continue;
-
                 string value = request.Cookies[key];
 
-                requestProperties.Cookies.Add(InternalHelpers.TruncateRequestPropertyValue(key, value));
+                requestProperties.Cookies.Add(new KeyValuePair<string, string>(key, value));
             }
 
             foreach (string key in request.Query.Keys)
@@ -97,19 +105,17 @@ namespace KissLog.AspNetCore
                 foreach (string key in request.Form.Keys)
                 {
                     string value = string.Join("; ", request.Form[key]);
-
-                    requestProperties.FormData.Add(InternalHelpers.TruncateRequestPropertyValue(key, value));
+                    requestProperties.FormData.Add(new KeyValuePair<string, string>(key, value));
                 }
             }
 
-            if (ShouldLogRequestInputStream(logger, result))
+            if (InternalHelpers.ShouldLogInputStream(requestProperties.Headers))
             {
-                string inputStream = ReadInputStream(request);
-                if (string.IsNullOrEmpty(inputStream) == false)
-                {
-                    requestProperties.InputStream = InternalHelpers.TruncateInputStream(inputStream);
-                }
+                inputStream = ReadInputStream(request);
             }
+
+            result.HttpReferer = httpReferer;
+            result.Request.InputStream = inputStream;
 
             return result;
         }
@@ -131,17 +137,10 @@ namespace KissLog.AspNetCore
             List<KeyValuePair<string, string>> claims = ToDictionary(identity);
             properties.Request.Claims = claims;
 
-            string userName = KissLogConfiguration.GetLoggedInUserName(properties.Request);
-            string emailAddress = KissLogConfiguration.GetLoggedInUserEmailAddress(properties.Request);
-            string avatar = KissLogConfiguration.GetLoggedInUserAvatar(properties.Request);
-
             properties.IsAuthenticated = true;
-            properties.User = new UserDetails
-            {
-                Name = userName,
-                EmailAddress = emailAddress,
-                Avatar = avatar
-            };
+
+            UserDetails user = KissLogConfiguration.Options.ApplyGetUser(properties.Request);
+            properties.User = user;
         }
 
         private static string GetMachineName()
@@ -156,23 +155,11 @@ namespace KissLog.AspNetCore
                     System.Net.Dns.GetHostName();
             }
             catch
-            { }
-
-            return name;
-        }
-
-        private static bool ShouldLogRequestInputStream(ILogger logger, WebRequestProperties webRequestProperties)
-        {
-            if (logger is Logger theLogger)
             {
-                var logResponse = theLogger.GetProperty(InternalHelpers.LogRequestInputStreamProperty);
-                if (logResponse != null && logResponse is bool asBoolean)
-                {
-                    return asBoolean;
-                }
+                // ignored
             }
 
-            return KissLogConfiguration.ShouldLogRequestInputStream(webRequestProperties);
+            return name;
         }
 
         private static string ReadInputStream(HttpRequest request)
@@ -198,7 +185,7 @@ namespace KissLog.AspNetCore
             }
             catch
             {
-
+                // ignored
             }
 
             return content;

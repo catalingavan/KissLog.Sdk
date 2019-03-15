@@ -14,7 +14,7 @@ namespace KissLog.WindowsApplication
 
             if(logger is Logger theLogger)
             {
-                WebRequestProperties webRequestProperties = theLogger.WebRequestProperties;
+                WebRequestProperties webRequestProperties = theLogger.DataContainer.WebRequestProperties;
 
                 if(webRequestProperties.Response == null)
                 {
@@ -24,14 +24,12 @@ namespace KissLog.WindowsApplication
                     };
                 }
 
-                if(theLogger.CapturedExceptions.Any())
+                if(theLogger.DataContainer.Exceptions.Any())
                 {
                     webRequestProperties.Response.HttpStatusCode = HttpStatusCode.InternalServerError;
                 }
 
                 webRequestProperties.EndDateTime = DateTime.UtcNow;
-
-                theLogger.SetWebRequestProperties(webRequestProperties);
             }
 
             Logger.NotifyListeners(logger);

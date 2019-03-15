@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using System.Collections.Generic;
+using System.Net;
 
 namespace KissLog.AspNetCore
 {
@@ -13,6 +14,8 @@ namespace KissLog.AspNetCore
 
             if (response == null)
                 return result;
+
+            result.HttpStatusCode = (HttpStatusCode)response.StatusCode;
 
             foreach (string key in response.Headers.Keys)
             {

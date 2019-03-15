@@ -1,4 +1,5 @@
-﻿using KissLog.Web;
+﻿using KissLog.Internal;
+using KissLog.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -21,10 +22,13 @@ namespace KissLog.AspNetCore
 
         public async Task Invoke(HttpContext context)
         {
-            ILogger logger = Logger.Factory.Get();
-            (logger as Logger)?.AddProperty(InternalHelpers.IsCreatedByHttpRequest, true);
+            Logger logger = Logger.Factory.Get() as Logger;
+            if(logger == null)
+                return;
 
-            WebRequestProperties webRequestProperties = WebRequestPropertiesFactory.Create(logger, context.Request);
+            logger.DataContainer.AddProperty(InternalHelpers.IsCreatedByHttpRequest, true);
+
+            WebRequestProperties properties = WebRequestPropertiesFactory.Create(context.Request);
 
             Exception ex = null;
             Stream originalBodyStream = context.Response.Body;
@@ -56,7 +60,7 @@ namespace KissLog.AspNetCore
             {
                 context.Response.Body = originalBodyStream;
 
-                webRequestProperties.EndDateTime = DateTime.UtcNow;
+                properties.EndDateTime = DateTime.UtcNow;
 
                 HttpStatusCode statusCode = (HttpStatusCode)context.Response.StatusCode;
 
@@ -66,19 +70,22 @@ namespace KissLog.AspNetCore
                     logger.Log(LogLevel.Error, ex);
                 }
 
-                logger.SetHttpStatusCode(statusCode);
-
-                ResponseProperties responseProperties = ResponsePropertiesFactory.Create(context.Response);
-                responseProperties.HttpStatusCode = statusCode;
-                webRequestProperties.Response = responseProperties;
-
-                if (responseBodyFile != null && ShouldLogResponseBody(logger, webRequestProperties))
+                if (logger.DataContainer.ExplicitHttpStatusCode.HasValue)
                 {
-                    string responseFileName = InternalHelpers.ResponseFileName(webRequestProperties.Response.Headers);
+                    statusCode = logger.DataContainer.ExplicitHttpStatusCode.Value;
+                }
+
+                ResponseProperties response = ResponsePropertiesFactory.Create(context.Response);
+                response.HttpStatusCode = statusCode;
+                properties.Response = response;
+
+                if(responseBodyFile != null && InternalHelpers.ShouldLogResponseBody(logger, response))
+                {
+                    string responseFileName = InternalHelpers.ResponseFileName(response.Headers);
                     logger.LogFile(responseBodyFile.FileName, responseFileName);
                 }
 
-                ((Logger)logger).SetWebRequestProperties(webRequestProperties);
+                logger.DataContainer.WebRequestProperties = properties;
 
                 responseBodyFile?.Dispose();
 
@@ -103,20 +110,6 @@ namespace KissLog.AspNetCore
             {
                 response.Body.Seek(0, SeekOrigin.Begin);
             }
-        }
-
-        private bool ShouldLogResponseBody(ILogger logger, WebRequestProperties webRequestProperties)
-        {
-            if (logger is Logger theLogger)
-            {
-                var logResponse = theLogger.GetProperty(InternalHelpers.LogResponseBodyProperty);
-                if (logResponse != null && logResponse is bool asBoolean)
-                {
-                    return asBoolean;
-                }
-            }
-
-            return KissLogConfiguration.ShouldLogResponseBody(webRequestProperties);
         }
 
         private bool CanWriteToResponseBody(HttpResponse response)

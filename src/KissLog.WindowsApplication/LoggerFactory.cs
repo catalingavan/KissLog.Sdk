@@ -64,7 +64,7 @@ namespace KissLog.WindowsApplication
             if (string.IsNullOrEmpty(serviceName))
                 serviceName = nameof(serviceName);
 
-            var webRequestProperties = new WebRequestProperties
+            var properties = new WebRequestProperties
             {
                 Url = new Uri(BuildUri(serviceName)),
                 HttpMethod = DefaultHttpMethod,
@@ -77,7 +77,7 @@ namespace KissLog.WindowsApplication
             };
 
             Logger logger = new Logger();
-            logger.SetWebRequestProperties(webRequestProperties);
+            logger.DataContainer.WebRequestProperties = properties;
 
             return logger;
         }

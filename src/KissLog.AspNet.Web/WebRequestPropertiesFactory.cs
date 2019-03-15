@@ -1,4 +1,5 @@
-﻿using KissLog.Web;
+﻿using KissLog.Internal;
+using KissLog.Web;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +12,7 @@ namespace KissLog.AspNet.Web
     {
         private static readonly string[] ServerVariablesKeysToIgnore = {"all_http", "all_raw"};
 
-        public static WebRequestProperties Create(ILogger logger, HttpRequest request)
+        public static WebRequestProperties Create(HttpRequest request)
         {
             WebRequestProperties result = new WebRequestProperties();
 
@@ -33,31 +34,25 @@ namespace KissLog.AspNet.Web
             headers = FilterHeaders(headers);
 
             var queryString = DataParser.ToDictionary(request.Unvalidated.QueryString);
-            queryString = queryString.Select(p => InternalHelpers.TruncateRequestPropertyValue(p.Key, p.Value)).ToList();
-
             var formData = DataParser.ToDictionary(request.Unvalidated.Form);
-            formData = formData.Select(p => InternalHelpers.TruncateRequestPropertyValue(p.Key, p.Value)).ToList();
-
             var serverVariables = DataParser.ToDictionary(request.ServerVariables);
             serverVariables = FilterServerVariables(serverVariables);
 
             var cookies = DataParser.ToDictionary(request.Unvalidated.Cookies);
-            cookies = FilterCookies(cookies);
 
             requestProperties.Headers = headers;
             requestProperties.QueryString = queryString;
             requestProperties.FormData = formData;
             requestProperties.ServerVariables = serverVariables;
             requestProperties.Cookies = cookies;
+            string inputStream = null;
 
-            if (ShouldLogRequestInputStream(logger, result))
+            if (InternalHelpers.ShouldLogInputStream(headers))
             {
-                string inputStream = ReadInputStream(request);
-                if (string.IsNullOrEmpty(inputStream) == false)
-                {
-                    requestProperties.InputStream = InternalHelpers.TruncateInputStream(inputStream);
-                }
+                inputStream = ReadInputStream(request);
             }
+
+            requestProperties.InputStream = inputStream;
 
             return result;
         }
@@ -84,20 +79,6 @@ namespace KissLog.AspNet.Web
             }
 
             return machineName;
-        }
-
-        private static bool ShouldLogRequestInputStream(ILogger logger, WebRequestProperties webRequestProperties)
-        {
-            if (logger is Logger theLogger)
-            {
-                var logResponse = theLogger.GetProperty(InternalHelpers.LogRequestInputStreamProperty);
-                if (logResponse != null && logResponse is bool asBoolean)
-                {
-                    return asBoolean;
-                }
-            }
-
-            return KissLogConfiguration.ShouldLogRequestInputStream(webRequestProperties);
         }
 
         private static string ReadInputStream(HttpRequest request)
@@ -134,10 +115,10 @@ namespace KissLog.AspNet.Web
                 if (string.IsNullOrEmpty(item.Key))
                     continue;
 
-                if(string.Compare(item.Key, "Cookie", StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(item.Key, "Cookie", StringComparison.OrdinalIgnoreCase) == 0)
                     continue;
 
-                result.Add(InternalHelpers.TruncateRequestPropertyValue(item.Key, item.Value));
+                result.Add(new KeyValuePair<string, string>(item.Key, item.Value));
             }
 
             return result;
@@ -152,36 +133,18 @@ namespace KissLog.AspNet.Web
 
             foreach (var item in values)
             {
-                if(string.IsNullOrEmpty(item.Key))
+                if (string.IsNullOrEmpty(item.Key))
                     continue;
 
                 string key = item.Key.ToLower();
 
-                if(ServerVariablesKeysToIgnore.Contains(key))
+                if (ServerVariablesKeysToIgnore.Contains(key))
                     continue;
 
-                if(key.StartsWith("http_"))
+                if (key.StartsWith("http_"))
                     continue;
 
-                result.Add(InternalHelpers.TruncateRequestPropertyValue(item.Key, item.Value));
-            }
-
-            return result;
-        }
-
-        private static List<KeyValuePair<string, string>> FilterCookies(List<KeyValuePair<string, string>> values)
-        {
-            if (values == null || !values.Any())
-                return values;
-
-            List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
-
-            foreach (var item in values)
-            {
-                if(KissLogConfiguration.ShouldLogCookie(item.Key) == false)
-                    continue;
-
-                result.Add(InternalHelpers.TruncateRequestPropertyValue(item.Key, item.Value));
+                result.Add(new KeyValuePair<string, string>(item.Key, item.Value));
             }
 
             return result;

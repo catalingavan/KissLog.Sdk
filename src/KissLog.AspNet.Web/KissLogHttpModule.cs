@@ -1,9 +1,9 @@
-﻿using KissLog.Web;
+﻿using KissLog.Internal;
+using KissLog.Web;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Security.Claims;
 using System.Web;
@@ -57,8 +57,8 @@ namespace KissLog.AspNet.Web
         {
             HttpContext ctx = HttpContext.Current;
 
-            WebRequestProperties requestProperties = (WebRequestProperties)ctx.Items[Constants.HttpRequestPropertiesKey];
-            if(requestProperties == null)
+            WebRequestProperties properties = (WebRequestProperties)ctx.Items[Constants.HttpRequestPropertiesKey];
+            if(properties == null)
                 return;
 
             if((ctx.User is ClaimsPrincipal) == false)
@@ -71,30 +71,26 @@ namespace KissLog.AspNet.Web
             if(claimsPrincipal.Identity.IsAuthenticated == false)
                 return;
 
-            requestProperties.IsAuthenticated = true;
-            requestProperties.User = new UserDetails
+            properties.IsAuthenticated = true;
+            properties.User = new UserDetails
             {
                 Name = claimsPrincipal.Identity.Name,
             };
 
             ClaimsIdentity claimsIdentity = claimsPrincipal?.Identity as ClaimsIdentity;
+            if(claimsIdentity == null)
+                return;
 
-            if (claimsIdentity != null)
+            List<KeyValuePair<string, string>> claims = DataParser.ToDictionary(claimsIdentity);
+            properties.Request.Claims = claims;
+
+            UserDetails user = KissLogConfiguration.Options.ApplyGetUser(properties.Request);
+            if (user != null)
             {
-                List<KeyValuePair<string, string>> claims = DataParser.ToDictionary(claimsIdentity);
-                requestProperties.Request.Claims = claims;
-
-                string userName = KissLogConfiguration.GetLoggedInUserName(requestProperties.Request);
-                string emailAddress = KissLogConfiguration.GetLoggedInUserEmailAddress(requestProperties.Request);
-                string avatar = KissLogConfiguration.GetLoggedInUserAvatar(requestProperties.Request);
-
-                requestProperties.User = new UserDetails
-                {
-                    Name = userName ?? claimsIdentity.Name,
-                    EmailAddress = emailAddress,
-                    Avatar = avatar
-                };
+                user.Name = user.Name ?? claimsIdentity.Name;
             }
+
+            properties.User = user;
         }
 
         private void BeginRequest(object sender, EventArgs e)
@@ -102,19 +98,20 @@ namespace KissLog.AspNet.Web
             HttpContext ctx = HttpContext.Current;
             var request = ctx.Request;
 
-            ILogger logger = Logger.Factory.Get();
-            (logger as Logger)?.AddProperty(InternalHelpers.IsCreatedByHttpRequest, true);
+            ctx.Items[Constants.HttpRequestPropertiesKey] = WebRequestPropertiesFactory.Create(request);
 
-            WebRequestProperties requestProperties = WebRequestPropertiesFactory.Create(logger, request);
-            ctx.Items[Constants.HttpRequestPropertiesKey] = requestProperties;
+            Logger logger = Logger.Factory.Get() as Logger;
+            if(logger == null)
+                return;
+
+            logger.DataContainer.AddProperty(InternalHelpers.IsCreatedByHttpRequest, true);
         }
 
         private void OnError(object sender, EventArgs eventArgs)
         {
             HttpContext ctx = HttpContext.Current;
 
-            ILogger logger = Logger.Factory.Get();
-
+            Logger logger = Logger.Factory.Get() as Logger;
             if (logger == null)
                 return;
 
@@ -129,7 +126,7 @@ namespace KissLog.AspNet.Web
         {
             HttpContext ctx = HttpContext.Current;
 
-            ILogger logger = Logger.Factory.Get();
+            Logger logger = Logger.Factory.Get() as Logger;
             if (logger == null)
                 return;
 
@@ -145,26 +142,28 @@ namespace KissLog.AspNet.Web
             {
                 if (sniffer != null)
                 {
-                    string response = sniffer.GetContent();
-                    if (string.IsNullOrEmpty(response) == false)
+                    string responseContent = sniffer.GetContent();
+                    if (string.IsNullOrEmpty(responseContent) == false)
                     {
-                        logger.Log(LogLevel.Error, response);
+                        logger.Log(LogLevel.Error, responseContent);
                     }
                 }
             }
 
-            WebRequestProperties webRequestProperties = (WebRequestProperties)HttpContext.Current.Items[Constants.HttpRequestPropertiesKey];
-            webRequestProperties.EndDateTime = DateTime.UtcNow;
+            WebRequestProperties properties = (WebRequestProperties)HttpContext.Current.Items[Constants.HttpRequestPropertiesKey];
+            properties.EndDateTime = DateTime.UtcNow;
 
-            ResponseProperties responseProperties = new ResponseProperties();
-            responseProperties.HttpStatusCode = (HttpStatusCode)ctx.Response.StatusCode;
-            responseProperties.Headers = DataParser.ToDictionary(ctx.Response.Headers);
+            ResponseProperties response = WebResponsePropertiesFactory.Create(ctx.Response);
+            properties.Response = response;
 
-            webRequestProperties.Response = responseProperties;
-
-            if (sniffer != null && ShouldLogResponseBody(logger, webRequestProperties))
+            if (logger.DataContainer.ExplicitHttpStatusCode.HasValue)
             {
-                string responseFileName = InternalHelpers.ResponseFileName(webRequestProperties.Response.Headers);
+                response.HttpStatusCode = logger.DataContainer.ExplicitHttpStatusCode.Value;
+            }
+
+            if (sniffer != null && InternalHelpers.ShouldLogResponseBody(logger, response))
+            {
+                string responseFileName = InternalHelpers.ResponseFileName(properties.Response.Headers);
 
                 using (sniffer.MirrorStream)
                 {
@@ -182,7 +181,7 @@ namespace KissLog.AspNet.Web
                 }
             }
 
-            ((Logger) logger).SetWebRequestProperties(webRequestProperties);
+            logger.DataContainer.WebRequestProperties = properties;
 
             IEnumerable<ILogger> loggers = Logger.Factory.GetAll();
 
@@ -193,21 +192,7 @@ namespace KissLog.AspNet.Web
         {
 
         }
-
-        private bool ShouldLogResponseBody(ILogger logger, WebRequestProperties webRequestProperties)
-        {
-            if (logger is Logger theLogger)
-            {
-                var logResponse = theLogger.GetProperty(InternalHelpers.LogResponseBodyProperty);
-                if (logResponse != null && logResponse is bool asBoolean)
-                {
-                    return asBoolean;
-                }
-            }
-
-            return KissLogConfiguration.ShouldLogResponseBody(webRequestProperties);
-        }
-
+        
         static KissLogHttpModule()
         {
             SetFactory();
@@ -218,7 +203,10 @@ namespace KissLog.AspNet.Web
             IKissLoggerFactory loggerFactory = new AspNetWebLoggerFactory();
 
             PropertyInfo factoryProperty = typeof(Logger).GetProperty("Factory");
-            factoryProperty.SetValue(Logger.Factory, loggerFactory, null);
+            if (factoryProperty != null)
+            {
+                factoryProperty.SetValue(Logger.Factory, loggerFactory, null);
+            }
         }
     }
 }

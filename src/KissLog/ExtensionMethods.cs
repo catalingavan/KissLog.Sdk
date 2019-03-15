@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KissLog.Internal;
+using System;
 using System.Net;
 
 namespace KissLog
@@ -1157,14 +1158,12 @@ namespace KissLog
     {
         /// <summary>
         /// <para>Sets the KissLog HttpStatusCode regardless of the Response returned by the server</para>
-        /// <para>This is useful when you capture an error, log it, but return 200 to the client.</para>
-        /// <para>Setting httpStatusCode to >= 400 will make the request be identified as error instead of success</para>
         /// </summary>
         public static void SetHttpStatusCode(this ILogger logger, HttpStatusCode httpStatusCode)
         {
             if (logger is Logger theLogger)
             {
-                theLogger.SetHttpStatusCode(httpStatusCode);
+                theLogger.DataContainer.ExplicitHttpStatusCode = httpStatusCode;
             }
         }
 
@@ -1175,7 +1174,7 @@ namespace KissLog
         {
             if (logger is Logger theLogger)
             {
-                theLogger.LoggerFiles.LogFile(sourceFilePath, fileName);
+                theLogger.DataContainer.LoggerFiles.LogFile(sourceFilePath, fileName);
             }
         }
 
@@ -1186,7 +1185,7 @@ namespace KissLog
         {
             if (logger is Logger theLogger)
             {
-                theLogger.LoggerFiles.LogAsFile(content, fileName);
+                theLogger.DataContainer.LoggerFiles.LogAsFile(content, fileName);
             }
         }
 
@@ -1197,18 +1196,7 @@ namespace KissLog
         {
             if (logger is Logger theLogger)
             {
-                theLogger.LoggerFiles.LogAsFile(content, fileName);
-            }
-        }
-
-        /// <summary>
-        /// <para>Explicitly instruct logger to capture the Request.InputStream property</para>
-        /// </summary>
-        public static void LogRequestInputStream(this ILogger logger, bool value = true)
-        {
-            if (logger is Logger theLogger)
-            {
-                theLogger.AddProperty(InternalHelpers.LogRequestInputStreamProperty, value);
+                theLogger.DataContainer.LoggerFiles.LogAsFile(content, fileName);
             }
         }
 
@@ -1219,7 +1207,7 @@ namespace KissLog
         {
             if (logger is Logger theLogger)
             {
-                theLogger.AddProperty(InternalHelpers.LogResponseBodyProperty, value);
+                theLogger.DataContainer.AddProperty(InternalHelpers.LogResponseBodyProperty, value);
             }
         }
 
@@ -1230,7 +1218,7 @@ namespace KissLog
         {
             if (logger is Logger theLogger)
             {
-                return theLogger.GetProperty(InternalHelpers.IsCreatedByHttpRequest) != null;
+                return theLogger.DataContainer.GetProperty(InternalHelpers.IsCreatedByHttpRequest) != null;
             }
 
             return false;
