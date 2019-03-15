@@ -4,35 +4,65 @@ KissLog represents a powerful logging and monitoring solution for .NET applicati
 
 Some of the main features of KissLog are:
 
-&#128313; Centralized Logging, Diagnostics and Error Reporting
+&#128313; Centralized logging, diagnostics and error reporting
 
 &#128313; Automatically captures all the exceptions
 
-&#128313; Provides a lightweight, yet powerfull logging interface for developers
+&#128313; Provides a lightweight, powerfull logging interface for developers
 
 &#128313; Provides ready-to-use [KissLog.net](https://kisslog.net) cloud or on-premises integration
 
-Please check the [Wiki page](https://github.com/KissLog-net/KissLog.Sdk/wiki) for a complete documentation.
+Check the [Wiki page](https://github.com/KissLog-net/KissLog.Sdk/wiki) for a complete documentation.
 
-<br>
+[Change log](https://github.com/KissLog-net/KissLog.Sdk/wiki/ChangeLog)
 
 **Quick guide**
 
 * [Framework support](#Framework-support)
+* [Basic usage](#Basic-usage)
 * [Logging interface](#Logging-interface)
 * [Logging files](#Logging-files)
 * [Error reporting](#Error-reporting)
 * [Requests-tracking](#Requests-tracking)
 * [Logs target](#Logs-target)
 * [Focused for developers](#Focused-for-developers)
+* [User interface](#User-interface)
 
-<br>
+---
 
 ## Framework support
 
 - [.NET Core](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-Net-Core)
 - [AspNet WebApi](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-AspNet-WebApi)
 - [AspNet MVC](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-AspNet-Mvc)
+
+## Basic usage
+
+```csharp
+public async Task<bool> IsEmailAddressValidAsync(string emailAddress)
+{
+    // acquire logger instance
+    ILogger logger = Logger.Factory.Get();
+
+    logger.Info(new Args("IsEmailAddressValidAsync begin", emailAddress));
+
+    ExternalUser externalUser = await _externalProviderManager.GetUserByEmailAddressAsync(emailAddress);
+    if (externalUser != null)
+    {
+        logger.Error("User exists in External Provider");
+        return false;
+    }
+
+    User user = _usersRepository.GetByEmailAddress(emailAddress, false);
+    if (user != null)
+    {
+        logger.Error("User exists in database");
+        return true;
+    }
+
+    return true;
+}
+```
 
 ## Logging interface
 
@@ -52,11 +82,17 @@ KissLog exposes all the log levels used by [.NET Framework](https://docs.microso
 KissLog exposes methods which allows developers to save and log raw data as files.
 
 ```csharp
-byte[] archive = File.ReadAllBytes(@"C:\Files\bootstrap.zip");
-_logger.LogAsFile(archive, "Bootstrap.zip");
+public void Foo()
+{
+    // acquire logger instance
+    ILogger logger = Logger.Factory.Get();
 
-string path = @"C:\Files\Invoice-16-11-2017.pdf";
-_logger.LogFile(path, "Invoice.pdf");
+    byte[] archive = File.ReadAllBytes(@"C:\Files\bootstrap.zip");
+    logger.LogAsFile(archive, "Bootstrap.zip");
+
+    string path = @"C:\Files\Invoice-16-11-2017.pdf";
+    logger.LogFile(path, "Invoice.pdf");
+}
 ```
 
 ## Error reporting
