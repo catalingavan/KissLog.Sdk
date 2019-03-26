@@ -12,9 +12,9 @@
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>NLog, KissLog</PackageTags>
-    <PackageReleaseNotes>Adapted to KissLog 3.0.0 improvements</PackageReleaseNotes>
+    <PackageReleaseNotes>Adapted to KissLog 3.1.0 improvements</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.0.0</Version>
+    <Version>2.1.0</Version>
     <PackageId>KissLog.Adapters.NLog</PackageId>
   </PropertyGroup>
 

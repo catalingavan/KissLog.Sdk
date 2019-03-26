@@ -9,6 +9,8 @@ namespace KissLog.Web
 
         public List<KeyValuePair<string, string>> Headers { get; set; }
 
+        public long ContentLength { get; set; }
+
         public ResponseProperties()
         {
             Headers = new List<KeyValuePair<string, string>>();

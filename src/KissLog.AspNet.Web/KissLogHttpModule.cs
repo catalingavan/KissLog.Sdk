@@ -161,6 +161,11 @@ namespace KissLog.AspNet.Web
                 response.HttpStatusCode = logger.DataContainer.ExplicitHttpStatusCode.Value;
             }
 
+            if (sniffer != null)
+            {
+                response.ContentLength = sniffer.MirrorStream.Length;
+            }
+
             if (sniffer != null && InternalHelpers.ShouldLogResponseBody(logger, response))
             {
                 string responseFileName = InternalHelpers.ResponseFileName(properties.Response.Headers);

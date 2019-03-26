@@ -7,19 +7,21 @@
     <PackageLicenseUrl>https://opensource.org/licenses/Apache-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://kisslog.net</PackageProjectUrl>
     <PackageIconUrl>https://kisslog.net/Content/images/kissLogLogos/logo_32.png</PackageIconUrl>
-    <Description>KissLog core package. Contains the minimal components required to use ILogger in your application. Install this package in sub-modules.</Description>
+    <Description>KissLog package. Contains all the necessary components used for logging.
+Install this package on all the projects.</Description>
     <PackageReleaseNotes>Breaking changes. Refactored.</PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>KissLog.net</Authors>
     <Company>KissLog.net</Company>
     <Product>KissLog.net</Product>
     <PackageTags>Logging, Management, Error, Exception, Tracing, KissLog, Diagnostics, Reporing</PackageTags>
-    <Version>3.0.0</Version>
-    <AssemblyVersion>3.0.0.0</AssemblyVersion>
-    <FileVersion>3.0.0.0</FileVersion>
+    <Version>3.1.0</Version>
+    <AssemblyVersion>3.1.0.0</AssemblyVersion>
+    <FileVersion>3.1.0.0</FileVersion>
     <PackageId>KissLog</PackageId>
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <Copyright />
   </PropertyGroup>
 
   <ItemGroup>

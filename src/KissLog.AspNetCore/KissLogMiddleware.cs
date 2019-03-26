@@ -33,6 +33,7 @@ namespace KissLog.AspNetCore
             Exception ex = null;
             Stream originalBodyStream = context.Response.Body;
             TemporaryFile responseBodyFile = null;
+            long contentLength = 0;
 
             try
             {
@@ -44,8 +45,9 @@ namespace KissLog.AspNetCore
 
                     responseBodyFile = new TemporaryFile();
                     await ReadResponse(context.Response, responseBodyFile.FileName);
+                    contentLength = responseStream.Length;
 
-                    if(CanWriteToResponseBody(context.Response))
+                    if (CanWriteToResponseBody(context.Response))
                     {
                         await responseStream.CopyToAsync(originalBodyStream);
                     }
@@ -77,6 +79,7 @@ namespace KissLog.AspNetCore
 
                 ResponseProperties response = ResponsePropertiesFactory.Create(context.Response);
                 response.HttpStatusCode = statusCode;
+                response.ContentLength = contentLength;
                 properties.Response = response;
 
                 if(responseBodyFile != null && InternalHelpers.ShouldLogResponseBody(logger, response))
