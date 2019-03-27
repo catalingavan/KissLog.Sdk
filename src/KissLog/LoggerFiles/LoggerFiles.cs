@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using KissLog.Internal;
 
 namespace KissLog
 {
     internal class LoggerFiles : IDisposable
     {
-        private const long MaxFileSizeBytes = 5 * 1024 * 1024;
-
         private readonly ILogger _logger;
         private readonly List<TemporaryFile> _tempFiles;
         private readonly List<LoggerFile> _files;
@@ -32,14 +31,14 @@ namespace KissLog
         {
             if (!File.Exists(sourceFilePath))
             {
-                _logger.Warn($"Could not upload file '{sourceFilePath}' because it does not exist");
+                _logger.Warn($"KissLog: Could not upload file '{sourceFilePath}' because it does not exist");
                 return;
             }
 
             FileInfo fi = new FileInfo(sourceFilePath);
-            if (fi.Length > MaxFileSizeBytes)
+            if (fi.Length > InternalHelpers.LoggerFileMaximumSizeBytes)
             {
-                _logger.Warn($"Could not upload file '{sourceFilePath}', because size exceeds {MaxFileSizeBytes} bytes");
+                _logger.Warn($"KissLog: Could not upload file '{sourceFilePath}', because size exceeds {InternalHelpers.LoggerFileMaximumSizeBytes} bytes");
                 return;
             }
 
@@ -69,9 +68,9 @@ namespace KissLog
             if(content == null || !content.Any())
                 return;
 
-            if (content.Length > MaxFileSizeBytes)
+            if (content.Length > InternalHelpers.LoggerFileMaximumSizeBytes)
             {
-                _logger.Warn($"Could not upload file because size exceeds {MaxFileSizeBytes} bytes");
+                _logger.Warn($"KissLog: Could not upload file because size exceeds {InternalHelpers.LoggerFileMaximumSizeBytes} bytes");
                 return;
             }
 
@@ -101,9 +100,9 @@ namespace KissLog
             if (string.IsNullOrEmpty(content))
                 return;
 
-            if (content.Length > MaxFileSizeBytes)
+            if (content.Length > InternalHelpers.LoggerFileMaximumSizeBytes)
             {
-                _logger.Warn($"Could not upload file because size exceeds {MaxFileSizeBytes} bytes");
+                _logger.Warn($"KissLog: Could not upload file because size exceeds {InternalHelpers.LoggerFileMaximumSizeBytes} bytes");
                 return;
             }
 

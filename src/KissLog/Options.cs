@@ -39,6 +39,7 @@ namespace KissLog
         internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestClaimFn = (ILogListener listener, FlushLogArgs args, string name) => true;
 
         internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogResponseHeaderFn = (ILogListener listener, FlushLogArgs args, string name) => true;
+        internal Func<ILogListener, FlushLogArgs, bool, bool> ShouldLogResponseBodyFn = (ILogListener listener, FlushLogArgs args, bool defaultValue) => defaultValue;
 
         internal Func<Exception, string> AppendExceptionDetailsFn = (Exception ex) => null;
 
@@ -97,6 +98,12 @@ namespace KissLog
         public Options ShouldLogResponseHeader(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
             ShouldLogResponseHeaderFn = handler;
+            return this;
+        }
+
+        public Options ShouldLogResponseBody(Func<ILogListener, FlushLogArgs, bool, bool> handler)
+        {
+            ShouldLogResponseBodyFn = handler;
             return this;
         }
 

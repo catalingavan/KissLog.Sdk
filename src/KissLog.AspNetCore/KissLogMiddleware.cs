@@ -82,7 +82,7 @@ namespace KissLog.AspNetCore
                 response.ContentLength = contentLength;
                 properties.Response = response;
 
-                if(responseBodyFile != null && InternalHelpers.ShouldLogResponseBody(logger, response))
+                if(responseBodyFile != null && InternalHelpers.PreFilterShouldLogResponseBody(logger, responseBodyFile, response))
                 {
                     string responseFileName = InternalHelpers.ResponseFileName(response.Headers);
                     logger.LogFile(responseBodyFile.FileName, responseFileName);
