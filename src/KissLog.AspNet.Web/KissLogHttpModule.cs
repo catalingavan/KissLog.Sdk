@@ -166,22 +166,24 @@ namespace KissLog.AspNet.Web
                 response.ContentLength = sniffer.MirrorStream.Length;
             }
 
-            if (sniffer != null && InternalHelpers.ShouldLogResponseBody(logger, response))
+            if (sniffer != null)
             {
-                string responseFileName = InternalHelpers.ResponseFileName(properties.Response.Headers);
-
                 using (sniffer.MirrorStream)
                 {
                     sniffer.MirrorStream.Position = 0;
 
-                    using (TemporaryFile tempFile = new TemporaryFile())
+                    if (InternalHelpers.PreFilterShouldLogResponseBody(logger, sniffer.MirrorStream, response))
                     {
-                        using (var fs = File.OpenWrite(tempFile.FileName))
+                        using (TemporaryFile tempFile = new TemporaryFile())
                         {
-                            sniffer.MirrorStream.CopyTo(fs);
-                        }
+                            using (var fs = File.OpenWrite(tempFile.FileName))
+                            {
+                                sniffer.MirrorStream.CopyTo(fs);
+                            }
 
-                        logger.LogFile(tempFile.FileName, responseFileName);
+                            string responseFileName = InternalHelpers.ResponseFileName(properties.Response.Headers);
+                            logger.LogFile(tempFile.FileName, responseFileName);
+                        }
                     }
                 }
             }

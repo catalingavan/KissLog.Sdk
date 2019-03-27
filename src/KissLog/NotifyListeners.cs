@@ -1,4 +1,5 @@
-﻿using KissLog.Internal;
+﻿using System;
+using KissLog.Internal;
 using KissLog.Web;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -32,12 +33,13 @@ namespace KissLog
             ArgsResult argsResult = CreateArgs(theLoggers);
 
             FlushLogArgs defaultArgs = argsResult.Args;
+            List<LoggerFile> defaultFiles = argsResult.Files.ToList();
+
             string defaultArgsJsonJson = JsonConvert.SerializeObject(defaultArgs);
 
             foreach (ILogListener listener in KissLogConfiguration.Listeners)
             {
-                FlushLogArgs args = CreateFlushArgsForListener(defaultLogger, listener, defaultArgs, defaultArgsJsonJson);
-                args.Files = argsResult.Files.ToList();
+                FlushLogArgs args = CreateFlushArgsForListener(defaultLogger, listener, defaultArgs, defaultArgsJsonJson, defaultFiles.ToList());
 
                 if(ShouldUseListener(listener, args) == false)
                     continue;
@@ -100,6 +102,8 @@ namespace KissLog
                 CapturedExceptions = exceptions
             };
 
+            args.Files = files;
+
             return new ArgsResult
             {
                 Args = args,
@@ -107,7 +111,7 @@ namespace KissLog
             };
         }
 
-        private static FlushLogArgs CreateFlushArgsForListener(Logger defaultLogger, ILogListener listener, FlushLogArgs defaultArgs, string defaultArgsJson)
+        private static FlushLogArgs CreateFlushArgsForListener(Logger defaultLogger, ILogListener listener, FlushLogArgs defaultArgs, string defaultArgsJson, List<LoggerFile> defaultFiles)
         {
             FlushLogArgs args = JsonConvert.DeserializeObject<FlushLogArgs>(defaultArgsJson);
 
@@ -142,6 +146,16 @@ namespace KissLog
 
             args.MessagesGroups = messages;
 
+            List<LoggerFile> files = defaultFiles.ToList();
+            LoggerFile responseFile = GetResponseFile(files);
+
+            if (responseFile != null && !InternalHelpers.ShouldLogResponseBody(defaultLogger, listener, defaultArgs))
+            {
+                files.Remove(responseFile);
+            }
+
+            args.Files = files;
+
             return args;
         }
 
@@ -155,6 +169,14 @@ namespace KissLog
                 return true;
 
             return parser.ShouldLog(args, listener);
+        }
+
+        private static LoggerFile GetResponseFile(List<LoggerFile> files)
+        {
+            if (files == null || !files.Any())
+                return null;
+
+            return files.FirstOrDefault(p => string.Compare(p.FileName, "Response", StringComparison.OrdinalIgnoreCase) == 0);
         }
     }
 }

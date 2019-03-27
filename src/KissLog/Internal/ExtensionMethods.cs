@@ -50,6 +50,11 @@ namespace KissLog.Internal
             return options.ShouldLogResponseHeaderFn(listener, args, name);
         }
 
+        public static bool ApplyShouldLogResponseBody(this Options options, ILogListener listener, FlushLogArgs args, bool defaultValue)
+        {
+            return options.ShouldLogResponseBodyFn(listener, args, defaultValue);
+        }
+
         public static string ApplyAppendExceptionDetails(this Options options, Exception ex)
         {
             return options.AppendExceptionDetailsFn(ex);
