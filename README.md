@@ -1,147 +1,223 @@
-# ![KissLog logo](https://kisslog.net/content/images/kissLogLogos/logo_32.png) KissLog.net
+# ![KissLog logo](https://kisslog.net/cdn/KissLog/logos/32.png) KissLog.net
 
 KissLog represents a powerful logging and monitoring solution for .NET applications.
 
 Some of the main features of KissLog are:
 
-&#128313; Centralized logging, diagnostics and error reporting
+&#128313; Automatically logs all the exceptions
 
-&#128313; Automatically captures all the exceptions
+&#128313; Monitors all the HTTP traffic
 
-&#128313; Provides a lightweight, powerfull logging interface for developers
+&#128313; Lightweight, powerful SDK
 
-&#128313; Provides ready-to-use [KissLog.net](https://kisslog.net) cloud or on-premises integration
-
-Check the [Wiki page](https://github.com/KissLog-net/KissLog.Sdk/wiki) for a complete documentation.
-
-[Change log](https://github.com/KissLog-net/KissLog.Sdk/wiki/ChangeLog)
-
-**Quick guide**
-
-* [Framework support](#Framework-support)
-* [Basic usage](#Basic-usage)
-* [Logging interface](#Logging-interface)
-* [Logging files](#Logging-files)
-* [Error reporting](#Error-reporting)
-* [Requests-tracking](#Requests-tracking)
-* [Logs target](#Logs-target)
-* [Focused for developers](#Focused-for-developers)
-* [User interface](#User-interface)
-
----
+&#128313; Centralized logging using [KissLog.net](https://kisslog.net) cloud or on-premises integration
 
 ## Framework support
 
 - [.NET Core](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-Net-Core)
-- [AspNet WebApi](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-AspNet-WebApi)
-- [AspNet MVC](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-AspNet-Mvc)
+- [ASP.NET WebApi](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-AspNet-WebApi)
+- [ASP.NET MVC](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-AspNet-Mvc)
 
-## Basic usage
+Check the [Wiki page](https://github.com/KissLog-net/KissLog.Sdk/wiki) for a complete documentation.
+
+View the [Change log](https://github.com/KissLog-net/KissLog.Sdk/wiki/ChangeLog).
+
+## Table of contents
+
+- [Setup](#Setup)
+  - [Register listeners](#register-listeners)
+  - [Configuration](#configuration)
+- [Usage](#usage)
+- [Centralized logging](#centralized-logging)
+- [Integration with other loggers](#integration-with-other-loggers)
+- [Samples](#samples)
+- [Feedback](#feedback)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
+## Setup
+
+### Register listeners
+
+Listeners are responsible for saving the log messages.
+
+KissLog comes with built-in listeners, and it is easy to create [custom implementations](https://github.com/KissLog-net/KissLog.Sdk/wiki/Custom-output).
 
 ```csharp
-public async Task<bool> IsEmailAddressValidAsync(string emailAddress)
+public Startup(IConfiguration configuration)
 {
-    // acquire logger instance
-    ILogger logger = Logger.Factory.Get();
+    // KissLog.net listener
+    KissLogConfiguration.Listeners.Add(
+        new KissLogApiListener("KissLog_OrganizationId", "KissLog_ApplicationId", "Staging")
+    );
 
-    logger.Info(new Args("IsEmailAddressValidAsync begin", emailAddress));
-
-    ExternalUser externalUser = await _externalProviderManager.GetUserByEmailAddressAsync(emailAddress);
-    if (externalUser != null)
-    {
-        logger.Error("User exists in External Provider");
-        return false;
-    }
-
-    User user = _usersRepository.GetByEmailAddress(emailAddress, false);
-    if (user != null)
-    {
-        logger.Error("User exists in database");
-        return true;
-    }
-
-    return true;
+    // custom MongoDb listener
+    KissLogConfiguration.Listeners.Add(new MongoDbListener());
 }
 ```
 
-## Logging interface
+### Configuration
 
-KissLog exposes all the log levels used by [.NET Framework](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-2.1#log-level).
-
-| Level | Usage |
-| :--- | :--- |
-| Trace | _logger.Trace("Database connection opened"); |
-| Debug | _logger.Debug("Two factor authentication started"); |
-| Information | _logger.Info($"Recover password email sent for email {emailAddress}"); |
-| Warning | _logger.Warn($"Cache entry for {key} was not found"); |
-| Error | _logger.Error($"User with Id = {userId} was not found"); <br> _logger.Error(ex); |
-| Critical | _logger.Critical("There is not enough space on the disk. Save failed."); |
-
-## Logging files
-
-KissLog exposes methods which allows developers to save and log raw data as files.
+`Options` container provides a number of properties and runtime handlers used to customize the logs output.
 
 ```csharp
-public void Foo()
+public Startup(IConfiguration configuration)
 {
-    // acquire logger instance
-    ILogger logger = Logger.Factory.Get();
+    KissLogConfiguration.Options
+        .JsonSerializerSettings.Converters.Add(new StringEnumConverter());
 
-    byte[] archive = File.ReadAllBytes(@"C:\Files\bootstrap.zip");
-    logger.LogAsFile(archive, "Bootstrap.zip");
+    KissLogConfiguration.Options
+        .ShouldLogRequestFormData((ILogListener listener, FlushLogArgs args, string key) =>
+        {
+            // do not log "CreditCard" parameter
+            if (string.Compare(key, "CreditCard", true) == 0)
+                return false;
 
-    string path = @"C:\Files\Invoice-16-11-2017.pdf";
-    logger.LogFile(path, "Invoice.pdf");
+            return true;
+        });
 }
 ```
 
-## Error reporting
+Additional information about the captured exceptions can be logged by using the `AppendExceptionDetails(ex)` handler.
 
-KissLog captures all the unhandled exceptions.
+```csharp
+public Startup(IConfiguration configuration)
+{
+    KissLogConfiguration.Options
+        .AppendExceptionDetails((Exception ex) =>
+        {
+            // log EntityFramework validation errors
+            if (ex is DbEntityValidationException dbException)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("DbEntityValidationException:");
 
-## Requests tracking
+                foreach (var error in dbException.EntityValidationErrors.SelectMany(p => p.ValidationErrors))
+                {
+                    sb.AppendLine($"Field: {error.PropertyName}, Error: {error.ErrorMessage}");
+                }
 
-KissLog monitors all the Http requests, regardless if they are successful or not.
+                return sb.ToString();
+            }
 
-## Logs target
+            return null;
+        });
+}
+```
 
-KissLog comes with built-in log targets, saving the logs on:
+## Usage
 
-- Local text files
-- KissLog cloud / on-premises
+`ILogger` instance is acquired by using the `Logger.Factory.Get()` factory method.
 
-Additionally, developers can create [custom output targets](https://github.com/KissLog-net/KissLog.Sdk/wiki/Custom-output) for saving the logs.
+```csharp
+public class Service
+{
+    private readonly ILogger _logger;
+    public Service()
+    {
+        _logger = Logger.Factory.Get();
+    }
 
-## Focused for developers
+    public void Foo(string productId, double price)
+    {
+        _logger.Debug($"Foo begin with args: {productId}, {price}");
 
-KissLog goal is to create an unobtrusive logging framework for .NET.
+        // executing Foo
 
-With this in mind, KissLog is built on the following principles:
+        _logger.Debug("Foo completed");
+    }
+}
+```
 
-* It is easy to install for existing, legacy applications
+Additionally, you can log files, asynchronously.
 
-* It is lightweight, and it does not bring unnecessary dependencies
+```csharp
+public class Service
+{
+    private readonly ILogger _logger;
+    public Service()
+    {
+        _logger = Logger.Factory.Get();
+    }
 
-* Transparent configuration (we try to avoid confusing xml settings)
+    public void Foo()
+    {
+        byte[] archive = File.ReadAllBytes(@"C:\Files\bootstrap.zip");
+        _logger.LogAsFile(archive, "Bootstrap.zip");
 
-* It is highly customisable, being adaptive to application changes and specific scenarios
+        string path = @"C:\Files\Invoice-16-11-2017.pdf";
+        _logger.LogFile(path, "Invoice.pdf");
+    }
+}
+```
 
-## User interface
+## Centralized logging
 
-Captured errors, logs and other metrics can be visualised on [KissLog.net](https://kisslog.net) cloud or on-premises application.
+When using `KissLogApiListener` listener, the logs will be saved to KissLog.net cloud or on-premises application.
 
-* Website analytics
+```csharp
+public Startup(IConfiguration configuration)
+{
+    KissLogConfiguration.Listeners.Add(new KissLogApiListener(
+        Configuration["KissLog.OrganizationId"],
+        Configuration["KissLog.ApplicationId"],
+        Configuration["Environment"]
+    )
+    {
+        // URI to KissLog.net on-premises application
+        ApiUrl = "http://my-kisslog.net"
+    });
+}
+```
 
-![Website analytics](https://kisslog.net/Content/images/app-screens/website-analytics-framed.png)
+## Integration with other loggers
 
-* Centralized logging
+KissLog provides adapters used for saving **NLog** and **log4net** logs to [KissLog.net](https://kisslog.net).
 
-![Centralized logging](https://kisslog.net/Content/images/app-screens/centralized-logging-framed.png)
+- NLog
 
-* Request details
+```xml
+<nlog>
+  <extensions>
+    <add assembly="KissLog.Adapters.NLog" />
+  </extensions>
+  <targets>
+    <target name="kisslog" type="KissLog" layout="${message}" />
+  </targets>
+  <rules>
+    <logger name="*" minlevel="Trace" writeTo="kisslog" />
+  </rules>
+</nlog>
+```
 
-![Logs details](https://kisslog.net/Content/images/app-screens/logs-details-framed.png)
+- log4net
 
-* Slack integration
+```xml
+﻿<log4net>
+  <root>
+    <level value="ALL" />
+    <appender-ref ref="KissLog" />
+  </root>
+  <appender name="KissLog" type="KissLog.Adapters.log4net.KissLogAppender, KissLog.Adapters.log4net">
+    <layout type="log4net.Layout.SimpleLayout" />
+  </appender>
+</log4net>
+```
 
-![Logs details](https://kisslog.net/Content/images/app-screens/slack-integration-framed.png)
+## Samples
+
+Check the [code samples](https://github.com/KissLog-net/KissLog.samples) for more examples of using KissLog.
+
+## Feedback
+
+Please use the [issues](https://github.com/KissLog-net/KissLog.Sdk/issues) section to report bugs, suggestions and general feedback.
+
+## Contributing
+
+All contributions are very welcomed: code, documentation, samples, bug reports, feature requests.
+
+## License
+
+[BSD license](LICENSE.md)

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using KissLog.Internal;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace KissLog.AspNetCore
 {
