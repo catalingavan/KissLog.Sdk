@@ -18,9 +18,9 @@ Some of the main features of KissLog are:
 - [ASP.NET WebApi](Install-AspNet-WebApi)
 - [ASP.NET MVC](Install-AspNet-Mvc)
 
-Check the [Wiki page](wiki) for a complete documentation.
+Check the [Wiki page](https://github.com/KissLog-net/KissLog.Sdk/wiki) for a complete documentation.
 
-View the [Change log](ChangeLog).
+View the [Change log](https://github.com/KissLog-net/KissLog.Sdk/wiki/ChangeLog).
 
 ---
 
@@ -30,7 +30,7 @@ View the [Change log](ChangeLog).
 
 Listeners are responsible for saving the log messages.
 
-KissLog comes with built-in listeners, and it is easy to create [custom implementations](Custom-output).
+KissLog comes with built-in listeners, and it is easy to create [custom implementations](https://github.com/KissLog-net/KissLog.Sdk/wiki/Custom-output).
 
 ```csharp
 public Startup(IConfiguration configuration)
