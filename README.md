@@ -203,4 +203,4 @@ All contributions are very welcomed: code, documentation, bug reports, feature r
 
 ## License
 
-[BSD license](LICENSE)
+[BSD license](/LICENSE.md)
