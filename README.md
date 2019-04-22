@@ -30,6 +30,7 @@ View the [Change log](https://github.com/KissLog-net/KissLog.Sdk/wiki/ChangeLog)
 - [Usage](#usage)
 - [Centralized logging](#centralized-logging)
 - [Integration with other loggers](#integration-with-other-loggers)
+- [Samples](#samples)
 - [Feedback](#feedback)
 - [Contributing](#contributing)
 - [License](#license)
@@ -175,12 +176,12 @@ public Startup(IConfiguration configuration)
 
 KissLog provides adapters used for saving **NLog** and **log4net** logs to [KissLog.net](https://kisslog.net).
 
-- [NLog](https://github.com/KissLog-net/KissLog.samples/tree/master/src/NLog-integration)
+NLog target
 
 ```xml
 <nlog>
   <extensions>
-    <add assembly="KissLog.Adapters.NLog"/>
+    <add assembly="KissLog.Adapters.NLog" />
   </extensions>
   <targets>
     <target name="kisslog" type="KissLog" layout="${message}" />
@@ -191,7 +192,7 @@ KissLog provides adapters used for saving **NLog** and **log4net** logs to [Kiss
 </nlog>
 ```
 
-- [log4net](https://github.com/KissLog-net/KissLog.samples/tree/master/src/log4net-integration)
+log4net appender
 
 ```xml
 ﻿<log4net>
@@ -205,14 +206,18 @@ KissLog provides adapters used for saving **NLog** and **log4net** logs to [Kiss
 </log4net>
 ```
 
+## Samples
+
+Check the [code samples](https://github.com/KissLog-net/KissLog.samples) for more examples of using KissLog.
+
 ## Feedback
 
 Please use the [issues](https://github.com/KissLog-net/KissLog.Sdk/issues) section to report bugs, suggestions and general feedback.
 
 ## Contributing
 
-All contributions are very welcomed: code, documentation, bug reports, feature requests.
+All contributions are very welcomed: code, documentation, samples, bug reports, feature requests.
 
 ## License
 
-[BSD license](/LICENSE.md)
+[BSD license](LICENSE.md)
