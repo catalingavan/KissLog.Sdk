@@ -176,7 +176,7 @@ public Startup(IConfiguration configuration)
 
 KissLog provides adapters used for saving **NLog** and **log4net** logs to [KissLog.net](https://kisslog.net).
 
-NLog target
+- NLog
 
 ```xml
 <nlog>
@@ -192,7 +192,7 @@ NLog target
 </nlog>
 ```
 
-log4net appender
+- log4net
 
 ```xml
 ﻿<log4net>
