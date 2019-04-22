@@ -22,6 +22,18 @@ Check the [Wiki page](https://github.com/KissLog-net/KissLog.Sdk/wiki) for a com
 
 View the [Change log](https://github.com/KissLog-net/KissLog.Sdk/wiki/ChangeLog).
 
+## Table of contents
+
+- [Setup](#Setup)
+  - [Register listeners](#register-listeners)
+  - [Configuration](#configuration)
+- [Usage](#usage)
+- [Centralized logging](#centralized-logging)
+- [Integration with other loggers](#integration-with-other-loggers)
+- [Feedback](#feedback)
+- [Contributing](#contributing)
+- [License](#license)
+
 ---
 
 ## Setup
