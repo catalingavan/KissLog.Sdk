@@ -195,7 +195,7 @@ KissLog provides adapters used for saving **NLog** and **log4net** logs to [Kiss
 
 ## Feedback
 
-Please use the [issues](issues) section to report bugs, suggestions and general feedback.
+Please use the [issues](/issues) section to report bugs, suggestions and general feedback.
 
 ## Contributing
 
