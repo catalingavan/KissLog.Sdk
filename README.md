@@ -14,9 +14,9 @@ Some of the main features of KissLog are:
 
 ## Framework support
 
-- [.NET Core](Install-Net-Core)
-- [ASP.NET WebApi](Install-AspNet-WebApi)
-- [ASP.NET MVC](Install-AspNet-Mvc)
+- [.NET Core](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-Net-Core)
+- [ASP.NET WebApi](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-AspNet-WebApi)
+- [ASP.NET MVC](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-AspNet-Mvc)
 
 Check the [Wiki page](https://github.com/KissLog-net/KissLog.Sdk/wiki) for a complete documentation.
 
