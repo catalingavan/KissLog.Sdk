@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using KissLog.Internal;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -61,7 +62,13 @@ namespace KissLog.AspNetCore
                 ctx.Items[Constants.LoggersDictionaryKey] = loggersDictionary;
             }
 
-            var logger = loggersDictionary.GetOrAdd(categoryName, (key) => new Logger(key));
+            var logger = loggersDictionary.GetOrAdd(categoryName, (key) =>
+            {
+                var theLogger = new Logger(key);
+                theLogger.DataContainer.AddProperty(InternalHelpers.IsCreatedByHttpRequest, true);
+
+                return theLogger;
+            });
 
             return logger;
         }

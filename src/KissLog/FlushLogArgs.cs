@@ -9,7 +9,6 @@ namespace KissLog
         public WebRequestProperties WebRequestProperties { get; set; }
         public IEnumerable<LogMessagesGroup> MessagesGroups { get; set; }
         public IEnumerable<CapturedException> CapturedExceptions { get; set; }
-        public string ErrorMessage { get; set; }
         public IEnumerable<LoggerFile> Files { get; set; }
 
         public FlushLogArgs()

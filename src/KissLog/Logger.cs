@@ -154,7 +154,7 @@ namespace KissLog
 
                 DataContainer.Exceptions.Add(new CapturedException
                 {
-                    ExceptionType = ex.GetType().Name,
+                    ExceptionType = ex.GetType().FullName,
                     ExceptionMessage = ex.Message,
                     Exception = exString
                 });

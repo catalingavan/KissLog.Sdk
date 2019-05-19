@@ -34,19 +34,5 @@ namespace KissLog
         public static List<ILogListener> Listeners = new List<ILogListener>();
 
         public static Options Options { get; } = new Options();
-
-        static KissLogConfiguration()
-        {
-            Logger.OnMessage += (sender, args) =>
-            {
-                if (sender is ILogger logger)
-                {
-                    if (logger.IsCreatedByHttpRequest() == false)
-                    {
-                        Logger.NotifyListeners(logger);
-                    }
-                }
-            };
-        }
     }
 }

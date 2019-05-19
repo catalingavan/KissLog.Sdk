@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using KissLog.Internal;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -39,7 +40,12 @@ namespace KissLog.AspNet.Web
                 ctx.Items[Constants.LoggersDictionaryKey] = loggersDictionary;
             }
 
-            return loggersDictionary.GetOrAdd(categoryName, (key) => new Logger(key));
+            return loggersDictionary.GetOrAdd(categoryName, (key) => {
+                var theLogger = new Logger(key);
+                theLogger.DataContainer.AddProperty(InternalHelpers.IsCreatedByHttpRequest, true);
+
+                return theLogger;
+            });
         }
 
         private IEnumerable<ILogger> GetAll(HttpContext ctx)

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using KissLog.Web;
+using System;
 using System.Net;
 using System.Net.Sockets;
-using KissLog.Web;
 
 namespace KissLog.WindowsApplication
 {

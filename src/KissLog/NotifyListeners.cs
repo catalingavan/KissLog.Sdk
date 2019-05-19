@@ -84,19 +84,23 @@ namespace KissLog
                 logMessages.Add(new LogMessagesGroup
                 {
                     CategoryName = logger.CategoryName,
-                    Messages = dataContainer.LogMessages.ToList()
+                    Messages = logger.DataContainer.LogMessages.ToList()
                 });
 
-                exceptions.AddRange(dataContainer.Exceptions);
+                exceptions.AddRange(logger.DataContainer.Exceptions);
             }
 
             exceptions = exceptions.Distinct(new CapturedExceptionComparer()).ToList();
+
+            if(defaultLogger.IsCreatedByHttpRequest() == false && exceptions.Any())
+            {
+                webRequestProperties.Response.HttpStatusCode = System.Net.HttpStatusCode.InternalServerError;
+            }
 
             List<LoggerFile> files = dataContainer.LoggerFiles.GetFiles().ToList();
             FlushLogArgs args = new FlushLogArgs
             {
                 IsCreatedByHttpRequest = defaultLogger.IsCreatedByHttpRequest(),
-                ErrorMessage = errorMessage,
                 WebRequestProperties = webRequestProperties,
                 MessagesGroups = logMessages,
                 CapturedExceptions = exceptions

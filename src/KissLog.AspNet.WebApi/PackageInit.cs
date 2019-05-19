@@ -24,6 +24,17 @@ namespace KissLog.AspNet.WebApi
         {
             InternalHelpers.SdkName = SdkName;
             InternalHelpers.SdkVersion = GetSdkVersion();
+
+            Logger.OnMessage += (sender, args) =>
+            {
+                if (sender is ILogger logger)
+                {
+                    if (logger.IsCreatedByHttpRequest() == false)
+                    {
+                        Logger.NotifyListeners(logger);
+                    }
+                }
+            };
         }
     }
 }

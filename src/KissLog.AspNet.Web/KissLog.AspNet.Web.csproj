@@ -45,7 +45,6 @@
     <Compile Include="ResponseSniffer.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DataParser.cs" />
-    <Compile Include="LoggerFactory.cs" />
     <Compile Include="KissLogHttpModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebRequestPropertiesFactory.cs" />

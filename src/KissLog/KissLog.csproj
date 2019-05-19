@@ -4,20 +4,20 @@
     <TargetFrameworks>netstandard1.3;netstandard1.4;net40;net45</TargetFrameworks>
     <AssemblyName>KissLog</AssemblyName>
     <RootNamespace>KissLog</RootNamespace>
-    <PackageLicenseUrl>https://opensource.org/licenses/Apache-2.0</PackageLicenseUrl>
+    <PackageLicenseUrl>https://opensource.org/licenses/BSD-3-Clause</PackageLicenseUrl>
     <PackageProjectUrl>https://kisslog.net</PackageProjectUrl>
-    <PackageIconUrl>https://kisslog.net/Content/images/kissLogLogos/logo_32.png</PackageIconUrl>
+    <PackageIconUrl>https://kisslog.net/cdn/KissLog/logos/32.png</PackageIconUrl>
     <Description>KissLog package. Contains all the necessary components used for logging.
 Install this package on all the projects.</Description>
-    <PackageReleaseNotes>Implemented Options.ShouldLogResponseBody() handler</PackageReleaseNotes>
+    <PackageReleaseNotes>General improvements</PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>KissLog.net</Authors>
     <Company>KissLog.net</Company>
     <Product>KissLog.net</Product>
-    <PackageTags>Logging, Management, Error, Exception, Tracing, KissLog, Diagnostics, Reporing</PackageTags>
-    <Version>3.1.1</Version>
-    <AssemblyVersion>3.1.1.0</AssemblyVersion>
-    <FileVersion>3.1.1.0</FileVersion>
+    <PackageTags>Logging, Error, Exception, Trace, Tracing, KissLog, Diagnostics, Reporing</PackageTags>
+    <Version>3.2.0</Version>
+    <AssemblyVersion>3.2.0.0</AssemblyVersion>
+    <FileVersion>3.2.0.0</FileVersion>
     <PackageId>KissLog</PackageId>
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
