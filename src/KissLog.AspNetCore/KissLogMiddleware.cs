@@ -1,6 +1,5 @@
 ﻿using KissLog.Internal;
 using KissLog.Web;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -128,19 +127,6 @@ namespace KissLog.AspNetCore
             }
 
             return true;
-        }
-    }
-
-    public static class KissLogMiddlewareExtensions
-    {
-        static KissLogMiddlewareExtensions()
-        {
-            PackageInit.Init();
-        }
-
-        public static IApplicationBuilder UseKissLogMiddleware(this IApplicationBuilder builder)
-        {
-            return builder.UseMiddleware<KissLogMiddleware>();
         }
     }
 }
