@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace KissLog
 {
@@ -19,18 +20,24 @@ namespace KissLog
 
         public LoggerDataContainer DataContainer { get; }
 
-        public Logger() : this(DefaultCategoryName)
+        public Logger() : this(categoryName: DefaultCategoryName)
         {
         }
 
-        public Logger(string categoryName)
+        public Logger(string categoryName = null, string url = null)
         {
-            if (string.IsNullOrWhiteSpace(categoryName))
-                categoryName = DefaultCategoryName;
-
-            CategoryName = categoryName;
+            CategoryName = categoryName ?? DefaultCategoryName;
 
             DataContainer = new LoggerDataContainer(this);
+
+            if(string.IsNullOrEmpty(url) == false)
+            {
+                Uri uri = GenerateUri(url);
+                if(uri != null)
+                {
+                    DataContainer.WebRequestProperties.Url = uri;
+                }
+            }
         }
 
         public string CategoryName { get; set; }
@@ -174,7 +181,7 @@ namespace KissLog
             }
         }
 
-        public static string NormalizeMemberType(string memberType)
+        private string NormalizeMemberType(string memberType)
         {
             if (string.IsNullOrEmpty(memberType))
                 return memberType;
@@ -230,6 +237,40 @@ namespace KissLog
             }
 
             return memberType;
+        }
+
+        private Uri GenerateUri(string urlPath)
+        {
+            Uri uri = null;
+
+            if (string.IsNullOrEmpty(urlPath))
+                return null;
+
+            urlPath = Regex.Replace(urlPath, "[^a-zA-Z0-9/:._-]+", "-", RegexOptions.Compiled);
+            if (string.IsNullOrEmpty(urlPath))
+                return null;
+
+            if (Uri.TryCreate(urlPath, UriKind.Absolute, out uri))
+            {
+                if(string.Compare(uri.Scheme, "http", true) == 0 || string.Compare(uri.Scheme, "https", true) == 0)
+                {
+                    return uri;
+                }
+            }
+
+            urlPath = urlPath.Replace("//", "/");
+            if (urlPath.StartsWith("/"))
+                urlPath = urlPath.Substring(1);
+
+            if (string.IsNullOrEmpty(urlPath))
+                return null;
+
+            if (Uri.TryCreate($"http://Application/{urlPath}", UriKind.Absolute, out uri))
+            {
+                return uri;
+            }
+
+            return null;
         }
 
         internal void Reset()

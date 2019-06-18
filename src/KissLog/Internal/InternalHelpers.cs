@@ -110,7 +110,7 @@ namespace KissLog.Internal
             return DefaultResponseFileName;
         }
 
-        public static string SdkName { get; set; }
-        public static string SdkVersion { get; set; }
+        public static string SdkName { get; set; } = "KissLog";
+        public static string SdkVersion { get; set; } = "3.2.0";
     }
 }

@@ -34,5 +34,10 @@ namespace KissLog
         public static List<ILogListener> Listeners = new List<ILogListener>();
 
         public static Options Options { get; } = new Options();
+
+        static KissLogConfiguration()
+        {
+            Internal.PackageInit.Init();
+        }
     }
 }

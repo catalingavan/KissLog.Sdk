@@ -11,16 +11,32 @@ namespace KissLog.Web
             {
                 Url = new Uri("http://Application/RequestNotAvailable"),
                 HttpMethod = "GET",
-                MachineName = "Not available",
+                MachineName = GetMachineName(),
                 UserAgent = "Not available",
                 Request = new RequestProperties(),
                 Response = new ResponseProperties
                 {
                     HttpStatusCode = HttpStatusCode.OK
                 },
-                StartDateTime = DateTime.UtcNow,
-                EndDateTime = DateTime.UtcNow.AddMilliseconds(100)
+                StartDateTime = DateTime.UtcNow
             };
+        }
+
+        private static string GetMachineName()
+        {
+            string result = null;
+
+            try
+            {
+                result = Environment.GetEnvironmentVariable("COMPUTERNAME") ??
+                         Environment.GetEnvironmentVariable("HOSTNAME");
+            }
+            catch
+            {
+                
+            }
+
+            return result ?? "Not available";
         }
     }
 }
