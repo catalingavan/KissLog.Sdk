@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>KissLog.AspNet.Web</id>
-    <version>3.2.0</version>
+    <version>3.2.1</version>
     <authors>KissLog.net</authors>
     <owners>KissLog.net</owners>
     <licenseUrl>https://opensource.org/licenses/BSD-3-Clause</licenseUrl>
@@ -10,13 +10,13 @@
     <iconUrl>https://kisslog.net/cdn/KissLog/logos/32.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>KissLog Web package. You should not manually install this package, as it will be installed as a dependency.</description>
-    <releaseNotes>Adapted to KissLog 3.2.0 improvements</releaseNotes>
+    <releaseNotes>Adapted to KissLog 3.3.0 improvements</releaseNotes>
     <copyright>Copyright 2019</copyright>
     <tags>KissLog</tags>
     <repository type="git" url="https://github.com/KissLog-net/KissLog.Sdk" />
     <dependencies>
-      <dependency id="KissLog" version="3.2.0" />
-      <dependency id="KissLog.Apis.v1" version="2.2.0" />
+      <dependency id="KissLog" version="3.3.0" />
+      <dependency id="KissLog.Apis.v1" version="2.3.0" />
     </dependencies>
   </metadata>
   <files></files>

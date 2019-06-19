@@ -51,10 +51,6 @@
     <Compile Include="WebResponsePropertiesFactory.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\KissLog\KissLog.Apis.v1\KissLog.Apis.v1.csproj">
-      <Project>{76f88469-a3dc-4bfd-9d6d-795cc93af97a}</Project>
-      <Name>KissLog.Apis.v1</Name>
-    </ProjectReference>
     <ProjectReference Include="..\KissLog\KissLog.csproj">
       <Project>{31515375-c888-4224-b607-a2127fb702de}</Project>
       <Name>KissLog</Name>

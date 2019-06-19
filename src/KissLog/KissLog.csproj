@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard1.4;net40;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard1.4;netstandard2.0;net40;net45</TargetFrameworks>
     <AssemblyName>KissLog</AssemblyName>
     <RootNamespace>KissLog</RootNamespace>
     <PackageLicenseUrl>https://opensource.org/licenses/BSD-3-Clause</PackageLicenseUrl>
@@ -15,9 +15,9 @@ Install this package on all the projects.</Description>
     <Company>KissLog.net</Company>
     <Product>KissLog.net</Product>
     <PackageTags>Logging, Error, Exception, Trace, Tracing, KissLog, Diagnostics, Reporing</PackageTags>
-    <Version>3.2.0</Version>
-    <AssemblyVersion>3.2.0.0</AssemblyVersion>
-    <FileVersion>3.2.0.0</FileVersion>
+    <Version>3.3.0</Version>
+    <AssemblyVersion>3.3.0.0</AssemblyVersion>
+    <FileVersion>3.3.0.0</FileVersion>
     <PackageId>KissLog</PackageId>
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>

@@ -13,15 +13,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KissLog.AspNet.WebApi", "Ki
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.AspNetCore", "KissLog.AspNetCore\KissLog.AspNetCore.csproj", "{AD2DFD6A-1C56-4D00-AE49-85FC80B7B40D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.AspNet.SignalR.Client", "KissLog.AspNet.SignalR.Client\KissLog.AspNet.SignalR.Client.csproj", "{856B0D92-6F7C-4630-95D2-403DCE73C37F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.HandlebarsNet", "KissLog.HandlebarsNet\KissLog.HandlebarsNet.csproj", "{4A7ACBAC-5786-4030-99AB-4BE87685A47C}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.WindowsApplication", "KissLog.WindowsApplication\KissLog.WindowsApplication.csproj", "{9B7E78B9-6A52-411C-8C1A-F64E761A5E73}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.Adapters.log4net", "KissLog.Adapters.log4net\KissLog.Adapters.log4net.csproj", "{6665AFB2-F772-4E7B-8C2B-B281C722A85E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KissLog.Adapters.NLog", "KissLog.Adapters.NLog\KissLog.Adapters.NLog.csproj", "{EB0F32E6-FDE7-407C-820E-75E8FCF9EF57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.Adapters.NLog", "KissLog.Adapters.NLog\KissLog.Adapters.NLog.csproj", "{EB0F32E6-FDE7-407C-820E-75E8FCF9EF57}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.Apis.v1", "KissLog.Apis.v1\KissLog.Apis.v1.csproj", "{5FE61AF6-73B0-4573-B254-7F29A48FA0C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,18 +47,10 @@ Global
 		{AD2DFD6A-1C56-4D00-AE49-85FC80B7B40D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD2DFD6A-1C56-4D00-AE49-85FC80B7B40D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD2DFD6A-1C56-4D00-AE49-85FC80B7B40D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{856B0D92-6F7C-4630-95D2-403DCE73C37F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{856B0D92-6F7C-4630-95D2-403DCE73C37F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{856B0D92-6F7C-4630-95D2-403DCE73C37F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{856B0D92-6F7C-4630-95D2-403DCE73C37F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4A7ACBAC-5786-4030-99AB-4BE87685A47C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4A7ACBAC-5786-4030-99AB-4BE87685A47C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A7ACBAC-5786-4030-99AB-4BE87685A47C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A7ACBAC-5786-4030-99AB-4BE87685A47C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9B7E78B9-6A52-411C-8C1A-F64E761A5E73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9B7E78B9-6A52-411C-8C1A-F64E761A5E73}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9B7E78B9-6A52-411C-8C1A-F64E761A5E73}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9B7E78B9-6A52-411C-8C1A-F64E761A5E73}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6665AFB2-F772-4E7B-8C2B-B281C722A85E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6665AFB2-F772-4E7B-8C2B-B281C722A85E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6665AFB2-F772-4E7B-8C2B-B281C722A85E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -69,6 +59,10 @@ Global
 		{EB0F32E6-FDE7-407C-820E-75E8FCF9EF57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB0F32E6-FDE7-407C-820E-75E8FCF9EF57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB0F32E6-FDE7-407C-820E-75E8FCF9EF57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FE61AF6-73B0-4573-B254-7F29A48FA0C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FE61AF6-73B0-4573-B254-7F29A48FA0C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FE61AF6-73B0-4573-B254-7F29A48FA0C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FE61AF6-73B0-4573-B254-7F29A48FA0C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

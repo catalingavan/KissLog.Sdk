@@ -97,6 +97,11 @@ namespace KissLog
                 webRequestProperties.Response.HttpStatusCode = System.Net.HttpStatusCode.InternalServerError;
             }
 
+            if(!webRequestProperties.EndDateTime.HasValue)
+            {
+                webRequestProperties.EndDateTime = DateTime.UtcNow;
+            }
+
             List<LoggerFile> files = dataContainer.LoggerFiles.GetFiles().ToList();
             FlushLogArgs args = new FlushLogArgs
             {

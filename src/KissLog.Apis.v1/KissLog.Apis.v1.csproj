@@ -1,27 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.4;netstandard2.0;net40;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard1.4;netstandard2.0;net45</TargetFrameworks>
+    <Version>2.3.0</Version>
     <Authors>KissLog.net</Authors>
     <Company>KissLog.net</Company>
     <Product>KissLog.net</Product>
-    <Description>log4net adapter for saving log messages to KissLog.net</Description>
+    <Description>KissLog.net cloud / on-premises listener.</Description>
     <PackageLicenseUrl>https://opensource.org/licenses/BSD-3-Clause</PackageLicenseUrl>
     <PackageProjectUrl>https://kisslog.net</PackageProjectUrl>
     <PackageIconUrl>https://kisslog.net/cdn/KissLog/logos/32.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>log4net, KissLog</PackageTags>
+    <PackageTags>KissLog</PackageTags>
     <PackageReleaseNotes>Adapted to KissLog 3.3.0 improvements</PackageReleaseNotes>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.2.1</Version>
-    <AssemblyVersion>2.2.1.0</AssemblyVersion>
-    <FileVersion>2.2.1.0</FileVersion>
-    <PackageId>KissLog.Adapters.log4net</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 
   <ItemGroup>
