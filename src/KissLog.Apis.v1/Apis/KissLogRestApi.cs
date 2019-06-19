@@ -1,6 +1,5 @@
 ﻿using KissLog.Apis.v1.Models;
 using KissLog.Apis.v1.Requests;
-using Newtonsoft.Json;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -12,15 +11,16 @@ namespace KissLog.Apis.v1.Apis
         private readonly IApiClient _apiClient;
         public KissLogRestApi(string baseUrl)
         {
-            _apiClient = new TryCatchApiClient(
-                new ApiClient(baseUrl)
-            );
+            _apiClient =
+                new LogApiClient(
+                    new TryCatchApiClient(
+                        new ApiClient(baseUrl)
+                    )
+                );
         }
 
         public async Task<ApiResult<RequestLog>> CreateRequestLogAsync(CreateRequestLogRequest request)
         {
-            var test = JsonConvert.SerializeObject(request, Formatting.Indented);
-
             string url = "api/logs/v1.0/createRequestLog";
             return await _apiClient.PostAsJsonAsync<RequestLog>(url, request).ConfigureAwait(false);
         }

@@ -85,5 +85,10 @@ namespace KissLog.Apis.v1.Apis
 
             return result;
         }
+
+        public Uri BuildRequestUri(string resource)
+        {
+            return _decorated.BuildRequestUri(resource);
+        }
     }
 }

@@ -67,7 +67,7 @@ namespace KissLog.Apis.v1.Apis
             }
         }
 
-        private Uri BuildRequestUri(string resource)
+        public Uri BuildRequestUri(string resource)
         {
             resource = CombineUriParts(_baseUrl, resource);
             return new Uri(resource, UriKind.RelativeOrAbsolute);

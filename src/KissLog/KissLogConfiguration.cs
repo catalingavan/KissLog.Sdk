@@ -35,6 +35,8 @@ namespace KissLog
 
         public static Options Options { get; } = new Options();
 
+        public static Action<string, LogLevel> InternalLog { get; set; }
+
         static KissLogConfiguration()
         {
             Internal.PackageInit.Init();

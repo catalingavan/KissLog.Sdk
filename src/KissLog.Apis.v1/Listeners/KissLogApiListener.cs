@@ -53,19 +53,6 @@ namespace KissLog.Apis.v1.Listeners
             ObfuscateService?.Obfuscate(args);
             TruncateService?.Truncate(args);
 
-            if (args.IsCreatedByHttpRequest == false)
-            {
-                // if there is no error message, we do not log the request to the cloud
-                // log messages should be logged KissLog.Listeners.LocalTextFileListener
-
-                // this IF was useful when user created log messages in a NON Http environment, like Application_Start
-                // and was preventing "flushing" for each log message
-
-                //IEnumerable<LogMessage> logMessages = args.MessagesGroups.SelectMany(p => p.Messages).ToList();
-                //if (!logMessages.Any(p => p.LogLevel == LogLevel.Error || p.LogLevel == LogLevel.Critical))
-                //    return;
-            }
-
             Requests.CreateRequestLogRequest request = CreateRequestLogRequestFactory.Create(args);
             request.OrganizationId = organizationId;
             request.ApplicationId = applicationId;

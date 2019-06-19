@@ -8,6 +8,9 @@ namespace KissLog.Internal
 {
     public static class InternalHelpers
     {
+        public static string SdkName { get; set; }
+        public static string SdkVersion { get; set; }
+
         public static readonly string[] InputStreamContentTypes = { "text/plain", "application/json", "application/xml", "text/xml", "text/html" };
         public static readonly string[] LogResponseBodyContentTypes = { "application/json" };
 
@@ -110,7 +113,12 @@ namespace KissLog.Internal
             return DefaultResponseFileName;
         }
 
-        public static string SdkName { get; set; } = "KissLog";
-        public static string SdkVersion { get; set; } = "3.2.0";
+        public static void Log(string message, LogLevel logLevel)
+        {
+            if (KissLogConfiguration.InternalLog == null)
+                return;
+
+            KissLogConfiguration.InternalLog.Invoke(message, logLevel);
+        }
     }
 }
