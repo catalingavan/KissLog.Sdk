@@ -17,6 +17,7 @@ Some of the main features of KissLog are:
 - [.NET Core](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-Net-Core)
 - [ASP.NET WebApi](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-AspNet-WebApi)
 - [ASP.NET MVC](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-AspNet-Mvc)
+- [Windows / Console apps](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-WindowsApp)
 
 Check the [Wiki page](https://github.com/KissLog-net/KissLog.Sdk/wiki) for a complete documentation.
 
@@ -48,9 +49,9 @@ KissLog comes with built-in listeners, and it is easy to create [custom implemen
 ```csharp
 public Startup(IConfiguration configuration)
 {
-    // KissLog.net listener
+    // KissLog.net cloud listener
     KissLogConfiguration.Listeners.Add(
-        new KissLogApiListener("KissLog_OrganizationId", "KissLog_ApplicationId", "Staging")
+        new KissLogApiListener(new Application("KissLog_OrganizationId", "KissLog_ApplicationId"))
     );
 
     // custom MongoDb listener
@@ -160,10 +161,9 @@ When using `KissLogApiListener` listener, the logs will be saved to KissLog.net 
 ```csharp
 public Startup(IConfiguration configuration)
 {
-    KissLogConfiguration.Listeners.Add(new KissLogApiListener(
+    KissLogConfiguration.Listeners.Add(new KissLogApiListener(new Application(
         Configuration["KissLog.OrganizationId"],
-        Configuration["KissLog.ApplicationId"],
-        Configuration["Environment"]
+        Configuration["KissLog.ApplicationId"])
     )
     {
         // URI to KissLog.net on-premises application
