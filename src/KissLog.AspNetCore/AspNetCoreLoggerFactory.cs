@@ -10,14 +10,16 @@ namespace KissLog.AspNetCore
     internal class AspNetCoreLoggerFactory : IKissLoggerFactory
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IKissLoggerFactory _defaultLoggerFactory;
         public AspNetCoreLoggerFactory()
         {
+            _defaultLoggerFactory = new KissLog.Internal.DefaultLoggerFactory();
             _httpContextAccessor = new HttpContextAccessor();
         }
 
-        public ILogger Get(string categoryName = Logger.DefaultCategoryName)
+        public ILogger Get(string categoryName = null, string url = null)
         {
-            return GetInstance(_httpContextAccessor, categoryName);
+            return GetInstance(_httpContextAccessor, categoryName, url);
         }
 
         public IEnumerable<ILogger> GetAll()
@@ -25,30 +27,24 @@ namespace KissLog.AspNetCore
             return GetAll(_httpContextAccessor);
         }
 
-        private ILogger GetInstance(IHttpContextAccessor httpContextAccessor, string categoryName)
+        private ILogger GetInstance(IHttpContextAccessor httpContextAccessor, string categoryName, string url)
         {
-            if (string.IsNullOrWhiteSpace(categoryName))
-                categoryName = Logger.DefaultCategoryName;
-
             if (httpContextAccessor == null)
             {
                 Debug.WriteLine("httpContextAccessor is null. Creating static instance");
-                return GetStaticInstance(categoryName);
+                return GetNonWebInstance(categoryName, url);
             }
 
             HttpContext ctx = httpContextAccessor.HttpContext;
-            return GetInstance(ctx, categoryName);
+            return GetInstance(ctx, categoryName, url);
         }
 
-        private ILogger GetInstance(HttpContext ctx, string categoryName)
+        private ILogger GetInstance(HttpContext ctx, string categoryName, string url)
         {
-            if (string.IsNullOrWhiteSpace(categoryName))
-                categoryName = Logger.DefaultCategoryName;
-
             if (IsRequestContext(ctx) == false)
             {
                 Debug.WriteLine("HttpContext is null. Creating static instance");
-                return GetStaticInstance(categoryName);
+                return GetNonWebInstance(categoryName, url);
             }
 
             ConcurrentDictionary<string, ILogger> loggersDictionary = null;
@@ -61,6 +57,9 @@ namespace KissLog.AspNetCore
                 loggersDictionary = new ConcurrentDictionary<string, ILogger>();
                 ctx.Items[Constants.LoggersDictionaryKey] = loggersDictionary;
             }
+
+            if (string.IsNullOrWhiteSpace(categoryName))
+                categoryName = Logger.DefaultCategoryName;
 
             var logger = loggersDictionary.GetOrAdd(categoryName, (key) =>
             {
@@ -78,7 +77,7 @@ namespace KissLog.AspNetCore
             if (httpContextAccessor == null)
             {
                 Debug.WriteLine("httpContextAccessor is null. Returning static instances");
-                return StaticInstances.Values.ToList();
+                return Enumerable.Empty<ILogger>();
             }
 
             HttpContext ctx = httpContextAccessor.HttpContext;
@@ -90,7 +89,7 @@ namespace KissLog.AspNetCore
             if (ctx == null)
             {
                 Debug.WriteLine("HttpContext is null. Returning static instances");
-                return StaticInstances.Values.ToList();
+                return Enumerable.Empty<ILogger>();
             }
 
             if (ctx.Items.ContainsKey(Constants.LoggersDictionaryKey) == false)
@@ -124,11 +123,9 @@ namespace KissLog.AspNetCore
             }
         }
 
-        private static readonly ConcurrentDictionary<string, ILogger> StaticInstances = new ConcurrentDictionary<string, ILogger>();
-
-        private static ILogger GetStaticInstance(string categoryName)
+        private ILogger GetNonWebInstance(string categoryName, string url)
         {
-            return StaticInstances.GetOrAdd(categoryName, (key) => new Logger(key));
+            return _defaultLoggerFactory.Get(categoryName, url);
         }
     }
 }

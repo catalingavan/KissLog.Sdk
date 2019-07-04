@@ -9,7 +9,7 @@ namespace KissLog.AspNet.Web
 {
     internal class AspNetWebLoggerFactory : IKissLoggerFactory
     {
-        public ILogger Get(string categoryName = Logger.DefaultCategoryName)
+        public ILogger Get(string categoryName = null, string url = null)
         {
             return GetInstance(HttpContext.Current, categoryName);
         }
