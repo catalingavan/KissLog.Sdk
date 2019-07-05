@@ -28,8 +28,11 @@ namespace KissLog.Internal
 
         public static void Init()
         {
-            InternalHelpers.SdkName = SdkName;
-            InternalHelpers.SdkVersion = GetSdkVersion();
+            if(string.IsNullOrEmpty(InternalHelpers.SdkName))
+            {
+                InternalHelpers.SdkName = SdkName;
+                InternalHelpers.SdkVersion = GetSdkVersion();
+            }
         }
     }
 }

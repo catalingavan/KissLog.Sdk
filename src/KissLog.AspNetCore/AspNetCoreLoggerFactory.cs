@@ -1,5 +1,4 @@
-﻿using KissLog.Internal;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -61,15 +60,15 @@ namespace KissLog.AspNetCore
             if (string.IsNullOrWhiteSpace(categoryName))
                 categoryName = Logger.DefaultCategoryName;
 
-            var logger = loggersDictionary.GetOrAdd(categoryName, (key) =>
+            return loggersDictionary.GetOrAdd(categoryName, (key) =>
             {
-                var theLogger = new Logger(key);
-                theLogger.DataContainer.AddProperty(InternalHelpers.IsCreatedByHttpRequest, true);
+                var logger = new Logger(key);
+                logger.DataContainer.AddProperty(KissLog.Internal.Constants.FactoryNameProperty, nameof(AspNetCoreLoggerFactory));
+                logger.DataContainer.AddProperty(KissLog.Internal.Constants.AutoFlushProperty, true);
+                logger.DataContainer.AddProperty(KissLog.Internal.Constants.IsCreatedByHttpRequestProperty, true);
 
-                return theLogger;
+                return logger;
             });
-
-            return logger;
         }
 
         private IEnumerable<ILogger> GetAll(IHttpContextAccessor httpContextAccessor)

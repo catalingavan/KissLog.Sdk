@@ -36,9 +36,9 @@ namespace KissLog
             }
 
             FileInfo fi = new FileInfo(sourceFilePath);
-            if (fi.Length > InternalHelpers.LoggerFileMaximumSizeBytes)
+            if (fi.Length > Constants.LoggerFileMaximumSizeBytes)
             {
-                _logger.Warn($"KissLog: Could not upload file '{sourceFilePath}', because size exceeds {InternalHelpers.LoggerFileMaximumSizeBytes} bytes");
+                _logger.Warn($"KissLog: Could not upload file '{sourceFilePath}', because size exceeds {Constants.LoggerFileMaximumSizeBytes} bytes");
                 return;
             }
 
@@ -68,9 +68,9 @@ namespace KissLog
             if(content == null || !content.Any())
                 return;
 
-            if (content.Length > InternalHelpers.LoggerFileMaximumSizeBytes)
+            if (content.Length > Constants.LoggerFileMaximumSizeBytes)
             {
-                _logger.Warn($"KissLog: Could not upload file because size exceeds {InternalHelpers.LoggerFileMaximumSizeBytes} bytes");
+                _logger.Warn($"KissLog: Could not upload file because size exceeds {Constants.LoggerFileMaximumSizeBytes} bytes");
                 return;
             }
 
@@ -100,9 +100,9 @@ namespace KissLog
             if (string.IsNullOrEmpty(content))
                 return;
 
-            if (content.Length > InternalHelpers.LoggerFileMaximumSizeBytes)
+            if (content.Length > Constants.LoggerFileMaximumSizeBytes)
             {
-                _logger.Warn($"KissLog: Could not upload file because size exceeds {InternalHelpers.LoggerFileMaximumSizeBytes} bytes");
+                _logger.Warn($"KissLog: Could not upload file because size exceeds {Constants.LoggerFileMaximumSizeBytes} bytes");
                 return;
             }
 

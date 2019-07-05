@@ -12,7 +12,10 @@ namespace KissLog.Internal
 
         public ILogger Get(string categoryName = null, string url = null)
         {
-            return new Logger(categoryName: categoryName, url: url);
+            var logger = new Logger(categoryName: categoryName, url: url);
+            logger.DataContainer.AddProperty(Constants.FactoryNameProperty, nameof(DefaultLoggerFactory));
+
+            return logger;
         }
     }
 }

@@ -78,6 +78,7 @@ namespace KissLog
             string errorMessage = dataContainer.Exceptions.LastOrDefault()?.ExceptionMessage;
             List<LogMessagesGroup> logMessages = new List<LogMessagesGroup>();
             List<CapturedException> exceptions = new List<CapturedException>();
+            List<KeyValuePair<string, object>> customProperties = new List<KeyValuePair<string, object>>();
 
             foreach (Logger logger in loggers)
             {
@@ -88,6 +89,9 @@ namespace KissLog
                 });
 
                 exceptions.AddRange(logger.DataContainer.Exceptions);
+
+                var properties = GetCustomProperties(logger);
+                customProperties.AddRange(properties);
             }
 
             exceptions = exceptions.Distinct(new CapturedExceptionComparer()).ToList();
@@ -108,7 +112,8 @@ namespace KissLog
                 IsCreatedByHttpRequest = defaultLogger.IsCreatedByHttpRequest(),
                 WebRequestProperties = webRequestProperties,
                 MessagesGroups = logMessages,
-                CapturedExceptions = exceptions
+                CapturedExceptions = exceptions,
+                CustomProperties = customProperties
             };
 
             args.Files = files;
@@ -186,6 +191,11 @@ namespace KissLog
                 return null;
 
             return files.FirstOrDefault(p => string.Compare(p.FileName, "Response", StringComparison.OrdinalIgnoreCase) == 0);
+        }
+
+        private static IEnumerable<KeyValuePair<string, object>> GetCustomProperties(Logger logger)
+        {
+            return logger.DataContainer.GetProperties().Where(p => p.Key.ToLowerInvariant().StartsWith("x-kisslog-") == false);
         }
     }
 }

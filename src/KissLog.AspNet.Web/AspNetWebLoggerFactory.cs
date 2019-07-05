@@ -9,9 +9,15 @@ namespace KissLog.AspNet.Web
 {
     internal class AspNetWebLoggerFactory : IKissLoggerFactory
     {
+        private readonly IKissLoggerFactory _defaultLoggerFactory;
+        public AspNetWebLoggerFactory()
+        {
+            _defaultLoggerFactory = new KissLog.Internal.DefaultLoggerFactory();
+        }
+
         public ILogger Get(string categoryName = null, string url = null)
         {
-            return GetInstance(HttpContext.Current, categoryName);
+            return GetInstance(HttpContext.Current, categoryName, url);
         }
 
         public IEnumerable<ILogger> GetAll()
@@ -19,14 +25,11 @@ namespace KissLog.AspNet.Web
             return GetAll(HttpContext.Current);
         }
 
-        private ILogger GetInstance(HttpContext ctx, string categoryName)
+        private ILogger GetInstance(HttpContext ctx, string categoryName, string url)
         {
-            if (string.IsNullOrWhiteSpace(categoryName))
-                categoryName = Logger.DefaultCategoryName;
-
             if (IsRequestContext(ctx) == false)
             {
-                return GetStaticInstance(categoryName);
+                return GetNonWebInstance(categoryName, url);
             }
 
             ConcurrentDictionary<string, ILogger> loggersDictionary = null;
@@ -40,11 +43,16 @@ namespace KissLog.AspNet.Web
                 ctx.Items[Constants.LoggersDictionaryKey] = loggersDictionary;
             }
 
-            return loggersDictionary.GetOrAdd(categoryName, (key) => {
-                var theLogger = new Logger(key);
-                theLogger.DataContainer.AddProperty(InternalHelpers.IsCreatedByHttpRequest, true);
+            if (string.IsNullOrWhiteSpace(categoryName))
+                categoryName = Logger.DefaultCategoryName;
 
-                return theLogger;
+            return loggersDictionary.GetOrAdd(categoryName, (key) => {
+                var logger = new Logger(key);
+                logger.DataContainer.AddProperty(KissLog.Internal.Constants.FactoryNameProperty, nameof(AspNetWebLoggerFactory));
+                logger.DataContainer.AddProperty(KissLog.Internal.Constants.AutoFlushProperty, true);
+                logger.DataContainer.AddProperty(KissLog.Internal.Constants.IsCreatedByHttpRequestProperty, true);
+
+                return logger;
             });
         }
 
@@ -52,7 +60,7 @@ namespace KissLog.AspNet.Web
         {
             if (ctx == null)
             {
-                return StaticInstances.Values.ToList();
+                return Enumerable.Empty<ILogger>();
             }
 
             if (ctx.Items.Contains(Constants.LoggersDictionaryKey) == false)
@@ -86,11 +94,9 @@ namespace KissLog.AspNet.Web
             }
         }
 
-        private static readonly ConcurrentDictionary<string, ILogger> StaticInstances = new ConcurrentDictionary<string, ILogger>();
-
-        private static ILogger GetStaticInstance(string categoryName)
+        private ILogger GetNonWebInstance(string categoryName, string url)
         {
-            return StaticInstances.GetOrAdd(categoryName, (key) => new Logger(key));
+            return _defaultLoggerFactory.Get(categoryName, url);
         }
     }
 }
