@@ -9,15 +9,16 @@
     <PackageIconUrl>https://kisslog.net/cdn/KissLog/logos/32.png</PackageIconUrl>
     <Description>KissLog package. Contains all the necessary components used for logging.
 Install this package on all the projects.</Description>
-    <PackageReleaseNotes>General improvements</PackageReleaseNotes>
+    <PackageReleaseNotes>Improvements for windows / console logging.
+Implemented AddCustomProperty(key, value) method.</PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>KissLog.net</Authors>
     <Company>KissLog.net</Company>
     <Product>KissLog.net</Product>
     <PackageTags>Logging, Error, Exception, Trace, Tracing, KissLog, Diagnostics, Reporing</PackageTags>
-    <Version>3.3.0</Version>
-    <AssemblyVersion>3.3.0.0</AssemblyVersion>
-    <FileVersion>3.3.0.0</FileVersion>
+    <Version>3.4.0</Version>
+    <AssemblyVersion>3.4.0.0</AssemblyVersion>
+    <FileVersion>3.4.0.0</FileVersion>
     <PackageId>KissLog</PackageId>
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
