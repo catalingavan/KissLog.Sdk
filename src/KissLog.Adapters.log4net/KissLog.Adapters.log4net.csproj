@@ -12,11 +12,11 @@
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>log4net, KissLog</PackageTags>
-    <PackageReleaseNotes>Adapted to KissLog 3.3.0 improvements</PackageReleaseNotes>
+    <PackageReleaseNotes>Adapted to KissLog 3.4.0 improvements</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.2.1</Version>
-    <AssemblyVersion>2.2.1.0</AssemblyVersion>
-    <FileVersion>2.2.1.0</FileVersion>
+    <Version>2.4.0</Version>
+    <AssemblyVersion>2.4.0.0</AssemblyVersion>
+    <FileVersion>2.4.0.0</FileVersion>
     <PackageId>KissLog.Adapters.log4net</PackageId>
   </PropertyGroup>
 

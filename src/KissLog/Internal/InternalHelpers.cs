@@ -1,8 +1,8 @@
-﻿using System;
+﻿using KissLog.Web;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using KissLog.Web;
 
 namespace KissLog.Internal
 {
@@ -13,13 +13,6 @@ namespace KissLog.Internal
 
         public static readonly string[] InputStreamContentTypes = { "text/plain", "application/json", "application/xml", "text/xml", "text/html" };
         public static readonly string[] LogResponseBodyContentTypes = { "application/json" };
-
-        private const string DefaultResponseFileName = "Response.txt";
-
-        public const string LogResponseBodyProperty = "X-KissLog-LogResponseBody";
-        public const string IsCreatedByHttpRequest = "X-KissLog-IsCreatedByHttpRequest";
-
-        internal const long LoggerFileMaximumSizeBytes = 5 * 1024 * 1024;
 
         public static bool ShouldLogInputStream(IEnumerable<KeyValuePair<string, string>> requestHeaders)
         {
@@ -39,10 +32,10 @@ namespace KissLog.Internal
                 return false;
 
             FileInfo fi = new FileInfo(responseBodyFile.FileName);
-            if (!fi.Exists || fi.Length > LoggerFileMaximumSizeBytes)
+            if (!fi.Exists || fi.Length > Constants.LoggerFileMaximumSizeBytes)
                 return false;
 
-            var logResponse = defaultLogger.DataContainer.GetProperty(LogResponseBodyProperty);
+            var logResponse = defaultLogger.DataContainer.GetProperty(Constants.LogResponseBodyProperty);
             if (logResponse != null && logResponse is bool asBoolean)
             {
                 return asBoolean;
@@ -58,10 +51,10 @@ namespace KissLog.Internal
             if (responseStream == null || responseStream.CanRead == false)
                 return false;
 
-            if (responseStream.Length > LoggerFileMaximumSizeBytes)
+            if (responseStream.Length > Constants.LoggerFileMaximumSizeBytes)
                 return false;
 
-            var logResponse = defaultLogger.DataContainer.GetProperty(LogResponseBodyProperty);
+            var logResponse = defaultLogger.DataContainer.GetProperty(Constants.LogResponseBodyProperty);
             if (logResponse != null && logResponse is bool asBoolean)
             {
                 return asBoolean;
@@ -72,7 +65,7 @@ namespace KissLog.Internal
 
         public static bool ShouldLogResponseBody(Logger defaultLogger, ILogListener listener, FlushLogArgs args)
         {
-            var logResponse = defaultLogger.DataContainer.GetProperty(LogResponseBodyProperty);
+            var logResponse = defaultLogger.DataContainer.GetProperty(Constants.LogResponseBodyProperty);
             if (logResponse != null && logResponse is bool asBoolean)
             {
                 return asBoolean;
@@ -93,11 +86,11 @@ namespace KissLog.Internal
         public static string ResponseFileName(IList<KeyValuePair<string, string>> responseHeaders)
         {
             if (responseHeaders == null || !responseHeaders.Any())
-                return DefaultResponseFileName;
+                return Constants.DefaultResponseFileName;
 
             string contentType = responseHeaders.FirstOrDefault(p => string.Compare(p.Key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0).Value;
             if (string.IsNullOrEmpty(contentType))
-                return DefaultResponseFileName;
+                return Constants.DefaultResponseFileName;
 
             contentType = contentType.ToLowerInvariant();
 
@@ -110,7 +103,7 @@ namespace KissLog.Internal
             if (contentType.Contains("application/xml") || contentType.Contains("text/xml"))
                 return "Response.xml";
 
-            return DefaultResponseFileName;
+            return Constants.DefaultResponseFileName;
         }
 
         public static void Log(string message, LogLevel logLevel)

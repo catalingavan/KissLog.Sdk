@@ -38,6 +38,8 @@ namespace KissLog.Apis.v1.Factories
 
             result.Exceptions = args.CapturedExceptions?.Select(p => ToCapturedException(p)).ToList();
 
+            result.CustomProperties = args.CustomProperties?.ToList();
+
             return result;
         }
 

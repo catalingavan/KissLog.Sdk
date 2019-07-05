@@ -1,5 +1,6 @@
 ﻿using KissLog.Web;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 
 namespace KissLog.Internal
@@ -27,6 +28,9 @@ namespace KissLog.Internal
 
         public void AddProperty(string key, object value)
         {
+            if (string.IsNullOrWhiteSpace(key))
+                return;
+
             if (_customProperties == null)
                 _customProperties = new Dictionary<string, object>();
 
@@ -45,6 +49,10 @@ namespace KissLog.Internal
                 return null;
 
             return _customProperties[key];
+        }
+        public Dictionary<string, object> GetProperties()
+        {
+            return _customProperties ?? new Dictionary<string, object>();
         }
 
         public void Reset()

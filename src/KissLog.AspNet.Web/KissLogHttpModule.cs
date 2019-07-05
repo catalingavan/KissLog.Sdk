@@ -98,13 +98,14 @@ namespace KissLog.AspNet.Web
             HttpContext ctx = HttpContext.Current;
             var request = ctx.Request;
 
-            ctx.Items[Constants.HttpRequestPropertiesKey] = WebRequestPropertiesFactory.Create(request);
+            WebRequestProperties webProperties = WebRequestPropertiesFactory.Create(request);
+            ctx.Items[Constants.HttpRequestPropertiesKey] = webProperties;
 
             Logger logger = Logger.Factory.Get() as Logger;
             if(logger == null)
                 return;
 
-            logger.DataContainer.AddProperty(InternalHelpers.IsCreatedByHttpRequest, true);
+            logger.DataContainer.WebRequestProperties = webProperties;
         }
 
         private void OnError(object sender, EventArgs eventArgs)

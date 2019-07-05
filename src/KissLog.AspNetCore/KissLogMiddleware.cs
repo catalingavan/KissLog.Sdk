@@ -25,9 +25,8 @@ namespace KissLog.AspNetCore
             if(logger == null)
                 return;
 
-            logger.DataContainer.AddProperty(InternalHelpers.IsCreatedByHttpRequest, true);
-
             WebRequestProperties properties = WebRequestPropertiesFactory.Create(context.Request);
+            logger.DataContainer.WebRequestProperties = properties;
 
             Exception ex = null;
             Stream originalBodyStream = context.Response.Body;
