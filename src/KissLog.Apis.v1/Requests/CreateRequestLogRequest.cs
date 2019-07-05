@@ -22,7 +22,7 @@ namespace KissLog.Apis.v1.Requests
         public IEnumerable<LogMessage> LogMessages { get; set; }
         public IEnumerable<CapturedException> Exceptions { get; set; }
         public IEnumerable<string> Keywords { get; set; }
-        public List<KeyValuePair<string, object>> Properties { get; set; }
+        public List<KeyValuePair<string, object>> CustomProperties { get; set; }
 
         public CreateRequestLogRequest()
         {
@@ -30,7 +30,7 @@ namespace KissLog.Apis.v1.Requests
             LogMessages = new List<LogMessage>();
             Exceptions = new List<CapturedException>();
             Keywords = new List<string>();
-            Properties = new List<KeyValuePair<string, object>>();
+            CustomProperties = new List<KeyValuePair<string, object>>();
         }
     }
 }

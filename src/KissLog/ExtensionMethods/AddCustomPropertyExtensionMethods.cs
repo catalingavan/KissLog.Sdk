@@ -24,6 +24,11 @@ namespace KissLog
             InternalAddCustomProperty(logger, key, value);
         }
 
+        public static void AddCustomProperty(this ILogger logger, string key, bool value)
+        {
+            InternalAddCustomProperty(logger, key, value);
+        }
+
         public static void AddCustomProperty(this ILogger logger, string key, DateTime value)
         {
             InternalAddCustomProperty(logger, key, value);
