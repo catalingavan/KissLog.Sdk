@@ -152,6 +152,12 @@ namespace KissLog.AspNet.Web
             }
 
             WebRequestProperties properties = (WebRequestProperties)HttpContext.Current.Items[Constants.HttpRequestPropertiesKey];
+            if(properties == null)
+            {
+                // IIS redirect rule bypasses the BeginRequest() event
+                properties = WebRequestPropertiesFactory.Create(ctx.Request);
+            }
+
             properties.EndDateTime = DateTime.UtcNow;
 
             ResponseProperties response = WebResponsePropertiesFactory.Create(ctx.Response);

@@ -11,7 +11,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using KissLog.Internal;
-using Microsoft.AspNetCore.Http.Features;
 
 namespace KissLog.AspNetCore
 {
@@ -173,19 +172,24 @@ namespace KissLog.AspNetCore
                     return content;
 
                 // Allows using several time the stream in ASP.Net Core
-                request.EnableRewind();
+                // request.EnableRewind();
+                request.EnableBuffering();
 
                 // Arguments: Stream, Encoding, detect encoding, buffer size 
                 // AND, the most important: keep stream opened
                 using (StreamReader reader = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true))
                 {
-                    content = reader.ReadToEnd();
+                    var task = reader.ReadToEndAsync();
+                    task.Wait();
+
+                    content = task.Result;
                 }
 
                 request.Body.Position = 0;
             }
-            catch
+            catch(Exception ex)
             {
+                var a = 1;
                 // ignored
             }
 
