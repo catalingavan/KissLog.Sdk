@@ -1,17 +1,14 @@
-﻿using KissLog.Web;
+﻿using KissLog.Internal;
+using KissLog.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using KissLog.Internal;
-using Microsoft.AspNetCore.Http.Features;
 
 namespace KissLog.AspNetCore
 {
@@ -165,31 +162,20 @@ namespace KissLog.AspNetCore
 
         private static string ReadInputStream(HttpRequest request)
         {
-            string content = string.Empty;
-
             try
             {
-                if (request.Body.CanRead == false)
-                    return content;
-
-                // Allows using several time the stream in ASP.Net Core
-                request.EnableRewind();
-
-                // Arguments: Stream, Encoding, detect encoding, buffer size 
-                // AND, the most important: keep stream opened
-                using (StreamReader reader = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true))
-                {
-                    content = reader.ReadToEnd();
-                }
-
-                request.Body.Position = 0;
+                return PackageInit.ReadInputStreamProvider.ReadInputStream(request);
             }
-            catch
+            catch(Exception ex)
             {
-                // ignored
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("Error on WebRequestPropertiesFactory.ReadInputStream()");
+                sb.AppendLine(ex.ToString());
+
+                KissLog.Internal.InternalHelpers.Log(sb.ToString(), LogLevel.Error);
             }
 
-            return content;
+            return string.Empty;
         }
 
         public static List<KeyValuePair<string, string>> ToDictionary(ClaimsIdentity identity)

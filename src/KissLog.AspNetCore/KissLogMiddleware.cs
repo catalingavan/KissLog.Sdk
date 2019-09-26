@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace KissLog.AspNetCore
@@ -41,8 +42,8 @@ namespace KissLog.AspNetCore
 
                     await _next(context);
 
-                    responseBodyFile = new TemporaryFile();
-                    await ReadResponse(context.Response, responseBodyFile.FileName);
+                    responseBodyFile = await ReadResponseAsync(context.Response);
+
                     contentLength = responseStream.Length;
 
                     if (CanWriteToResponseBody(context.Response))
@@ -96,21 +97,42 @@ namespace KissLog.AspNetCore
             }
         }
 
-        private async Task ReadResponse(HttpResponse response, string destinationFilePath)
+        private async Task<TemporaryFile> ReadResponseAsync(HttpResponse response)
         {
+            TemporaryFile responseBodyFile = null;
+
             try
             {
+                responseBodyFile = new TemporaryFile();
+
                 response.Body.Seek(0, SeekOrigin.Begin);
 
-                using (var fs = File.OpenWrite(destinationFilePath))
+                using (var fs = File.OpenWrite(responseBodyFile.FileName))
                 {
                     await response.Body.CopyToAsync(fs);
                 }
+            }
+            catch(Exception ex)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("KissLogMiddleware.ReadResponseAsync error");
+                sb.AppendLine(ex.ToString());
+
+                KissLog.Internal.InternalHelpers.Log(sb.ToString(), LogLevel.Error);
+
+                if(responseBodyFile != null)
+                {
+                    responseBodyFile.Dispose();
+                }
+
+                responseBodyFile = null;
             }
             finally
             {
                 response.Body.Seek(0, SeekOrigin.Begin);
             }
+
+            return responseBodyFile;
         }
 
         private bool CanWriteToResponseBody(HttpResponse response)
