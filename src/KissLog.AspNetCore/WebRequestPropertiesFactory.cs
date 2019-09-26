@@ -168,7 +168,11 @@ namespace KissLog.AspNetCore
             bool hasEnableBuffering = false;
             bool hasEnableRewind = false;
 
-            Type type = Type.GetType("Microsoft.AspNetCore.Http.HttpRequestRewindExtensions", false);
+            string assemblyName = "Microsoft.AspNetCore.Http";
+            string typeName = "Microsoft.AspNetCore.Http.HttpRequestRewindExtensions";
+            string assemblyQualifiedName = Assembly.CreateQualifiedName(assemblyName, typeName);
+
+            Type type = Type.GetType(assemblyQualifiedName, false);
             if(type != null)
             {
                 var enableBuffering = type
@@ -178,7 +182,11 @@ namespace KissLog.AspNetCore
                 hasEnableBuffering = enableBuffering != null;
             }
 
-            type = Type.GetType("Microsoft.AspNetCore.Http.Internal.BufferingHelper", false);
+            assemblyName = "Microsoft.AspNetCore.Http";
+            typeName = "Microsoft.AspNetCore.Http.Internal.BufferingHelper";
+            assemblyQualifiedName = Assembly.CreateQualifiedName(assemblyName, typeName);
+
+            type = Type.GetType(assemblyQualifiedName, false);
             if (type != null)
             {
                 var enableRewind = type
