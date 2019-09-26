@@ -11,6 +11,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using KissLog.Internal;
+using System.Reflection;
 
 namespace KissLog.AspNetCore
 {
@@ -162,17 +163,33 @@ namespace KissLog.AspNetCore
             return name;
         }
 
+        private static void Test1()
+        {
+            var enableBuffering = typeof(HttpRequestRewindExtensions)
+                .GetMethods(BindingFlags.Static | BindingFlags.Public)
+                .FirstOrDefault(m => m.Name == "EnableBuffering");
+
+            var enableRewind = typeof(Microsoft.AspNetCore.Http.Internal.BufferingHelper)
+                .GetMethods(BindingFlags.Static | BindingFlags.Public)
+                .FirstOrDefault(m => m.Name == "EnableRewind");
+
+            var x = 2;
+        }
+
         private static string ReadInputStream(HttpRequest request)
         {
             string content = string.Empty;
 
             try
             {
+                Test1();
+
                 if (request.Body.CanRead == false)
                     return content;
 
                 // Allows using several time the stream in ASP.Net Core
-                // request.EnableRewind();
+                request.EnableRewind();
+
                 request.EnableBuffering();
 
                 // Arguments: Stream, Encoding, detect encoding, buffer size 
