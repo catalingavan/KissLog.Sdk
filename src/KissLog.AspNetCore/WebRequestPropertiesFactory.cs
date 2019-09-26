@@ -165,13 +165,28 @@ namespace KissLog.AspNetCore
 
         private static void Test1()
         {
-            var enableBuffering = typeof(HttpRequestRewindExtensions)
-                .GetMethods(BindingFlags.Static | BindingFlags.Public)
-                .FirstOrDefault(m => m.Name == "EnableBuffering");
+            bool hasEnableBuffering = false;
+            bool hasEnableRewind = false;
 
-            var enableRewind = typeof(Microsoft.AspNetCore.Http.Internal.BufferingHelper)
-                .GetMethods(BindingFlags.Static | BindingFlags.Public)
-                .FirstOrDefault(m => m.Name == "EnableRewind");
+            Type type = Type.GetType("Microsoft.AspNetCore.Http.HttpRequestRewindExtensions", false);
+            if(type != null)
+            {
+                var enableBuffering = type
+                    .GetMethods(BindingFlags.Static | BindingFlags.Public)
+                    .FirstOrDefault(m => m.Name == "EnableBuffering");
+
+                hasEnableBuffering = enableBuffering != null;
+            }
+
+            type = Type.GetType("Microsoft.AspNetCore.Http.Internal.BufferingHelper", false);
+            if (type != null)
+            {
+                var enableRewind = type
+                    .GetMethods(BindingFlags.Static | BindingFlags.Public)
+                    .FirstOrDefault(m => m.Name == "EnableRewind");
+
+                hasEnableRewind = enableRewind != null;
+            }
 
             var x = 2;
         }
