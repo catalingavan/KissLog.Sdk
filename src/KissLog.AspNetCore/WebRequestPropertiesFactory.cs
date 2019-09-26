@@ -1,17 +1,14 @@
-﻿using KissLog.Web;
+﻿using KissLog.Internal;
+using KissLog.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using KissLog.Internal;
-using System.Reflection;
 
 namespace KissLog.AspNetCore
 {
@@ -163,77 +160,22 @@ namespace KissLog.AspNetCore
             return name;
         }
 
-        private static void Test1()
-        {
-            bool hasEnableBuffering = false;
-            bool hasEnableRewind = false;
-
-            string assemblyName = "Microsoft.AspNetCore.Http";
-            string typeName = "Microsoft.AspNetCore.Http.HttpRequestRewindExtensions";
-            string assemblyQualifiedName = Assembly.CreateQualifiedName(assemblyName, typeName);
-
-            Type type = Type.GetType(assemblyQualifiedName, false);
-            if(type != null)
-            {
-                var enableBuffering = type
-                    .GetMethods(BindingFlags.Static | BindingFlags.Public)
-                    .FirstOrDefault(m => m.Name == "EnableBuffering");
-
-                hasEnableBuffering = enableBuffering != null;
-            }
-
-            assemblyName = "Microsoft.AspNetCore.Http";
-            typeName = "Microsoft.AspNetCore.Http.Internal.BufferingHelper";
-            assemblyQualifiedName = Assembly.CreateQualifiedName(assemblyName, typeName);
-
-            type = Type.GetType(assemblyQualifiedName, false);
-            if (type != null)
-            {
-                var enableRewind = type
-                    .GetMethods(BindingFlags.Static | BindingFlags.Public)
-                    .FirstOrDefault(m => m.Name == "EnableRewind");
-
-                hasEnableRewind = enableRewind != null;
-            }
-
-            var x = 2;
-        }
-
         private static string ReadInputStream(HttpRequest request)
         {
-            string content = string.Empty;
-
             try
             {
-                Test1();
-
-                if (request.Body.CanRead == false)
-                    return content;
-
-                // Allows using several time the stream in ASP.Net Core
-                request.EnableRewind();
-
-                request.EnableBuffering();
-
-                // Arguments: Stream, Encoding, detect encoding, buffer size 
-                // AND, the most important: keep stream opened
-                using (StreamReader reader = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true))
-                {
-                    var task = reader.ReadToEndAsync();
-                    task.Wait();
-
-                    content = task.Result;
-                }
-
-                request.Body.Position = 0;
+                return PackageInit.ReadInputStreamProvider.ReadInputStream(request);
             }
             catch(Exception ex)
             {
-                var a = 1;
-                // ignored
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("Error on WebRequestPropertiesFactory.ReadInputStream()");
+                sb.AppendLine(ex.ToString());
+
+                KissLog.Internal.InternalHelpers.Log(sb.ToString(), LogLevel.Error);
             }
 
-            return content;
+            return string.Empty;
         }
 
         public static List<KeyValuePair<string, string>> ToDictionary(ClaimsIdentity identity)

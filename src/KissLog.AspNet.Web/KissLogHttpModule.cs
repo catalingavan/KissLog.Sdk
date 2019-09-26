@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
+using System.Text;
 using System.Web;
 
 namespace KissLog.AspNet.Web
@@ -154,7 +155,7 @@ namespace KissLog.AspNet.Web
             WebRequestProperties properties = (WebRequestProperties)HttpContext.Current.Items[Constants.HttpRequestPropertiesKey];
             if(properties == null)
             {
-                // IIS redirect rule bypasses the BeginRequest() event
+                // IIS redirect bypasses the BeginRequest() event
                 properties = WebRequestPropertiesFactory.Create(ctx.Request);
             }
 
@@ -175,24 +176,7 @@ namespace KissLog.AspNet.Web
 
             if (sniffer != null)
             {
-                using (sniffer.MirrorStream)
-                {
-                    sniffer.MirrorStream.Position = 0;
-
-                    if (InternalHelpers.PreFilterShouldLogResponseBody(logger, sniffer.MirrorStream, response))
-                    {
-                        using (TemporaryFile tempFile = new TemporaryFile())
-                        {
-                            using (var fs = File.OpenWrite(tempFile.FileName))
-                            {
-                                sniffer.MirrorStream.CopyTo(fs);
-                            }
-
-                            string responseFileName = InternalHelpers.ResponseFileName(properties.Response.Headers);
-                            logger.LogFile(tempFile.FileName, responseFileName);
-                        }
-                    }
-                }
+                LogResponse(logger, properties, response, sniffer);
             }
 
             logger.DataContainer.WebRequestProperties = properties;
@@ -220,6 +204,39 @@ namespace KissLog.AspNet.Web
             if (factoryProperty != null)
             {
                 factoryProperty.SetValue(Logger.Factory, loggerFactory, null);
+            }
+        }
+
+        private static void LogResponse(Logger logger, WebRequestProperties properties, ResponseProperties response, ResponseSniffer sniffer)
+        {
+            try
+            {
+                using (sniffer.MirrorStream)
+                {
+                    sniffer.MirrorStream.Position = 0;
+
+                    if (InternalHelpers.PreFilterShouldLogResponseBody(logger, sniffer.MirrorStream, response))
+                    {
+                        using (TemporaryFile tempFile = new TemporaryFile())
+                        {
+                            using (var fs = File.OpenWrite(tempFile.FileName))
+                            {
+                                sniffer.MirrorStream.CopyTo(fs);
+                            }
+
+                            string responseFileName = InternalHelpers.ResponseFileName(properties.Response.Headers);
+                            logger.LogFile(tempFile.FileName, responseFileName);
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("Error logging HTTP Response Content as file");
+                sb.AppendLine(ex.ToString());
+
+                KissLog.Internal.InternalHelpers.Log(sb.ToString(), LogLevel.Error);
             }
         }
     }

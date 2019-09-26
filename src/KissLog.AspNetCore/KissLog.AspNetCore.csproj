@@ -12,21 +12,21 @@ Install this package on ASP.NET Core web applications.</Description>
     <PackageIconUrl>https://kisslog.net/cdn/KissLog/logos/32.png</PackageIconUrl>
     <PackageTags>KissLog, AspNetCore, NetCore, Core</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>2.4.0</Version>
-    <AssemblyVersion>2.4.0.0</AssemblyVersion>
-    <FileVersion>2.4.0.0</FileVersion>
-    <PackageReleaseNotes>Adapted to KissLog 3.4.0 improvements</PackageReleaseNotes>
+    <Version>2.4.2</Version>
+    <AssemblyVersion>2.4.2.0</AssemblyVersion>
+    <FileVersion>2.4.2.0</FileVersion>
+    <PackageReleaseNotes>Adapted to .NET Core 3.0</PackageReleaseNotes>
     <PackageId>KissLog.AspNetCore</PackageId>
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Net.Http.Headers" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Net.Http.Headers" Version="2.1.1" />
     <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
   </ItemGroup>
 
