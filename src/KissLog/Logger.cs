@@ -67,6 +67,8 @@ namespace KissLog
 
             DataContainer.LogMessages.Add(logMessage);
 
+            KissLog.NotifyListeners.NotifyListenersOnMessage(logMessage);
+
             OnMessage?.Invoke(this, new LogMessageCreatedEventArgs { LogMessage = logMessage });
         }
 

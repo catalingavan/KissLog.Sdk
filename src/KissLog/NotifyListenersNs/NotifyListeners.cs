@@ -1,36 +1,52 @@
-﻿using System;
-using KissLog.Internal;
+﻿using KissLog.Internal;
 using KissLog.Web;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace KissLog
+namespace KissLog.NotifyListenersNs
 {
-    class ArgsResult
+    public static class NotifyListeners
     {
-        public FlushLogArgs Args { get; set; }
-        public List<LoggerFile> Files { get; set; } = new List<LoggerFile>();
-    }
-
-    internal static class NotifyListeners
-    {
-        public static void Notify(ILogger[] loggers)
+        public static void NotifyBeginRequest(ILogger logger)
         {
-            if (loggers == null || !loggers.Any())
-                return;
-
             if (KissLogConfiguration.Listeners == null || KissLogConfiguration.Listeners.Any() == false)
                 return;
 
-            Logger[] theLoggers = loggers.OfType<Logger>().ToArray();
-
-            if (!theLoggers.Any())
+            if (logger is Logger == false)
                 return;
 
-            Logger defaultLogger = theLoggers.FirstOrDefault(p => p.CategoryName == Logger.DefaultCategoryName) ?? theLoggers.First();
+            Logger defaultLogger = logger as Logger;
+            WebRequestProperties webRequestProperties = defaultLogger.DataContainer.WebRequestProperties;
 
-            ArgsResult argsResult = CreateArgs(theLoggers);
+            foreach (ILogListener listener in KissLogConfiguration.Listeners)
+            {
+                ILogListenerNew listner2 = null;
+
+                listner2.OnBeginRequest(webRequestProperties, logger);
+            }
+        }
+
+        public static void NotifyMessage(LogMessage message, ILogger logger)
+        {
+            foreach (ILogListener listener in KissLogConfiguration.Listeners)
+            {
+                if (listener.Parser.ShouldLog(message, listener) == false)
+                    continue;
+
+                listener.OnMessage(message, logger);
+            }
+        }
+
+        public static void NotifyFlush(ILogger logger)
+        {
+            if (KissLogConfiguration.Listeners == null || KissLogConfiguration.Listeners.Any() == false)
+                return;
+
+            Logger defaultLogger = logger as Logger;
+
+            ArgsResult argsResult = CreateArgs(new[] { defaultLogger });
 
             FlushLogArgs defaultArgs = argsResult.Args;
             List<LoggerFile> defaultFiles = argsResult.Files.ToList();
@@ -41,31 +57,13 @@ namespace KissLog
             {
                 FlushLogArgs args = CreateFlushArgsForListener(defaultLogger, listener, defaultArgs, defaultArgsJsonJson, defaultFiles.ToList());
 
-                if(ShouldUseListener(listener, args) == false)
-                    continue;
+                //if (ShouldUseListener(listener, args) == false)
+                //    continue;
 
                 listener.Parser?.BeforeFlush(args, listener);
 
-                listener.OnFlush(args);
+                listener.OnFlush(args, logger);
             }
-
-            foreach (Logger logger in theLoggers)
-            {
-                logger.Reset();
-            }
-        }
-
-        public static ArgsResult CreateArgs(ILogger[] loggers)
-        {
-            if (loggers == null || !loggers.Any())
-                return null;
-
-            Logger[] theLoggers = loggers.OfType<Logger>().ToArray();
-
-            if (!theLoggers.Any())
-                return null;
-
-            return CreateArgs(theLoggers);
         }
 
         private static ArgsResult CreateArgs(Logger[] loggers)
@@ -96,12 +94,12 @@ namespace KissLog
 
             exceptions = exceptions.Distinct(new CapturedExceptionComparer()).ToList();
 
-            if(defaultLogger.IsCreatedByHttpRequest() == false && exceptions.Any())
+            if (defaultLogger.IsCreatedByHttpRequest() == false && exceptions.Any())
             {
                 webRequestProperties.Response.HttpStatusCode = System.Net.HttpStatusCode.InternalServerError;
             }
 
-            if(!webRequestProperties.EndDateTime.HasValue)
+            if (!webRequestProperties.EndDateTime.HasValue)
             {
                 webRequestProperties.EndDateTime = DateTime.UtcNow;
             }
@@ -132,7 +130,7 @@ namespace KissLog
             string inputStream = null;
             if (!string.IsNullOrEmpty(defaultArgs.WebRequestProperties.Request.InputStream))
             {
-                if(KissLogConfiguration.Options.ApplyShouldLogRequestInputStream(defaultLogger, listener, defaultArgs))
+                if (KissLogConfiguration.Options.ApplyShouldLogRequestInputStream(defaultLogger, listener, defaultArgs))
                 {
                     inputStream = defaultArgs.WebRequestProperties.Request.InputStream;
                 }
@@ -173,18 +171,6 @@ namespace KissLog
             return args;
         }
 
-        private static bool ShouldUseListener(ILogListener listener, FlushLogArgs args)
-        {
-            if (KissLogConfiguration.Options.ApplyToggleListener(listener, args) == false)
-                return false;
-
-            LogListenerParser parser = listener.Parser;
-            if (parser == null)
-                return true;
-
-            return parser.ShouldLog(args, listener);
-        }
-
         private static LoggerFile GetResponseFile(List<LoggerFile> files)
         {
             if (files == null || !files.Any())
@@ -196,23 +182,6 @@ namespace KissLog
         private static IEnumerable<KeyValuePair<string, object>> GetCustomProperties(Logger logger)
         {
             return logger.DataContainer.GetProperties().Where(p => p.Key.ToLowerInvariant().StartsWith("x-kisslog-") == false);
-        }
-
-        public static void NotifyListenersOnMessage(LogMessage logMessage)
-        {
-            if (logMessage == null)
-                return;
-
-            if (KissLogConfiguration.Listeners == null || KissLogConfiguration.Listeners.Any() == false)
-                return;
-
-            foreach(ILogListener listener in KissLogConfiguration.Listeners)
-            {
-                if (listener.Parser.ShouldLog(logMessage, listener) == false)
-                    continue;
-
-                listener.OnMessage(logMessage);
-            }
         }
     }
 }

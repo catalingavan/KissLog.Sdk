@@ -39,7 +39,7 @@ namespace KissLog.Apis.v1.Listeners
 
         public virtual LogListenerParser Parser { get; set; } = new LogListenerParser();
 
-        public void OnFlush(FlushLogArgs args)
+        public void OnFlush(FlushLogArgs args, ILogger logger)
         {
             string organizationId = _application?.OrganizationId;
             string applicationId = _application?.ApplicationId;
@@ -79,6 +79,11 @@ namespace KissLog.Apis.v1.Listeners
             }
         }
 
+        public void OnMessage(LogMessage message, ILogger logger)
+        {
+            
+        }
+
         private List<LoggerFile> CopyFiles(IList<LoggerFile> source)
         {
             List<LoggerFile> files = new List<LoggerFile>();
@@ -97,27 +102,6 @@ namespace KissLog.Apis.v1.Listeners
             }
 
             return files;
-        }
-
-        private void DeleteFiles(IList<LoggerFile> files)
-        {
-            if (files == null || !files.Any())
-                return;
-
-            foreach (var item in files)
-            {
-                if (System.IO.File.Exists(item.FilePath))
-                {
-                    try
-                    {
-                        System.IO.File.Delete(item.FilePath);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-                }
-            }
         }
     }
 }

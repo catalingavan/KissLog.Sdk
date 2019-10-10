@@ -6,12 +6,17 @@ using System.Linq;
 
 namespace KissLog.Listeners
 {
-    public class LocalTextFileListener : ILogListener
+    public class LocalTextFileListener : ILogListener, ILogMessageListener, IBeginRequestListener
     {
         private static readonly object Locker = new object();
 
         private readonly ITextFormatter _textFormatter;
         private readonly string _logsDirectoryFullPath;
+
+        public LocalTextFileListener(string logsDirectoryFullPath) :
+            this(new DefaultTextFormatter(), logsDirectoryFullPath)
+        {
+        }
 
         public LocalTextFileListener(
             ITextFormatter textFormatter,
@@ -21,12 +26,12 @@ namespace KissLog.Listeners
             _logsDirectoryFullPath = logsDirectoryFullPath;
         }
 
-        public virtual int MinimumResponseHttpStatusCode { get; set; } = 0;
-        public virtual LogLevel MinimumLogMessageLevel { get; set; } = LogLevel.Trace;
+        public int MinimumResponseHttpStatusCode { get; set; } = 0;
+        public LogLevel MinimumLogMessageLevel { get; set; } = LogLevel.Trace;
+        public LogListenerParser Parser { get; set; } = new LogListenerParser();
+        public LocalTextFileFlushTrigger FlushTrigger { get; set; } = LocalTextFileFlushTrigger.NotifyListeners;
 
-        public virtual LogListenerParser Parser { get; set; } = new LogListenerParser();
-
-        public void OnFlush(FlushLogArgs args)
+        public void OnBeginRequest(WebRequestProperties webRequestProperties)
         {
             lock (Locker)
             {
@@ -35,6 +40,38 @@ namespace KissLog.Listeners
                 using (StreamWriter sw = System.IO.File.AppendText(filePath))
                 {
                     Write(sw, args);
+                }
+            }
+        }
+
+        public void OnFlush(FlushLogArgs args)
+        {
+            if (FlushTrigger != LocalTextFileFlushTrigger.NotifyListeners)
+                return;
+
+            lock (Locker)
+            {
+                string filePath = GetFileName(_logsDirectoryFullPath);
+
+                using (StreamWriter sw = System.IO.File.AppendText(filePath))
+                {
+                    Write(sw, args);
+                }
+            }
+        }
+
+        public void OnMessage(LogMessage message)
+        {
+            if (FlushTrigger != LocalTextFileFlushTrigger.OnMessage)
+                return;
+
+            lock (Locker)
+            {
+                string filePath = GetFileName(_logsDirectoryFullPath);
+
+                using (StreamWriter sw = System.IO.File.AppendText(filePath))
+                {
+                    Write(sw, message);
                 }
             }
         }
@@ -54,6 +91,11 @@ namespace KissLog.Listeners
             }
         }
 
+        private void Write(StreamWriter sw, LogMessage logMessage)
+        {
+            sw.WriteLine(Format(logMessage));
+        }
+
         private string Format(WebRequestProperties webRequestProperties)
         {
             if (webRequestProperties == null)
@@ -64,6 +106,9 @@ namespace KissLog.Listeners
 
         private string Format(LogMessage logMessage)
         {
+            if (logMessage == null)
+                return string.Empty;
+
             return _textFormatter.Format(logMessage);
         }
 
