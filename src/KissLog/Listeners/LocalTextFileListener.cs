@@ -29,23 +29,11 @@ namespace KissLog.Listeners
         public int MinimumResponseHttpStatusCode { get; set; } = 0;
         public LogLevel MinimumLogMessageLevel { get; set; } = LogLevel.Trace;
         public LogListenerParser Parser { get; set; } = new LogListenerParser();
+        public FlushTrigger FlushTrigger { get; set; } = FlushTrigger.OnFlush;
 
         public void OnBeginRequest(WebRequestProperties webRequestProperties, ILogger logger)
         {
             
-        }
-
-        public void OnFlush(FlushLogArgs args, ILogger logger)
-        {
-            lock (Locker)
-            {
-                string filePath = GetFileName(_logsDirectoryFullPath);
-
-                using (StreamWriter sw = System.IO.File.AppendText(filePath))
-                {
-                    Write(sw, args);
-                }
-            }
         }
 
         public void OnMessage(LogMessage message, ILogger logger)
@@ -57,6 +45,19 @@ namespace KissLog.Listeners
                 using (StreamWriter sw = System.IO.File.AppendText(filePath))
                 {
                     Write(sw, message);
+                }
+            }
+        }
+
+        public void OnFlush(FlushLogArgs args, ILogger logger)
+        {
+            lock (Locker)
+            {
+                string filePath = GetFileName(_logsDirectoryFullPath);
+
+                using (StreamWriter sw = System.IO.File.AppendText(filePath))
+                {
+                    Write(sw, args);
                 }
             }
         }
