@@ -29,6 +29,8 @@ namespace KissLog.AspNetCore
             WebRequestProperties properties = WebRequestPropertiesFactory.Create(context.Request);
             logger.DataContainer.WebRequestProperties = properties;
 
+            KissLog.Internal.NotifyListeners.NotifyBeginRequest(properties, logger);
+
             Exception ex = null;
             Stream originalBodyStream = context.Response.Body;
             TemporaryFile responseBodyFile = null;

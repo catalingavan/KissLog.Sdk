@@ -1,6 +1,7 @@
 ﻿using KissLog.Apis.v1.Apis;
 using KissLog.Apis.v1.Auth;
 using KissLog.Apis.v1.Factories;
+using KissLog.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +39,18 @@ namespace KissLog.Apis.v1.Listeners
         public LogLevel MinimumLogMessageLevel { get; set; } = LogLevel.Trace;
 
         public virtual LogListenerParser Parser { get; set; } = new LogListenerParser();
+
+        public void OnBeginRequest(WebRequestProperties webRequestProperties, ILogger logger)
+        {
+            // Do nothing
+            // KissLogApiListeners saves the logs only at the end of the request
+        }
+
+        public void OnMessage(LogMessage message, ILogger logger)
+        {
+            // Do nothing
+            // KissLogApiListeners saves the logs only at the end of the request
+        }
 
         public void OnFlush(FlushLogArgs args, ILogger logger)
         {
@@ -79,11 +92,6 @@ namespace KissLog.Apis.v1.Listeners
             }
         }
 
-        public void OnMessage(LogMessage message, ILogger logger)
-        {
-            
-        }
-
         private List<LoggerFile> CopyFiles(IList<LoggerFile> source)
         {
             List<LoggerFile> files = new List<LoggerFile>();
@@ -105,4 +113,3 @@ namespace KissLog.Apis.v1.Listeners
         }
     }
 }
-

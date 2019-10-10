@@ -67,9 +67,9 @@ namespace KissLog
 
             DataContainer.LogMessages.Add(logMessage);
 
-            KissLog.NotifyListeners.NotifyListenersOnMessage(logMessage);
-
             OnMessage?.Invoke(this, new LogMessageCreatedEventArgs { LogMessage = logMessage });
+
+            KissLog.Internal.NotifyListeners.NotifyMessage(logMessage, this);
         }
 
         public void Log(LogLevel logLevel, object json, string memberName = null, int lineNumber = 0, string memberType = null)
@@ -290,7 +290,7 @@ namespace KissLog
 
         public static void NotifyListeners(ILogger[] loggers)
         {
-            KissLog.NotifyListeners.Notify(loggers);
+            KissLog.Internal.NotifyListeners.NotifyFlush(loggers);
         }
 
         public static FlushLogArgs CreateFlushArgs(ILogger logger)
@@ -303,7 +303,7 @@ namespace KissLog
 
         public static FlushLogArgs CreateFlushArgs(ILogger[] loggers)
         {
-            ArgsResult args = KissLog.NotifyListeners.CreateArgs(loggers);
+            ArgsResult args = NotifyOnFlushService.CreateArgs(loggers);
             return args?.Args;
         }
     }

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace KissLog.Listeners
 {
-    public class LocalTextFileListener : ILogListener, ILogMessageListener, IBeginRequestListener
+    public class LocalTextFileListener : ILogListener
     {
         private static readonly object Locker = new object();
 
@@ -29,9 +29,13 @@ namespace KissLog.Listeners
         public int MinimumResponseHttpStatusCode { get; set; } = 0;
         public LogLevel MinimumLogMessageLevel { get; set; } = LogLevel.Trace;
         public LogListenerParser Parser { get; set; } = new LogListenerParser();
-        public LocalTextFileFlushTrigger FlushTrigger { get; set; } = LocalTextFileFlushTrigger.NotifyListeners;
 
-        public void OnBeginRequest(WebRequestProperties webRequestProperties)
+        public void OnBeginRequest(WebRequestProperties webRequestProperties, ILogger logger)
+        {
+            
+        }
+
+        public void OnFlush(FlushLogArgs args, ILogger logger)
         {
             lock (Locker)
             {
@@ -44,27 +48,8 @@ namespace KissLog.Listeners
             }
         }
 
-        public void OnFlush(FlushLogArgs args)
+        public void OnMessage(LogMessage message, ILogger logger)
         {
-            if (FlushTrigger != LocalTextFileFlushTrigger.NotifyListeners)
-                return;
-
-            lock (Locker)
-            {
-                string filePath = GetFileName(_logsDirectoryFullPath);
-
-                using (StreamWriter sw = System.IO.File.AppendText(filePath))
-                {
-                    Write(sw, args);
-                }
-            }
-        }
-
-        public void OnMessage(LogMessage message)
-        {
-            if (FlushTrigger != LocalTextFileFlushTrigger.OnMessage)
-                return;
-
             lock (Locker)
             {
                 string filePath = GetFileName(_logsDirectoryFullPath);

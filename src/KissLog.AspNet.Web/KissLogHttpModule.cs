@@ -107,6 +107,8 @@ namespace KissLog.AspNet.Web
                 return;
 
             logger.DataContainer.WebRequestProperties = webProperties;
+
+            KissLog.Internal.NotifyListeners.NotifyBeginRequest(webProperties, logger);
         }
 
         private void OnError(object sender, EventArgs eventArgs)
