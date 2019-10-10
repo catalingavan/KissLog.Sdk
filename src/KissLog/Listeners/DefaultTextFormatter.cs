@@ -11,16 +11,20 @@ namespace KissLog.Listeners
                 return string.Empty;
 
             string httpMethod = (webRequestProperties.HttpMethod ?? string.Empty).ToUpper();
-            string httpStatusCodeText = webRequestProperties.Response.HttpStatusCode.ToString();
-            int httpStatusCode = (int)webRequestProperties.Response.HttpStatusCode;
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine();
             sb.AppendLine();
             sb.AppendLine(webRequestProperties.StartDateTime.ToString("o"));
             sb.AppendLine($"{httpMethod} {webRequestProperties.Url.PathAndQuery}");
-            sb.AppendLine($"{httpStatusCode} {httpStatusCodeText}");
-            sb.AppendLine();
+
+            if(webRequestProperties.Response != null)
+            {
+                string httpStatusCodeText = webRequestProperties.Response.HttpStatusCode.ToString();
+                int httpStatusCode = (int)webRequestProperties.Response.HttpStatusCode;
+
+                sb.AppendLine($"{httpStatusCode} {httpStatusCodeText}");
+            }
 
             return sb.ToString();
         }
@@ -32,10 +36,7 @@ namespace KissLog.Listeners
 
             string logLevel = string.Format("{0,-20}", $"[{logMessage.LogLevel.ToString()}]");
 
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"{logLevel} {logMessage.Message}");
-
-            return sb.ToString();
+            return $"{logLevel} {logMessage.Message}";
         }
     }
 }

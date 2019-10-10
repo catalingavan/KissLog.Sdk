@@ -33,53 +33,59 @@ namespace KissLog.Listeners
 
         public void OnBeginRequest(WebRequestProperties webRequestProperties, ILogger logger)
         {
-            
+            if (FlushTrigger == FlushTrigger.OnMessage)
+            {
+                string filePath = GetFileName(_logsDirectoryFullPath);
+
+                lock (Locker)
+                {
+                    using (StreamWriter sw = System.IO.File.AppendText(filePath))
+                    {
+                        sw.WriteLine(Format(webRequestProperties));
+                    }
+                }
+            }
         }
 
         public void OnMessage(LogMessage message, ILogger logger)
         {
-            lock (Locker)
+            if (FlushTrigger == FlushTrigger.OnMessage)
             {
                 string filePath = GetFileName(_logsDirectoryFullPath);
 
-                using (StreamWriter sw = System.IO.File.AppendText(filePath))
+                lock (Locker)
                 {
-                    Write(sw, message);
+                    using (StreamWriter sw = System.IO.File.AppendText(filePath))
+                    {
+                        sw.WriteLine(Format(message));
+                    }
                 }
             }
         }
 
         public void OnFlush(FlushLogArgs args, ILogger logger)
         {
-            lock (Locker)
+            if (FlushTrigger == FlushTrigger.OnFlush)
             {
+                IEnumerable<LogMessage> logMessages = args.MessagesGroups.SelectMany(p => p.Messages).OrderBy(p => p.DateTime).ToList();
                 string filePath = GetFileName(_logsDirectoryFullPath);
 
-                using (StreamWriter sw = System.IO.File.AppendText(filePath))
+                lock (Locker)
                 {
-                    Write(sw, args);
+                    using (StreamWriter sw = System.IO.File.AppendText(filePath))
+                    {
+                        if (args.IsCreatedByHttpRequest == true)
+                        {
+                            sw.WriteLine(Format(args.WebRequestProperties));
+                        }
+
+                        foreach (var logMessage in logMessages)
+                        {
+                            sw.WriteLine(Format(logMessage));
+                        }
+                    }
                 }
             }
-        }
-
-        private void Write(StreamWriter sw, FlushLogArgs args)
-        {
-            if (args.IsCreatedByHttpRequest == true)
-            {
-                sw.WriteLine(Format(args.WebRequestProperties));
-            }
-
-            IEnumerable<LogMessage> logMessages = args.MessagesGroups.SelectMany(p => p.Messages).OrderBy(p => p.DateTime).ToList();
-
-            foreach (var logMessage in logMessages)
-            {
-                sw.WriteLine(Format(logMessage));
-            }
-        }
-
-        private void Write(StreamWriter sw, LogMessage logMessage)
-        {
-            sw.WriteLine(Format(logMessage));
         }
 
         private string Format(WebRequestProperties webRequestProperties)
