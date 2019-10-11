@@ -18,14 +18,14 @@ namespace KissLog.Apis.v1.Listeners
 
         public void Obfuscate(FlushLogArgs args)
         {
-            if (args.BeginRequestArgs.Request != null)
+            if (args.WebProperties.Request != null)
             {
-                Obfuscate(args.BeginRequestArgs.Request.Headers);
-                Obfuscate(args.BeginRequestArgs.Request.Cookies);
-                Obfuscate(args.BeginRequestArgs.Request.QueryString);
-                Obfuscate(args.BeginRequestArgs.Request.FormData);
-                Obfuscate(args.BeginRequestArgs.Request.ServerVariables);
-                Obfuscate(args.BeginRequestArgs.Request.Claims);
+                Obfuscate(args.WebProperties.Request.Properties.Headers);
+                Obfuscate(args.WebProperties.Request.Properties.Cookies);
+                Obfuscate(args.WebProperties.Request.Properties.QueryString);
+                Obfuscate(args.WebProperties.Request.Properties.FormData);
+                Obfuscate(args.WebProperties.Request.Properties.ServerVariables);
+                Obfuscate(args.WebProperties.Request.Properties.Claims);
             }
         }
 

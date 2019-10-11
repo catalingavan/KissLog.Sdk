@@ -1,4 +1,5 @@
 ﻿using KissLog.FlushArgs;
+using KissLog.Web;
 
 namespace KissLog
 {
@@ -8,7 +9,7 @@ namespace KissLog
         LogLevel MinimumLogMessageLevel { get; }
         LogListenerParser Parser { get; }
 
-        void OnBeginRequest(BeginRequestArgs args, ILogger logger);
+        void OnBeginRequest(HttpRequest httpRequest, ILogger logger);
 
         void OnMessage(LogMessage message, ILogger logger);
 

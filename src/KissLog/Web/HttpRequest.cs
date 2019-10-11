@@ -1,9 +1,8 @@
-﻿using KissLog.Web;
-using System;
+﻿using System;
 
-namespace KissLog.FlushArgs
+namespace KissLog.Web
 {
-    public class HttpRequestArgs
+    public class HttpRequest
     {
         public Uri Url { get; set; }
 
@@ -25,8 +24,13 @@ namespace KissLog.FlushArgs
 
         public UserDetails User { get; set; }
 
-        public RequestProperties Request { get; set; }
+        public RequestProperties Properties { get; set; }
 
         public DateTime StartDateTime { get; set; }
+
+        public HttpRequest()
+        {
+            Properties = new RequestProperties();
+        }
     }
 }

@@ -1,5 +1,4 @@
-﻿using KissLog.FlushArgs;
-using KissLog.Listeners.TextFileListener;
+﻿using KissLog.Listeners.TextFileListener;
 using KissLog.Web;
 using System;
 
@@ -10,35 +9,17 @@ namespace KissLog.HandlebarsNet
         private readonly Func<object, string> _logMessageTemplate;
         private readonly Func<object, string> _webRequestPropertiesTemplate;
 
-        public HandlebarsTextFormatter(
-            string logMessageTemplate,
-            string webRequestPropertiesTemplate)
-        {
-            _logMessageTemplate = HandlebarsDotNet.Handlebars.Compile(logMessageTemplate);
-            _webRequestPropertiesTemplate = HandlebarsDotNet.Handlebars.Compile(webRequestPropertiesTemplate);
-        }
-
-        public string Format(WebRequestProperties webRequestProperties)
-        {
-            return _webRequestPropertiesTemplate(webRequestProperties);
-        }
-
-        public string Format(LogMessage logMessage)
-        {
-            return _logMessageTemplate(logMessage);
-        }
-
-        public string FormatBeginRequest(BeginRequestArgs args)
+        public string FormatBeginRequest(HttpRequest httpRequest)
         {
             throw new NotImplementedException();
         }
 
-        public string FormatEndRequest(EndRequestArgs args)
+        public string FormatEndRequest(HttpRequest httpRequest, HttpResponse httpResponse)
         {
             throw new NotImplementedException();
         }
 
-        public string FormatFlush(FormatFlushArgs args)
+        public string FormatFlush(WebProperties webProperties)
         {
             throw new NotImplementedException();
         }

@@ -1,5 +1,4 @@
 ﻿using KissLog.Internal;
-using KissLog.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Primitives;
@@ -12,11 +11,11 @@ using System.Text;
 
 namespace KissLog.AspNetCore
 {
-    internal static class WebRequestPropertiesFactory
+    internal static class HttpRequestFactory
     {
-        public static WebRequestProperties Create(HttpRequest request)
+        public static KissLog.Web.HttpRequest Create(HttpRequest request)
         {
-            WebRequestProperties result = new WebRequestProperties();
+            KissLog.Web.HttpRequest result = new Web.HttpRequest();
 
             if (request == null)
                 return result;
@@ -51,8 +50,8 @@ namespace KissLog.AspNetCore
 
             result.MachineName = GetMachineName();
 
-            RequestProperties requestProperties = new RequestProperties();
-            result.Request = requestProperties;
+            KissLog.Web.RequestProperties properties = new KissLog.Web.RequestProperties();
+            result.Properties = properties;
 
             AddUserClaims(request, result);
 
@@ -65,7 +64,7 @@ namespace KissLog.AspNetCore
 
             foreach (string key in request.Headers.Keys)
             {
-                if(string.Compare(key, "Cookie", StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(key, "Cookie", StringComparison.OrdinalIgnoreCase) == 0)
                     continue;
 
                 StringValues values;
@@ -73,7 +72,7 @@ namespace KissLog.AspNetCore
 
                 string value = values.ToString();
 
-                requestProperties.Headers.Add(new KeyValuePair<string, string>(key, value));
+                properties.Headers.Add(new KeyValuePair<string, string>(key, value));
 
                 if (string.Compare(key, "Referer", StringComparison.OrdinalIgnoreCase) == 0)
                     httpReferer = value;
@@ -86,14 +85,14 @@ namespace KissLog.AspNetCore
             {
                 string value = request.Cookies[key];
 
-                requestProperties.Cookies.Add(new KeyValuePair<string, string>(key, value));
+                properties.Cookies.Add(new KeyValuePair<string, string>(key, value));
             }
 
             foreach (string key in request.Query.Keys)
             {
                 string value = string.Join("; ", request.Query[key]);
 
-                requestProperties.QueryString.Add(
+                properties.QueryString.Add(
                     new KeyValuePair<string, string>(key, value)
                 );
             }
@@ -103,22 +102,22 @@ namespace KissLog.AspNetCore
                 foreach (string key in request.Form.Keys)
                 {
                     string value = string.Join("; ", request.Form[key]);
-                    requestProperties.FormData.Add(new KeyValuePair<string, string>(key, value));
+                    properties.FormData.Add(new KeyValuePair<string, string>(key, value));
                 }
             }
 
-            if (InternalHelpers.ShouldLogInputStream(requestProperties.Headers))
+            if (InternalHelpers.ShouldLogInputStream(properties.Headers))
             {
                 inputStream = ReadInputStream(request);
             }
 
             result.HttpReferer = httpReferer;
-            result.Request.InputStream = inputStream;
+            result.Properties.InputStream = inputStream;
 
             return result;
         }
 
-        private static void AddUserClaims(HttpRequest request, WebRequestProperties properties)
+        private static void AddUserClaims(HttpRequest request, KissLog.Web.HttpRequest requestProperties)
         {
             if (request.HttpContext.User?.Identity == null || request.HttpContext.User.Identity.IsAuthenticated == false)
                 return;
@@ -133,12 +132,12 @@ namespace KissLog.AspNetCore
                 return;
 
             List<KeyValuePair<string, string>> claims = ToDictionary(identity);
-            properties.Request.Claims = claims;
+            requestProperties.Properties.Claims = claims;
 
-            properties.IsAuthenticated = true;
+            requestProperties.IsAuthenticated = true;
 
-            UserDetails user = KissLogConfiguration.Options.ApplyGetUser(properties.Request);
-            properties.User = user;
+            KissLog.Web.UserDetails user = KissLogConfiguration.Options.ApplyGetUser(requestProperties.Properties);
+            requestProperties.User = user;
         }
 
         private static string GetMachineName()
@@ -166,7 +165,7 @@ namespace KissLog.AspNetCore
             {
                 return PackageInit.ReadInputStreamProvider.ReadInputStream(request);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine("Error on WebRequestPropertiesFactory.ReadInputStream()");

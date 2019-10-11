@@ -17,11 +17,11 @@ namespace KissLog.Internal
             }
         }
 
-        public static void NotifyBeginRequest(WebRequestProperties webRequestProperties, Logger logger)
+        public static void NotifyBeginRequest(KissLog.Web.HttpRequest httpRequest, Logger logger)
         {
             try
             {
-                NotifyOnBeginRequestService.Notify(webRequestProperties, logger);
+                NotifyOnBeginRequestService.Notify(httpRequest, logger);
             }
             catch(Exception ex)
             {

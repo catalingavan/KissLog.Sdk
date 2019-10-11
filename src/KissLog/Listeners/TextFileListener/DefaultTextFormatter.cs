@@ -1,38 +1,37 @@
-﻿using KissLog.FlushArgs;
+﻿using KissLog.Web;
 using System.Text;
 
 namespace KissLog.Listeners.TextFileListener
 {
     internal class DefaultTextFormatter : ITextFormatter
     {
-        public string FormatBeginRequest(BeginRequestArgs args)
+        public string FormatBeginRequest(HttpRequest httpRequest)
         {
-            if (args == null)
+            if (httpRequest == null)
                 return string.Empty;
 
-            string httpMethod = (args.HttpMethod ?? string.Empty).ToUpper();
+            string httpMethod = (httpRequest.HttpMethod ?? string.Empty).ToUpper();
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine();
             sb.AppendLine();
-            sb.AppendLine(args.StartDateTime.ToString("o"));
-            sb.Append($"{httpMethod} {args.Url.PathAndQuery}");
+            sb.AppendLine(httpRequest.StartDateTime.ToString("o"));
+            sb.Append($"{httpMethod} {httpRequest.Url.PathAndQuery}");
 
             return sb.ToString();
         }
 
-        public string FormatEndRequest(EndRequestArgs args)
+        public string FormatEndRequest(HttpRequest httpRequest, HttpResponse httpResponse)
         {
-            if (args == null)
+            if (httpResponse == null)
                 return string.Empty;
 
-            string httpStatusCodeText = args.Response.HttpStatusCode.ToString();
-            int httpStatusCode = (int)args.Response.HttpStatusCode;
-            string durration = string.Format("{0:0,0}ms", args.DurationInMilliseconds);
+            string httpStatusCodeText = httpResponse.HttpStatusCode.ToString();
+            int httpStatusCode = (int)httpResponse.HttpStatusCode;
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine($"{httpStatusCode} {httpStatusCodeText}");
-            sb.Append($"{args.EndDateTime.ToString("o")} {durration}");
+            sb.Append($"{httpResponse.EndDateTime.ToString("o")}");
 
             return sb.ToString();
         }
@@ -47,14 +46,14 @@ namespace KissLog.Listeners.TextFileListener
             return $"{logLevel} {logMessage.Message}";
         }
 
-        public string FormatFlush(FormatFlushArgs args)
+        public string FormatFlush(WebProperties webProperties)
         {
-            string beginRequest = FormatBeginRequest(args.BeginRequest);
-            string endRequest = FormatEndRequest(args.EndRequest);
+            string request = FormatBeginRequest(webProperties.Request);
+            string response = FormatEndRequest(webProperties.Request, webProperties.Response);
 
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(beginRequest);
-            sb.AppendLine(endRequest);
+            sb.AppendLine(request);
+            sb.AppendLine(response);
 
             return sb.ToString();
         }

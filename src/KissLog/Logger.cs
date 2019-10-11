@@ -38,7 +38,7 @@ namespace KissLog
                 Uri uri = GenerateUri(url);
                 if(uri != null)
                 {
-                    DataContainer.WebRequestProperties.Url = uri;
+                    DataContainer.WebProperties.Request.Url = uri;
                 }
             }
         }

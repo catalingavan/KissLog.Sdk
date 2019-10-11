@@ -15,25 +15,25 @@ namespace KissLog.Apis.v1.Listeners
 
         public void Truncate(FlushLogArgs args)
         {
-            if (args.BeginRequestArgs.Request != null)
+            if (args.WebProperties.Request != null)
             {
-                Truncate(args.BeginRequestArgs.Request.Headers);
-                Truncate(args.BeginRequestArgs.Request.Cookies);
-                Truncate(args.BeginRequestArgs.Request.QueryString);
-                Truncate(args.BeginRequestArgs.Request.FormData);
-                Truncate(args.BeginRequestArgs.Request.ServerVariables);
-                Truncate(args.BeginRequestArgs.Request.Claims);
+                Truncate(args.WebProperties.Request.Properties.Headers);
+                Truncate(args.WebProperties.Request.Properties.Cookies);
+                Truncate(args.WebProperties.Request.Properties.QueryString);
+                Truncate(args.WebProperties.Request.Properties.FormData);
+                Truncate(args.WebProperties.Request.Properties.ServerVariables);
+                Truncate(args.WebProperties.Request.Properties.Claims);
 
-                if (!string.IsNullOrEmpty(args.BeginRequestArgs.Request.InputStream))
+                if (!string.IsNullOrEmpty(args.WebProperties.Request.Properties.InputStream))
                 {
-                    string inputStream = TruncateJson(args.BeginRequestArgs.Request.InputStream);
-                    args.BeginRequestArgs.Request.InputStream = inputStream;
+                    string inputStream = TruncateJson(args.WebProperties.Request.Properties.InputStream);
+                    args.WebProperties.Request.Properties.InputStream = inputStream;
                 }
             }
 
-            if (args.EndRequestArgs.Response != null)
+            if (args.WebProperties.Response != null)
             {
-                Truncate(args.EndRequestArgs.Response.Headers);
+                Truncate(args.WebProperties.Response.Properties.Headers);
             }
 
             if (args.MessagesGroups != null)

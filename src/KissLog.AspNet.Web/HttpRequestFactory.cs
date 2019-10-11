@@ -1,5 +1,4 @@
 ﻿using KissLog.Internal;
-using KissLog.Web;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,13 +7,13 @@ using System.Web;
 
 namespace KissLog.AspNet.Web
 {
-    internal static class WebRequestPropertiesFactory
+    internal static class HttpRequestFactory
     {
-        private static readonly string[] ServerVariablesKeysToIgnore = {"all_http", "all_raw"};
+        private static readonly string[] ServerVariablesKeysToIgnore = { "all_http", "all_raw" };
 
-        public static WebRequestProperties Create(HttpRequest request)
+        public static KissLog.Web.HttpRequest Create(HttpRequest request)
         {
-            WebRequestProperties result = new WebRequestProperties();
+            KissLog.Web.HttpRequest result = new KissLog.Web.HttpRequest();
 
             if (request == null)
                 return result;
@@ -27,8 +26,8 @@ namespace KissLog.AspNet.Web
             result.RemoteAddress = request.UserHostAddress;
             result.MachineName = GetMachineName(request);
 
-            RequestProperties requestProperties = new RequestProperties();
-            result.Request = requestProperties;
+            KissLog.Web.RequestProperties properties = new KissLog.Web.RequestProperties();
+            result.Properties = properties;
 
             var headers = DataParser.ToDictionary(request.Unvalidated.Headers);
             headers = FilterHeaders(headers);
@@ -40,11 +39,11 @@ namespace KissLog.AspNet.Web
 
             var cookies = DataParser.ToDictionary(request.Unvalidated.Cookies);
 
-            requestProperties.Headers = headers;
-            requestProperties.QueryString = queryString;
-            requestProperties.FormData = formData;
-            requestProperties.ServerVariables = serverVariables;
-            requestProperties.Cookies = cookies;
+            properties.Headers = headers;
+            properties.QueryString = queryString;
+            properties.FormData = formData;
+            properties.ServerVariables = serverVariables;
+            properties.Cookies = cookies;
             string inputStream = null;
 
             if (InternalHelpers.ShouldLogInputStream(headers))
@@ -52,7 +51,7 @@ namespace KissLog.AspNet.Web
                 inputStream = ReadInputStream(request);
             }
 
-            requestProperties.InputStream = inputStream;
+            properties.InputStream = inputStream;
 
             return result;
         }

@@ -37,17 +37,17 @@ namespace KissLog
             if (args.IsCreatedByHttpRequest == false)
                 return true;
 
-            if (args.EndRequestArgs.Response == null)
+            if (args.WebProperties.Response == null)
                 return true;
 
-            int httpStatusCode = (int)args.EndRequestArgs.Response.HttpStatusCode;
+            int httpStatusCode = (int)args.WebProperties.Response.HttpStatusCode;
             if (logListener.MinimumResponseHttpStatusCode > 0)
             {
                 if (httpStatusCode < logListener.MinimumResponseHttpStatusCode)
                     return false;
             }
 
-            string contentType = args.EndRequestArgs.Response.Headers.FirstOrDefault(p => string.Compare(p.Key, "content-type", StringComparison.OrdinalIgnoreCase) == 0).Value;
+            string contentType = args.WebProperties.Response.Properties.Headers.FirstOrDefault(p => string.Compare(p.Key, "content-type", StringComparison.OrdinalIgnoreCase) == 0).Value;
             if (string.IsNullOrEmpty(contentType) == false)
             {
                 if (ContentTypesToIgnore?.Any() == true)
@@ -59,7 +59,7 @@ namespace KissLog
                 }
             }
 
-            string localPath = args.BeginRequestArgs.Url?.LocalPath.ToLowerInvariant();
+            string localPath = args.WebProperties.Request.Url?.LocalPath.ToLowerInvariant();
             if (string.IsNullOrEmpty(localPath) == false)
             {
                 if (UrlsToIgnore?.Any() == true)

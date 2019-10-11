@@ -1,15 +1,15 @@
-﻿using KissLog.FlushArgs;
+﻿using KissLog.Web;
 
 namespace KissLog.Listeners.TextFileListener
 {
     public interface ITextFormatter
     {
-        string FormatBeginRequest(BeginRequestArgs args);
+        string FormatBeginRequest(HttpRequest httpRequest);
 
-        string FormatEndRequest(EndRequestArgs args);
+        string FormatEndRequest(HttpRequest httpRequest, HttpResponse httpResponse);
 
         string FormatLogMessage(LogMessage logMessage);
 
-        string FormatFlush(FormatFlushArgs args);
+        string FormatFlush(WebProperties webProperties);
     }
 }

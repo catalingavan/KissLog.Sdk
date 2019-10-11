@@ -41,7 +41,7 @@ namespace KissLog.Apis.v1.Listeners
 
         public virtual LogListenerParser Parser { get; set; } = new LogListenerParser();
 
-        public void OnBeginRequest(BeginRequestArgs args, ILogger logger)
+        public void OnBeginRequest(HttpRequest httpRequest, ILogger logger)
         {
             // Do nothing
             // KissLogApiListeners saves the logs only at the end of the request

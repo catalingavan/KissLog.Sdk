@@ -1,4 +1,5 @@
 ﻿using KissLog.FlushArgs;
+using KissLog.Web;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,7 +32,7 @@ namespace KissLog.Listeners.TextFileListener
         public LogListenerParser Parser { get; set; } = new LogListenerParser();
         public FlushTrigger FlushTrigger { get; set; } = FlushTrigger.OnFlush;
 
-        public void OnBeginRequest(BeginRequestArgs args, ILogger logger)
+        public void OnBeginRequest(HttpRequest httpRequest, ILogger logger)
         {
             if (FlushTrigger == FlushTrigger.OnMessage)
             {
@@ -41,7 +42,7 @@ namespace KissLog.Listeners.TextFileListener
                 {
                     using (StreamWriter sw = System.IO.File.AppendText(filePath))
                     {
-                        sw.WriteLine(_textFormatter.FormatBeginRequest(args));
+                        sw.WriteLine(_textFormatter.FormatBeginRequest(httpRequest));
                     }
                 }
             }
@@ -76,11 +77,7 @@ namespace KissLog.Listeners.TextFileListener
                     {
                         if (args.IsCreatedByHttpRequest == true)
                         {
-                            sw.WriteLine(_textFormatter.FormatFlush(new FormatFlushArgs
-                            {
-                                BeginRequest = args.BeginRequestArgs,
-                                EndRequest = args.EndRequestArgs
-                            }));
+                            sw.WriteLine(_textFormatter.FormatFlush(args.WebProperties));
                         }
 
                         foreach (var logMessage in logMessages)
