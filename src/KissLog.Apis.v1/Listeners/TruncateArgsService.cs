@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using KissLog.FlushArgs;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,25 +15,25 @@ namespace KissLog.Apis.v1.Listeners
 
         public void Truncate(FlushLogArgs args)
         {
-            if (args.WebRequestProperties?.Request != null)
+            if (args.BeginRequestArgs.Request != null)
             {
-                Truncate(args.WebRequestProperties.Request.Headers);
-                Truncate(args.WebRequestProperties.Request.Cookies);
-                Truncate(args.WebRequestProperties.Request.QueryString);
-                Truncate(args.WebRequestProperties.Request.FormData);
-                Truncate(args.WebRequestProperties.Request.ServerVariables);
-                Truncate(args.WebRequestProperties.Request.Claims);
+                Truncate(args.BeginRequestArgs.Request.Headers);
+                Truncate(args.BeginRequestArgs.Request.Cookies);
+                Truncate(args.BeginRequestArgs.Request.QueryString);
+                Truncate(args.BeginRequestArgs.Request.FormData);
+                Truncate(args.BeginRequestArgs.Request.ServerVariables);
+                Truncate(args.BeginRequestArgs.Request.Claims);
 
-                if (!string.IsNullOrEmpty(args.WebRequestProperties.Request.InputStream))
+                if (!string.IsNullOrEmpty(args.BeginRequestArgs.Request.InputStream))
                 {
-                    string inputStream = TruncateJson(args.WebRequestProperties.Request.InputStream);
-                    args.WebRequestProperties.Request.InputStream = inputStream;
+                    string inputStream = TruncateJson(args.BeginRequestArgs.Request.InputStream);
+                    args.BeginRequestArgs.Request.InputStream = inputStream;
                 }
             }
 
-            if (args.WebRequestProperties?.Response != null)
+            if (args.EndRequestArgs.Response != null)
             {
-                Truncate(args.WebRequestProperties.Response.Headers);
+                Truncate(args.EndRequestArgs.Response.Headers);
             }
 
             if (args.MessagesGroups != null)

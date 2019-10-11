@@ -1,4 +1,5 @@
-﻿using KissLog.Listeners;
+﻿using KissLog.FlushArgs;
+using KissLog.Listeners.TextFileListener;
 using KissLog.Web;
 using System;
 
@@ -25,6 +26,26 @@ namespace KissLog.HandlebarsNet
         public string Format(LogMessage logMessage)
         {
             return _logMessageTemplate(logMessage);
+        }
+
+        public string FormatBeginRequest(BeginRequestArgs args)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string FormatEndRequest(EndRequestArgs args)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string FormatFlush(FormatFlushArgs args)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string FormatLogMessage(LogMessage logMessage)
+        {
+            throw new NotImplementedException();
         }
     }
 }

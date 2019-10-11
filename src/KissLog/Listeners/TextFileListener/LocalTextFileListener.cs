@@ -1,10 +1,10 @@
-﻿using KissLog.Web;
+﻿using KissLog.FlushArgs;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace KissLog.Listeners
+namespace KissLog.Listeners.TextFileListener
 {
     public class LocalTextFileListener : ILogListener
     {
@@ -31,7 +31,7 @@ namespace KissLog.Listeners
         public LogListenerParser Parser { get; set; } = new LogListenerParser();
         public FlushTrigger FlushTrigger { get; set; } = FlushTrigger.OnFlush;
 
-        public void OnBeginRequest(WebRequestProperties webRequestProperties, ILogger logger)
+        public void OnBeginRequest(BeginRequestArgs args, ILogger logger)
         {
             if (FlushTrigger == FlushTrigger.OnMessage)
             {
@@ -41,7 +41,7 @@ namespace KissLog.Listeners
                 {
                     using (StreamWriter sw = System.IO.File.AppendText(filePath))
                     {
-                        sw.WriteLine(Format(webRequestProperties));
+                        sw.WriteLine(_textFormatter.FormatBeginRequest(args));
                     }
                 }
             }
@@ -57,7 +57,7 @@ namespace KissLog.Listeners
                 {
                     using (StreamWriter sw = System.IO.File.AppendText(filePath))
                     {
-                        sw.WriteLine(Format(message));
+                        sw.WriteLine(_textFormatter.FormatLogMessage(message));
                     }
                 }
             }
@@ -76,32 +76,20 @@ namespace KissLog.Listeners
                     {
                         if (args.IsCreatedByHttpRequest == true)
                         {
-                            sw.WriteLine(Format(args.WebRequestProperties));
+                            sw.WriteLine(_textFormatter.FormatFlush(new FormatFlushArgs
+                            {
+                                BeginRequest = args.BeginRequestArgs,
+                                EndRequest = args.EndRequestArgs
+                            }));
                         }
 
                         foreach (var logMessage in logMessages)
                         {
-                            sw.WriteLine(Format(logMessage));
+                            sw.WriteLine(_textFormatter.FormatLogMessage(logMessage));
                         }
                     }
                 }
             }
-        }
-
-        private string Format(WebRequestProperties webRequestProperties)
-        {
-            if (webRequestProperties == null)
-                return string.Empty;
-
-            return _textFormatter.Format(webRequestProperties);
-        }
-
-        private string Format(LogMessage logMessage)
-        {
-            if (logMessage == null)
-                return string.Empty;
-
-            return _textFormatter.Format(logMessage);
         }
 
         public Func<string, string> GetFileName = (string logsDirectoryPath) =>

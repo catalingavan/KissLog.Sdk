@@ -1,6 +1,7 @@
 ﻿using KissLog.Apis.v1.Apis;
 using KissLog.Apis.v1.Auth;
 using KissLog.Apis.v1.Factories;
+using KissLog.FlushArgs;
 using KissLog.Web;
 using System;
 using System.Collections.Generic;
@@ -40,7 +41,7 @@ namespace KissLog.Apis.v1.Listeners
 
         public virtual LogListenerParser Parser { get; set; } = new LogListenerParser();
 
-        public void OnBeginRequest(WebRequestProperties webRequestProperties, ILogger logger)
+        public void OnBeginRequest(BeginRequestArgs args, ILogger logger)
         {
             // Do nothing
             // KissLogApiListeners saves the logs only at the end of the request

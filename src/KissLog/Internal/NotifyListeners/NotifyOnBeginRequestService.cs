@@ -1,4 +1,5 @@
-﻿using KissLog.Web;
+﻿using KissLog.FlushArgs;
+using KissLog.Web;
 using System.Linq;
 
 namespace KissLog.Internal
@@ -10,12 +11,14 @@ namespace KissLog.Internal
             if (KissLogConfiguration.Listeners == null || KissLogConfiguration.Listeners.Any() == false)
                 return;
 
+            BeginRequestArgs args = Factory.CreateBeginRequestArgs(webRequestProperties);
+
             foreach (ILogListener listener in KissLogConfiguration.Listeners)
             {
                 if (listener == null)
                     continue;
 
-                listener.OnBeginRequest(webRequestProperties, logger);
+                listener.OnBeginRequest(args, logger);
             }
         }
     }

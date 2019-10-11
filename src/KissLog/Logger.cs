@@ -1,4 +1,5 @@
-﻿using KissLog.Internal;
+﻿using KissLog.FlushArgs;
+using KissLog.Internal;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,8 @@ using System.Text.RegularExpressions;
 
 namespace KissLog
 {
+    public delegate void LogMessageCreatedEventHandler(object sender, LogMessageCreatedEventArgs args);
+
     public class Logger : ILogger
     {
         public static IKissLoggerFactory Factory { get; private set; } = new DefaultLoggerFactory();

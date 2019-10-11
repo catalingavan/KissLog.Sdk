@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using KissLog.FlushArgs;
+using System.Collections.Generic;
 
 namespace KissLog.Internal
 {

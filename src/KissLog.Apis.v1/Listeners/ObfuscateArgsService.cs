@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KissLog.FlushArgs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,14 +18,14 @@ namespace KissLog.Apis.v1.Listeners
 
         public void Obfuscate(FlushLogArgs args)
         {
-            if (args.WebRequestProperties?.Request != null)
+            if (args.BeginRequestArgs.Request != null)
             {
-                Obfuscate(args.WebRequestProperties.Request.Headers);
-                Obfuscate(args.WebRequestProperties.Request.Cookies);
-                Obfuscate(args.WebRequestProperties.Request.QueryString);
-                Obfuscate(args.WebRequestProperties.Request.FormData);
-                Obfuscate(args.WebRequestProperties.Request.ServerVariables);
-                Obfuscate(args.WebRequestProperties.Request.Claims);
+                Obfuscate(args.BeginRequestArgs.Request.Headers);
+                Obfuscate(args.BeginRequestArgs.Request.Cookies);
+                Obfuscate(args.BeginRequestArgs.Request.QueryString);
+                Obfuscate(args.BeginRequestArgs.Request.FormData);
+                Obfuscate(args.BeginRequestArgs.Request.ServerVariables);
+                Obfuscate(args.BeginRequestArgs.Request.Claims);
             }
         }
 

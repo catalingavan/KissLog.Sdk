@@ -1,4 +1,5 @@
-﻿using KissLog.Internal;
+﻿using KissLog.FlushArgs;
+using KissLog.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,24 +15,24 @@ namespace KissLog.Apis.v1.Factories
             result.SdkName = InternalHelpers.SdkName;
             result.SdkVersion = InternalHelpers.SdkVersion;
 
-            if (args?.WebRequestProperties == null)
+            if (args.EndRequestArgs == null)
                 return result;
 
-            DateTime startDateTime = args.WebRequestProperties.StartDateTime;
-            DateTime endDateTime = args.WebRequestProperties.EndDateTime ?? DateTime.UtcNow;
+            DateTime startDateTime = args.EndRequestArgs.StartDateTime;
+            DateTime endDateTime = args.EndRequestArgs.EndDateTime;
 
             result.StartDateTime = startDateTime;
             result.DurationInMilliseconds = (endDateTime - startDateTime).TotalMilliseconds;
 
-            result.WebRequest = ToWebRequestProperties(args.WebRequestProperties);
+            result.WebRequest = ToWebRequestProperties(args.BeginRequestArgs, args.EndRequestArgs);
 
-            result.MachineName = args.WebRequestProperties.MachineName;
+            result.MachineName = args.EndRequestArgs.MachineName;
 
-            result.IsNewSession = args.WebRequestProperties.IsNewSession;
-            result.SessionId = args.WebRequestProperties.SessionId;
+            result.IsNewSession = args.EndRequestArgs.IsNewSession;
+            result.SessionId = args.EndRequestArgs.SessionId;
 
-            result.IsAuthenticated = args.WebRequestProperties.IsAuthenticated;
-            result.User = ToUser(args.WebRequestProperties.User);
+            result.IsAuthenticated = args.EndRequestArgs.IsAuthenticated;
+            result.User = ToUser(args.EndRequestArgs.User);
 
             IEnumerable<LogMessage> logMessages = args.MessagesGroups.SelectMany(p => p.Messages).OrderBy(p => p.DateTime).ToList();
             result.LogMessages = logMessages.Select(p => ToLogMessage(p, startDateTime)).ToList();
@@ -43,22 +44,22 @@ namespace KissLog.Apis.v1.Factories
             return result;
         }
 
-        private static Requests.Web.WebRequestProperties ToWebRequestProperties(KissLog.Web.WebRequestProperties item)
+        private static Requests.Web.WebRequestProperties ToWebRequestProperties(BeginRequestArgs beginRequest, EndRequestArgs endRequest)
         {
-            if (item == null)
+            if (endRequest == null)
                 return null;
 
-            Requests.Url url = ToUrl(item.Url);
-            Requests.Web.RequestProperties requestProperties = ToRequestProperties(item.Request);
-            Requests.Web.ResponseProperties responseProperties = ToResponseProperties(item.Response);
+            Requests.Url url = ToUrl(beginRequest.Url);
+            Requests.Web.RequestProperties requestProperties = ToRequestProperties(beginRequest.Request);
+            Requests.Web.ResponseProperties responseProperties = ToResponseProperties(endRequest.Response);
 
             return new Requests.Web.WebRequestProperties
             {
                 Url = url,
-                UserAgent = item.UserAgent,
-                HttpMethod = item.HttpMethod,
-                HttpReferer = item.HttpReferer,
-                RemoteAddress = item.RemoteAddress,
+                UserAgent = beginRequest.UserAgent,
+                HttpMethod = beginRequest.HttpMethod,
+                HttpReferer = beginRequest.HttpReferer,
+                RemoteAddress = beginRequest.RemoteAddress,
                 Request = requestProperties,
                 Response = responseProperties
             };

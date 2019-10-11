@@ -1,4 +1,5 @@
 ﻿using System;
+using KissLog.FlushArgs;
 using KissLog.Web;
 
 namespace KissLog.Internal
