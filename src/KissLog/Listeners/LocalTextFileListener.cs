@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace KissLog.Listeners.TextFileListener
+namespace KissLog.Listeners
 {
     public class LocalTextFileListener : ILogListener
     {
@@ -84,6 +84,18 @@ namespace KissLog.Listeners.TextFileListener
                         {
                             sw.WriteLine(_textFormatter.FormatLogMessage(logMessage));
                         }
+                    }
+                }
+            }
+            else if(FlushTrigger == FlushTrigger.OnMessage)
+            {
+                string filePath = GetFileName(_logsDirectoryFullPath);
+
+                lock (Locker)
+                {
+                    using (StreamWriter sw = System.IO.File.AppendText(filePath))
+                    {
+                        sw.WriteLine(_textFormatter.FormatEndRequest(args.WebProperties.Request, args.WebProperties.Response));
                     }
                 }
             }

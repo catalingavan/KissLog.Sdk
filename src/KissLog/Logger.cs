@@ -39,6 +39,10 @@ namespace KissLog
                 if(uri != null)
                 {
                     DataContainer.WebProperties.Request.Url = uri;
+
+                    // If the logger gets created with the url, we consider it as a BeginRequest event
+                    this.DataContainer.AddProperty(KissLog.Internal.Constants.IsCreatedByHttpRequestProperty, true);
+                    KissLog.Internal.NotifyListeners.NotifyBeginRequest(DataContainer.WebProperties.Request, this);
                 }
             }
         }

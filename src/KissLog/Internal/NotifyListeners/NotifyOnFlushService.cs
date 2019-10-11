@@ -90,6 +90,8 @@ namespace KissLog.Internal
                 webProperties.Response.HttpStatusCode = System.Net.HttpStatusCode.InternalServerError;
             }
 
+            webProperties.Response.EndDateTime = DateTime.UtcNow;
+
             List<LoggerFile> files = dataContainer.LoggerFiles.GetFiles().ToList();
             FlushLogArgs args = new FlushLogArgs
             {

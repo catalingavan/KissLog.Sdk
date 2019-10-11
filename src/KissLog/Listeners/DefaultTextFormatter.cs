@@ -1,7 +1,7 @@
 ﻿using KissLog.Web;
 using System.Text;
 
-namespace KissLog.Listeners.TextFileListener
+namespace KissLog.Listeners
 {
     internal class DefaultTextFormatter : ITextFormatter
     {
@@ -28,10 +28,10 @@ namespace KissLog.Listeners.TextFileListener
 
             string httpStatusCodeText = httpResponse.HttpStatusCode.ToString();
             int httpStatusCode = (int)httpResponse.HttpStatusCode;
+            string duration = string.Format("{0:0,0}", (httpResponse.EndDateTime - httpRequest.StartDateTime).TotalMilliseconds);
 
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"{httpStatusCode} {httpStatusCodeText}");
-            sb.Append($"{httpResponse.EndDateTime.ToString("o")}");
+            sb.Append($"{httpStatusCode} {httpStatusCodeText} Duration: {duration}ms");
 
             return sb.ToString();
         }
@@ -53,7 +53,7 @@ namespace KissLog.Listeners.TextFileListener
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(request);
-            sb.AppendLine(response);
+            sb.Append(response);
 
             return sb.ToString();
         }

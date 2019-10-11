@@ -1,4 +1,4 @@
-﻿namespace KissLog.Listeners.TextFileListener
+﻿namespace KissLog.Listeners
 {
     public enum FlushTrigger
     {
