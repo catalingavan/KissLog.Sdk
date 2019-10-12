@@ -1,5 +1,4 @@
 ﻿using KissLog.Internal;
-using KissLog.Web;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -26,8 +25,14 @@ namespace KissLog.AspNetCore
             if(logger == null)
                 return;
 
-            WebRequestProperties properties = WebRequestPropertiesFactory.Create(context.Request);
-            logger.DataContainer.WebRequestProperties = properties;
+            KissLog.Web.WebProperties webProperties = new KissLog.Web.WebProperties
+            {
+                Request = HttpRequestFactory.Create(context.Request)
+            };
+
+            logger.DataContainer.WebProperties = webProperties;
+
+            KissLog.Internal.NotifyListeners.NotifyBeginRequest(webProperties.Request, logger);
 
             Exception ex = null;
             Stream originalBodyStream = context.Response.Body;
@@ -61,7 +66,8 @@ namespace KissLog.AspNetCore
             {
                 context.Response.Body = originalBodyStream;
 
-                properties.EndDateTime = DateTime.UtcNow;
+                KissLog.Web.HttpResponse response = HttpResponseFactory.Create(context.Response);
+                webProperties.Response = response;
 
                 HttpStatusCode statusCode = (HttpStatusCode)context.Response.StatusCode;
 
@@ -75,19 +81,17 @@ namespace KissLog.AspNetCore
                 {
                     statusCode = logger.DataContainer.ExplicitHttpStatusCode.Value;
                 }
-
-                ResponseProperties response = ResponsePropertiesFactory.Create(context.Response);
+                
                 response.HttpStatusCode = statusCode;
-                response.ContentLength = contentLength;
-                properties.Response = response;
+                response.Properties.ContentLength = contentLength;
 
-                if(responseBodyFile != null && InternalHelpers.PreFilterShouldLogResponseBody(logger, responseBodyFile, response))
+                if(responseBodyFile != null && InternalHelpers.PreFilterShouldLogResponseBody(logger, responseBodyFile, response.Properties))
                 {
-                    string responseFileName = InternalHelpers.ResponseFileName(response.Headers);
+                    string responseFileName = InternalHelpers.ResponseFileName(response.Properties.Headers);
                     logger.LogFile(responseBodyFile.FileName, responseFileName);
                 }
 
-                logger.DataContainer.WebRequestProperties = properties;
+                logger.DataContainer.WebProperties = webProperties;
 
                 responseBodyFile?.Dispose();
 

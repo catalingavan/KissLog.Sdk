@@ -1,4 +1,6 @@
-﻿using KissLog.Internal;
+﻿using KissLog.FlushArgs;
+using KissLog.Internal;
+using KissLog.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,24 +16,24 @@ namespace KissLog.Apis.v1.Factories
             result.SdkName = InternalHelpers.SdkName;
             result.SdkVersion = InternalHelpers.SdkVersion;
 
-            if (args?.WebRequestProperties == null)
+            if (args.WebProperties == null)
                 return result;
 
-            DateTime startDateTime = args.WebRequestProperties.StartDateTime;
-            DateTime endDateTime = args.WebRequestProperties.EndDateTime ?? DateTime.UtcNow;
+            DateTime startDateTime = args.WebProperties.Request.StartDateTime;
+            DateTime endDateTime = args.WebProperties.Response.EndDateTime;
 
             result.StartDateTime = startDateTime;
             result.DurationInMilliseconds = (endDateTime - startDateTime).TotalMilliseconds;
 
-            result.WebRequest = ToWebRequestProperties(args.WebRequestProperties);
+            result.WebRequest = ToWebRequestProperties(args.WebProperties);
 
-            result.MachineName = args.WebRequestProperties.MachineName;
+            result.MachineName = args.WebProperties.Request.MachineName;
 
-            result.IsNewSession = args.WebRequestProperties.IsNewSession;
-            result.SessionId = args.WebRequestProperties.SessionId;
+            result.IsNewSession = args.WebProperties.Request.IsNewSession;
+            result.SessionId = args.WebProperties.Request.SessionId;
 
-            result.IsAuthenticated = args.WebRequestProperties.IsAuthenticated;
-            result.User = ToUser(args.WebRequestProperties.User);
+            result.IsAuthenticated = args.WebProperties.Request.IsAuthenticated;
+            result.User = ToUser(args.WebProperties.Request.User);
 
             IEnumerable<LogMessage> logMessages = args.MessagesGroups.SelectMany(p => p.Messages).OrderBy(p => p.DateTime).ToList();
             result.LogMessages = logMessages.Select(p => ToLogMessage(p, startDateTime)).ToList();
@@ -43,22 +45,22 @@ namespace KissLog.Apis.v1.Factories
             return result;
         }
 
-        private static Requests.Web.WebRequestProperties ToWebRequestProperties(KissLog.Web.WebRequestProperties item)
+        private static Requests.Web.WebRequestProperties ToWebRequestProperties(WebProperties webProperties)
         {
-            if (item == null)
+            if (webProperties == null)
                 return null;
 
-            Requests.Url url = ToUrl(item.Url);
-            Requests.Web.RequestProperties requestProperties = ToRequestProperties(item.Request);
-            Requests.Web.ResponseProperties responseProperties = ToResponseProperties(item.Response);
+            Requests.Url url = ToUrl(webProperties.Request.Url);
+            Requests.Web.RequestProperties requestProperties = ToRequestProperties(webProperties.Request.Properties);
+            Requests.Web.ResponseProperties responseProperties = ToResponseProperties(webProperties.Response);
 
             return new Requests.Web.WebRequestProperties
             {
                 Url = url,
-                UserAgent = item.UserAgent,
-                HttpMethod = item.HttpMethod,
-                HttpReferer = item.HttpReferer,
-                RemoteAddress = item.RemoteAddress,
+                UserAgent = webProperties.Request.UserAgent,
+                HttpMethod = webProperties.Request.HttpMethod,
+                HttpReferer = webProperties.Request.HttpReferer,
+                RemoteAddress = webProperties.Request.RemoteAddress,
                 Request = requestProperties,
                 Response = responseProperties
             };
@@ -81,17 +83,17 @@ namespace KissLog.Apis.v1.Factories
             };
         }
 
-        private static Requests.Web.ResponseProperties ToResponseProperties(KissLog.Web.ResponseProperties item)
+        private static Requests.Web.ResponseProperties ToResponseProperties(KissLog.Web.HttpResponse item)
         {
             if (item == null)
                 return null;
 
             return new Requests.Web.ResponseProperties
             {
-                Headers = item.Headers,
                 HttpStatusCode = (int)item.HttpStatusCode,
                 HttpStatusCodeText = item.HttpStatusCode.ToString(),
-                ContentLength = item.ContentLength
+                Headers = item.Properties.Headers,
+                ContentLength = item.Properties.ContentLength,
             };
         }
 

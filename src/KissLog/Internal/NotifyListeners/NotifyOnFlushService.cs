@@ -1,19 +1,13 @@
-﻿using System;
-using KissLog.Internal;
+﻿using KissLog.FlushArgs;
 using KissLog.Web;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace KissLog
+namespace KissLog.Internal
 {
-    class ArgsResult
-    {
-        public FlushLogArgs Args { get; set; }
-        public List<LoggerFile> Files { get; set; } = new List<LoggerFile>();
-    }
-
-    internal static class NotifyListeners
+    internal static class NotifyOnFlushService
     {
         public static void Notify(ILogger[] loggers)
         {
@@ -41,21 +35,16 @@ namespace KissLog
             {
                 FlushLogArgs args = CreateFlushArgsForListener(defaultLogger, listener, defaultArgs, defaultArgsJsonJson, defaultFiles.ToList());
 
-                if(ShouldUseListener(listener, args) == false)
+                if (ShouldUseListener(listener, args) == false)
                     continue;
 
                 listener.Parser?.BeforeFlush(args, listener);
 
-                listener.OnFlush(args);
-            }
-
-            foreach (Logger logger in theLoggers)
-            {
-                logger.Reset();
+                listener.OnFlush(args, defaultLogger);
             }
         }
 
-        public static ArgsResult CreateArgs(ILogger[] loggers)
+        internal static ArgsResult CreateArgs(ILogger[] loggers)
         {
             if (loggers == null || !loggers.Any())
                 return null;
@@ -74,7 +63,7 @@ namespace KissLog
 
             LoggerDataContainer dataContainer = defaultLogger.DataContainer;
 
-            WebRequestProperties webRequestProperties = dataContainer.WebRequestProperties;
+            WebProperties webProperties = dataContainer.WebProperties;
             string errorMessage = dataContainer.Exceptions.LastOrDefault()?.ExceptionMessage;
             List<LogMessagesGroup> logMessages = new List<LogMessagesGroup>();
             List<CapturedException> exceptions = new List<CapturedException>();
@@ -98,19 +87,16 @@ namespace KissLog
 
             if(defaultLogger.IsCreatedByHttpRequest() == false && exceptions.Any())
             {
-                webRequestProperties.Response.HttpStatusCode = System.Net.HttpStatusCode.InternalServerError;
+                webProperties.Response.HttpStatusCode = System.Net.HttpStatusCode.InternalServerError;
             }
 
-            if(!webRequestProperties.EndDateTime.HasValue)
-            {
-                webRequestProperties.EndDateTime = DateTime.UtcNow;
-            }
+            webProperties.Response.EndDateTime = DateTime.UtcNow;
 
             List<LoggerFile> files = dataContainer.LoggerFiles.GetFiles().ToList();
             FlushLogArgs args = new FlushLogArgs
             {
                 IsCreatedByHttpRequest = defaultLogger.IsCreatedByHttpRequest(),
-                WebRequestProperties = webRequestProperties,
+                WebProperties = webProperties,
                 MessagesGroups = logMessages,
                 CapturedExceptions = exceptions,
                 CustomProperties = customProperties
@@ -130,23 +116,23 @@ namespace KissLog
             FlushLogArgs args = JsonConvert.DeserializeObject<FlushLogArgs>(defaultArgsJson);
 
             string inputStream = null;
-            if (!string.IsNullOrEmpty(defaultArgs.WebRequestProperties.Request.InputStream))
+            if (!string.IsNullOrEmpty(defaultArgs.WebProperties.Request.Properties.InputStream))
             {
-                if(KissLogConfiguration.Options.ApplyShouldLogRequestInputStream(defaultLogger, listener, defaultArgs))
+                if (KissLogConfiguration.Options.ApplyShouldLogRequestInputStream(defaultLogger, listener, defaultArgs))
                 {
-                    inputStream = defaultArgs.WebRequestProperties.Request.InputStream;
+                    inputStream = defaultArgs.WebProperties.Request.Properties.InputStream;
                 }
             }
 
-            args.WebRequestProperties.Request.Headers = defaultArgs.WebRequestProperties.Request.Headers.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestHeader(listener, defaultArgs, p.Key)).ToList();
-            args.WebRequestProperties.Request.Cookies = defaultArgs.WebRequestProperties.Request.Cookies.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestCookie(listener, defaultArgs, p.Key)).ToList();
-            args.WebRequestProperties.Request.QueryString = defaultArgs.WebRequestProperties.Request.QueryString.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestQueryString(listener, defaultArgs, p.Key)).ToList();
-            args.WebRequestProperties.Request.FormData = defaultArgs.WebRequestProperties.Request.FormData.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestFormData(listener, defaultArgs, p.Key)).ToList();
-            args.WebRequestProperties.Request.ServerVariables = defaultArgs.WebRequestProperties.Request.ServerVariables.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestServerVariable(listener, defaultArgs, p.Key)).ToList();
-            args.WebRequestProperties.Request.Claims = defaultArgs.WebRequestProperties.Request.Claims.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestClaim(listener, defaultArgs, p.Key)).ToList();
-            args.WebRequestProperties.Request.InputStream = inputStream;
+            args.WebProperties.Request.Properties.Headers = defaultArgs.WebProperties.Request.Properties.Headers.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestHeader(listener, defaultArgs, p.Key)).ToList();
+            args.WebProperties.Request.Properties.Cookies = defaultArgs.WebProperties.Request.Properties.Cookies.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestCookie(listener, defaultArgs, p.Key)).ToList();
+            args.WebProperties.Request.Properties.QueryString = defaultArgs.WebProperties.Request.Properties.QueryString.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestQueryString(listener, defaultArgs, p.Key)).ToList();
+            args.WebProperties.Request.Properties.FormData = defaultArgs.WebProperties.Request.Properties.FormData.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestFormData(listener, defaultArgs, p.Key)).ToList();
+            args.WebProperties.Request.Properties.ServerVariables = defaultArgs.WebProperties.Request.Properties.ServerVariables.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestServerVariable(listener, defaultArgs, p.Key)).ToList();
+            args.WebProperties.Request.Properties.Claims = defaultArgs.WebProperties.Request.Properties.Claims.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestClaim(listener, defaultArgs, p.Key)).ToList();
+            args.WebProperties.Request.Properties.InputStream = inputStream;
 
-            args.WebRequestProperties.Response.Headers = defaultArgs.WebRequestProperties.Response.Headers.Where(p => KissLogConfiguration.Options.ApplyShouldLogResponseHeader(listener, defaultArgs, p.Key)).ToList();
+            args.WebProperties.Response.Properties.Headers = defaultArgs.WebProperties.Response.Properties.Headers.Where(p => KissLogConfiguration.Options.ApplyShouldLogResponseHeader(listener, defaultArgs, p.Key)).ToList();
 
             List<LogMessagesGroup> messages = new List<LogMessagesGroup>();
             foreach (var group in defaultArgs.MessagesGroups)
@@ -173,16 +159,9 @@ namespace KissLog
             return args;
         }
 
-        private static bool ShouldUseListener(ILogListener listener, FlushLogArgs args)
+        private static IEnumerable<KeyValuePair<string, object>> GetCustomProperties(Logger logger)
         {
-            if (KissLogConfiguration.Options.ApplyToggleListener(listener, args) == false)
-                return false;
-
-            LogListenerParser parser = listener.Parser;
-            if (parser == null)
-                return true;
-
-            return parser.ShouldLog(args, listener);
+            return logger.DataContainer.GetProperties().Where(p => p.Key.ToLowerInvariant().StartsWith("x-kisslog-") == false);
         }
 
         private static LoggerFile GetResponseFile(List<LoggerFile> files)
@@ -193,9 +172,16 @@ namespace KissLog
             return files.FirstOrDefault(p => string.Compare(p.FileName, "Response", StringComparison.OrdinalIgnoreCase) == 0);
         }
 
-        private static IEnumerable<KeyValuePair<string, object>> GetCustomProperties(Logger logger)
+        private static bool ShouldUseListener(ILogListener listener, FlushLogArgs args)
         {
-            return logger.DataContainer.GetProperties().Where(p => p.Key.ToLowerInvariant().StartsWith("x-kisslog-") == false);
+            if (KissLogConfiguration.Options.ApplyToggleListener(listener, args) == false)
+                return false;
+
+            LogListenerParser parser = listener.Parser;
+            if (parser == null)
+                return true;
+
+            return parser.ShouldLog(args, listener);
         }
     }
 }

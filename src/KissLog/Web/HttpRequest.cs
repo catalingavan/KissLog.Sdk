@@ -2,7 +2,7 @@
 
 namespace KissLog.Web
 {
-    public class WebRequestProperties
+    public class HttpRequest
     {
         public Uri Url { get; set; }
 
@@ -24,12 +24,13 @@ namespace KissLog.Web
 
         public UserDetails User { get; set; }
 
-        public RequestProperties Request { get; set; }
-
-        public ResponseProperties Response { get; set; }
+        public RequestProperties Properties { get; set; }
 
         public DateTime StartDateTime { get; set; }
 
-        public DateTime? EndDateTime { get; set; }
+        public HttpRequest()
+        {
+            Properties = new RequestProperties();
+        }
     }
 }

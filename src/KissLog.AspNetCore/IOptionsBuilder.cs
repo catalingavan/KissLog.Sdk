@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace KissLog.AspNetCore
 {
@@ -6,5 +7,6 @@ namespace KissLog.AspNetCore
     {
         List<ILogListener> Listeners { get; }
         Options Options { get; }
+        Action<string, LogLevel> InternalLog { get; set; }
     }
 }

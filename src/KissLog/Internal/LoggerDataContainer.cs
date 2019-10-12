@@ -1,6 +1,5 @@
 ﻿using KissLog.Web;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 
 namespace KissLog.Internal
@@ -10,7 +9,7 @@ namespace KissLog.Internal
         private readonly ILogger _logger;
         private Dictionary<string, object> _customProperties = null;
         public HttpStatusCode? ExplicitHttpStatusCode { get; set; }
-        public WebRequestProperties WebRequestProperties { get; set; }
+        public WebProperties WebProperties { get; set; }
         public List<CapturedException> Exceptions { get; private set; }
         public List<LogMessage> LogMessages { get; private set; }
         internal LoggerFiles LoggerFiles { get; private set; }
@@ -19,7 +18,7 @@ namespace KissLog.Internal
         {
             _logger = logger;
 
-            WebRequestProperties = WebRequestPropertiesFactory.CreateDefault();
+            WebProperties = WebPropertiesFactory.CreateDefault();
             Exceptions = new List<CapturedException>();
             LogMessages = new List<LogMessage>();
 

@@ -1,21 +1,25 @@
-﻿using KissLog.Web;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
+using System;
 using System.Collections.Generic;
 using System.Net;
 
 namespace KissLog.AspNetCore
 {
-    internal static class ResponsePropertiesFactory
+    internal static class HttpResponseFactory
     {
-        public static ResponseProperties Create(HttpResponse response)
+        public static KissLog.Web.HttpResponse Create(HttpResponse response)
         {
-            ResponseProperties result = new ResponseProperties();
+            KissLog.Web.HttpResponse result = new KissLog.Web.HttpResponse();
 
             if (response == null)
                 return result;
 
             result.HttpStatusCode = (HttpStatusCode)response.StatusCode;
+            result.EndDateTime = DateTime.UtcNow;
+
+            KissLog.Web.ResponseProperties properties = new KissLog.Web.ResponseProperties();
+            result.Properties = properties;
 
             foreach (string key in response.Headers.Keys)
             {
@@ -24,7 +28,7 @@ namespace KissLog.AspNetCore
 
                 string value = values.ToString();
 
-                result.Headers.Add(
+                properties.Headers.Add(
                     new KeyValuePair<string, string>(key, value)
                 );
             }

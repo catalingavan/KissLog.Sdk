@@ -1,6 +1,8 @@
 ﻿using KissLog.Apis.v1.Apis;
 using KissLog.Apis.v1.Auth;
 using KissLog.Apis.v1.Factories;
+using KissLog.FlushArgs;
+using KissLog.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +41,19 @@ namespace KissLog.Apis.v1.Listeners
 
         public virtual LogListenerParser Parser { get; set; } = new LogListenerParser();
 
-        public void OnFlush(FlushLogArgs args)
+        public void OnBeginRequest(HttpRequest httpRequest, ILogger logger)
+        {
+            // Do nothing
+            // KissLogApiListeners saves the logs only at the end of the request
+        }
+
+        public void OnMessage(LogMessage message, ILogger logger)
+        {
+            // Do nothing
+            // KissLogApiListeners saves the logs only at the end of the request
+        }
+
+        public void OnFlush(FlushLogArgs args, ILogger logger)
         {
             string organizationId = _application?.OrganizationId;
             string applicationId = _application?.ApplicationId;
@@ -98,27 +112,5 @@ namespace KissLog.Apis.v1.Listeners
 
             return files;
         }
-
-        private void DeleteFiles(IList<LoggerFile> files)
-        {
-            if (files == null || !files.Any())
-                return;
-
-            foreach (var item in files)
-            {
-                if (System.IO.File.Exists(item.FilePath))
-                {
-                    try
-                    {
-                        System.IO.File.Delete(item.FilePath);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-                }
-            }
-        }
     }
 }
-

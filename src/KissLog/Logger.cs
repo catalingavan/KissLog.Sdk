@@ -1,4 +1,5 @@
-﻿using KissLog.Internal;
+﻿using KissLog.FlushArgs;
+using KissLog.Internal;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,8 @@ using System.Text.RegularExpressions;
 
 namespace KissLog
 {
+    public delegate void LogMessageCreatedEventHandler(object sender, LogMessageCreatedEventArgs args);
+
     public class Logger : ILogger
     {
         public static IKissLoggerFactory Factory { get; private set; } = new DefaultLoggerFactory();
@@ -35,7 +38,11 @@ namespace KissLog
                 Uri uri = GenerateUri(url);
                 if(uri != null)
                 {
-                    DataContainer.WebRequestProperties.Url = uri;
+                    DataContainer.WebProperties.Request.Url = uri;
+
+                    // If the logger gets created with the url, we consider it as a BeginRequest event
+                    // this.DataContainer.AddProperty(KissLog.Internal.Constants.IsCreatedByHttpRequestProperty, true);
+                    KissLog.Internal.NotifyListeners.NotifyBeginRequest(DataContainer.WebProperties.Request, this);
                 }
             }
         }
@@ -68,6 +75,8 @@ namespace KissLog
             DataContainer.LogMessages.Add(logMessage);
 
             OnMessage?.Invoke(this, new LogMessageCreatedEventArgs { LogMessage = logMessage });
+
+            KissLog.Internal.NotifyListeners.NotifyMessage(logMessage, this);
         }
 
         public void Log(LogLevel logLevel, object json, string memberName = null, int lineNumber = 0, string memberType = null)
@@ -288,7 +297,7 @@ namespace KissLog
 
         public static void NotifyListeners(ILogger[] loggers)
         {
-            KissLog.NotifyListeners.Notify(loggers);
+            KissLog.Internal.NotifyListeners.NotifyFlush(loggers);
         }
 
         public static FlushLogArgs CreateFlushArgs(ILogger logger)
@@ -301,7 +310,7 @@ namespace KissLog
 
         public static FlushLogArgs CreateFlushArgs(ILogger[] loggers)
         {
-            ArgsResult args = KissLog.NotifyListeners.CreateArgs(loggers);
+            ArgsResult args = NotifyOnFlushService.CreateArgs(loggers);
             return args?.Args;
         }
     }

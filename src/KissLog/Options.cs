@@ -1,4 +1,5 @@
-﻿using KissLog.Web;
+﻿using KissLog.FlushArgs;
+using KissLog.Web;
 using Newtonsoft.Json;
 using System;
 using System.Linq;

@@ -4,7 +4,12 @@ namespace KissLog.Listeners
 {
     public interface ITextFormatter
     {
-        string Format(LogMessage logMessage);
-        string Format(WebRequestProperties webRequestProperties);
+        string FormatBeginRequest(HttpRequest httpRequest);
+
+        string FormatEndRequest(HttpRequest httpRequest, HttpResponse httpResponse);
+
+        string FormatLogMessage(LogMessage logMessage);
+
+        string FormatFlush(WebProperties webProperties);
     }
 }

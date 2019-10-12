@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KissLog.FlushArgs;
+using System;
 using System.Collections.Generic;
 
 namespace KissLog

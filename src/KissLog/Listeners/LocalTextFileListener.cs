@@ -1,4 +1,5 @@
-﻿using KissLog.Web;
+﻿using KissLog.FlushArgs;
+using KissLog.Web;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +14,11 @@ namespace KissLog.Listeners
         private readonly ITextFormatter _textFormatter;
         private readonly string _logsDirectoryFullPath;
 
+        public LocalTextFileListener(string logsDirectoryFullPath) :
+            this(new DefaultTextFormatter(), logsDirectoryFullPath)
+        {
+        }
+
         public LocalTextFileListener(
             ITextFormatter textFormatter,
             string logsDirectoryFullPath)
@@ -21,50 +27,78 @@ namespace KissLog.Listeners
             _logsDirectoryFullPath = logsDirectoryFullPath;
         }
 
-        public virtual int MinimumResponseHttpStatusCode { get; set; } = 0;
-        public virtual LogLevel MinimumLogMessageLevel { get; set; } = LogLevel.Trace;
+        public int MinimumResponseHttpStatusCode { get; set; } = 0;
+        public LogLevel MinimumLogMessageLevel { get; set; } = LogLevel.Trace;
+        public LogListenerParser Parser { get; set; } = new LogListenerParser();
+        public FlushTrigger FlushTrigger { get; set; } = FlushTrigger.OnFlush;
 
-        public virtual LogListenerParser Parser { get; set; } = new LogListenerParser();
-
-        public void OnFlush(FlushLogArgs args)
+        public void OnBeginRequest(HttpRequest httpRequest, ILogger logger)
         {
-            lock (Locker)
+            if (FlushTrigger == FlushTrigger.OnMessage)
             {
                 string filePath = GetFileName(_logsDirectoryFullPath);
 
-                using (StreamWriter sw = System.IO.File.AppendText(filePath))
+                lock (Locker)
                 {
-                    Write(sw, args);
+                    using (StreamWriter sw = System.IO.File.AppendText(filePath))
+                    {
+                        sw.WriteLine(_textFormatter.FormatBeginRequest(httpRequest));
+                    }
                 }
             }
         }
 
-        private void Write(StreamWriter sw, FlushLogArgs args)
+        public void OnMessage(LogMessage message, ILogger logger)
         {
-            if (args.IsCreatedByHttpRequest == true)
+            if (FlushTrigger == FlushTrigger.OnMessage)
             {
-                sw.WriteLine(Format(args.WebRequestProperties));
-            }
+                string filePath = GetFileName(_logsDirectoryFullPath);
 
-            IEnumerable<LogMessage> logMessages = args.MessagesGroups.SelectMany(p => p.Messages).OrderBy(p => p.DateTime).ToList();
-
-            foreach (var logMessage in logMessages)
-            {
-                sw.WriteLine(Format(logMessage));
+                lock (Locker)
+                {
+                    using (StreamWriter sw = System.IO.File.AppendText(filePath))
+                    {
+                        sw.WriteLine(_textFormatter.FormatLogMessage(message));
+                    }
+                }
             }
         }
 
-        private string Format(WebRequestProperties webRequestProperties)
+        public void OnFlush(FlushLogArgs args, ILogger logger)
         {
-            if (webRequestProperties == null)
-                return string.Empty;
+            if (FlushTrigger == FlushTrigger.OnFlush)
+            {
+                IEnumerable<LogMessage> logMessages = args.MessagesGroups.SelectMany(p => p.Messages).OrderBy(p => p.DateTime).ToList();
+                string filePath = GetFileName(_logsDirectoryFullPath);
 
-            return _textFormatter.Format(webRequestProperties);
-        }
+                lock (Locker)
+                {
+                    using (StreamWriter sw = System.IO.File.AppendText(filePath))
+                    {
+                        if (args.WebProperties != null)
+                        {
+                            sw.WriteLine(_textFormatter.FormatFlush(args.WebProperties));
+                        }
 
-        private string Format(LogMessage logMessage)
-        {
-            return _textFormatter.Format(logMessage);
+                        foreach (var logMessage in logMessages)
+                        {
+                            sw.WriteLine(_textFormatter.FormatLogMessage(logMessage));
+                        }
+                    }
+                }
+            }
+            else if(FlushTrigger == FlushTrigger.OnMessage)
+            {
+                string filePath = GetFileName(_logsDirectoryFullPath);
+
+                lock (Locker)
+                {
+                    using (StreamWriter sw = System.IO.File.AppendText(filePath))
+                    {
+                        sw.WriteLine(_textFormatter.FormatEndRequest(args.WebProperties.Request, args.WebProperties.Response));
+                    }
+                }
+            }
         }
 
         public Func<string, string> GetFileName = (string logsDirectoryPath) =>

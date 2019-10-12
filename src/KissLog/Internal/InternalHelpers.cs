@@ -1,4 +1,5 @@
-﻿using KissLog.Web;
+﻿using KissLog.FlushArgs;
+using KissLog.Web;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -73,7 +74,7 @@ namespace KissLog.Internal
 
             bool defaultValue = false;
 
-            string contentType = args.WebRequestProperties?.Response?.Headers?.FirstOrDefault(p => string.Compare(p.Key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0).Value;
+            string contentType = args.WebProperties.Response?.Properties?.Headers?.FirstOrDefault(p => string.Compare(p.Key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0).Value;
             if (!string.IsNullOrEmpty(contentType))
             {
                 contentType = contentType.ToLowerInvariant();

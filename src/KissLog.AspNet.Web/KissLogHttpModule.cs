@@ -46,20 +46,20 @@ namespace KissLog.AspNet.Web
             // We need to add a dummy session value, otherwise ctx.Session.IsNewSession will always be true
             ctx.Session.Add("X-KissLogSession", true);
 
-            WebRequestProperties requestProperties = (WebRequestProperties)ctx.Items[Constants.HttpRequestPropertiesKey];
-            if (requestProperties == null)
+            WebProperties webProperties = (WebProperties)ctx.Items[Constants.HttpRequestPropertiesKey];
+            if (webProperties == null)
                 return;
 
-            requestProperties.IsNewSession = ctx.Session.IsNewSession;
-            requestProperties.SessionId = ctx.Session.SessionID;
+            webProperties.Request.IsNewSession = ctx.Session.IsNewSession;
+            webProperties.Request.SessionId = ctx.Session.SessionID;
         }
 
         private void PostAuthenticateRquest(object sender, EventArgs e)
         {
             HttpContext ctx = HttpContext.Current;
 
-            WebRequestProperties properties = (WebRequestProperties)ctx.Items[Constants.HttpRequestPropertiesKey];
-            if(properties == null)
+            WebProperties webProperties = (WebProperties)ctx.Items[Constants.HttpRequestPropertiesKey];
+            if(webProperties == null)
                 return;
 
             if((ctx.User is ClaimsPrincipal) == false)
@@ -72,8 +72,8 @@ namespace KissLog.AspNet.Web
             if(claimsPrincipal.Identity.IsAuthenticated == false)
                 return;
 
-            properties.IsAuthenticated = true;
-            properties.User = new UserDetails
+            webProperties.Request.IsAuthenticated = true;
+            webProperties.Request.User = new UserDetails
             {
                 Name = claimsPrincipal.Identity.Name,
             };
@@ -83,15 +83,15 @@ namespace KissLog.AspNet.Web
                 return;
 
             List<KeyValuePair<string, string>> claims = DataParser.ToDictionary(claimsIdentity);
-            properties.Request.Claims = claims;
+            webProperties.Request.Properties.Claims = claims;
 
-            UserDetails user = KissLogConfiguration.Options.ApplyGetUser(properties.Request);
+            UserDetails user = KissLogConfiguration.Options.ApplyGetUser(webProperties.Request.Properties);
             if (user != null)
             {
                 user.Name = user.Name ?? claimsIdentity.Name;
             }
 
-            properties.User = user;
+            webProperties.Request.User = user;
         }
 
         private void BeginRequest(object sender, EventArgs e)
@@ -99,14 +99,20 @@ namespace KissLog.AspNet.Web
             HttpContext ctx = HttpContext.Current;
             var request = ctx.Request;
 
-            WebRequestProperties webProperties = WebRequestPropertiesFactory.Create(request);
+            KissLog.Web.WebProperties webProperties = new KissLog.Web.WebProperties
+            {
+                Request = HttpRequestFactory.Create(request)
+            };
+
             ctx.Items[Constants.HttpRequestPropertiesKey] = webProperties;
 
             Logger logger = Logger.Factory.Get() as Logger;
             if(logger == null)
                 return;
 
-            logger.DataContainer.WebRequestProperties = webProperties;
+            logger.DataContainer.WebProperties = webProperties;
+
+            KissLog.Internal.NotifyListeners.NotifyBeginRequest(webProperties.Request, logger);
         }
 
         private void OnError(object sender, EventArgs eventArgs)
@@ -144,7 +150,17 @@ namespace KissLog.AspNet.Web
             {
                 if (sniffer != null)
                 {
-                    string responseContent = sniffer.GetContent();
+                    string responseContent = null;
+
+                    try
+                    {
+                        responseContent = sniffer.GetContent();
+                    }
+                    catch(Exception ex1)
+                    {
+                        InternalHelpers.Log(ex1.ToString(), LogLevel.Error);
+                    }
+
                     if (string.IsNullOrEmpty(responseContent) == false)
                     {
                         logger.Log(LogLevel.Error, responseContent);
@@ -152,17 +168,18 @@ namespace KissLog.AspNet.Web
                 }
             }
 
-            WebRequestProperties properties = (WebRequestProperties)HttpContext.Current.Items[Constants.HttpRequestPropertiesKey];
-            if(properties == null)
+            WebProperties webProperties = (WebProperties)HttpContext.Current.Items[Constants.HttpRequestPropertiesKey];
+            if(webProperties == null)
             {
                 // IIS redirect bypasses the BeginRequest() event
-                properties = WebRequestPropertiesFactory.Create(ctx.Request);
+                webProperties = new WebProperties
+                {
+                    Request = HttpRequestFactory.Create(ctx.Request)
+                };
             }
 
-            properties.EndDateTime = DateTime.UtcNow;
-
-            ResponseProperties response = WebResponsePropertiesFactory.Create(ctx.Response);
-            properties.Response = response;
+            KissLog.Web.HttpResponse response = HttpResponseFactory.Create(ctx.Response);
+            webProperties.Response = response;
 
             if (logger.DataContainer.ExplicitHttpStatusCode.HasValue)
             {
@@ -171,15 +188,15 @@ namespace KissLog.AspNet.Web
 
             if (sniffer != null)
             {
-                response.ContentLength = sniffer.MirrorStream.Length;
+                response.Properties.ContentLength = sniffer.MirrorStream.Length;
             }
 
             if (sniffer != null)
             {
-                LogResponse(logger, properties, response, sniffer);
+                LogResponse(logger, response, sniffer);
             }
 
-            logger.DataContainer.WebRequestProperties = properties;
+            logger.DataContainer.WebProperties = webProperties;
 
             IEnumerable<ILogger> loggers = Logger.Factory.GetAll();
 
@@ -207,7 +224,7 @@ namespace KissLog.AspNet.Web
             }
         }
 
-        private static void LogResponse(Logger logger, WebRequestProperties properties, ResponseProperties response, ResponseSniffer sniffer)
+        private static void LogResponse(Logger logger, KissLog.Web.HttpResponse response, ResponseSniffer sniffer)
         {
             try
             {
@@ -215,7 +232,7 @@ namespace KissLog.AspNet.Web
                 {
                     sniffer.MirrorStream.Position = 0;
 
-                    if (InternalHelpers.PreFilterShouldLogResponseBody(logger, sniffer.MirrorStream, response))
+                    if (InternalHelpers.PreFilterShouldLogResponseBody(logger, sniffer.MirrorStream, response.Properties))
                     {
                         using (TemporaryFile tempFile = new TemporaryFile())
                         {
@@ -224,7 +241,7 @@ namespace KissLog.AspNet.Web
                                 sniffer.MirrorStream.CopyTo(fs);
                             }
 
-                            string responseFileName = InternalHelpers.ResponseFileName(properties.Response.Headers);
+                            string responseFileName = InternalHelpers.ResponseFileName(response.Properties.Headers);
                             logger.LogFile(tempFile.FileName, responseFileName);
                         }
                     }
