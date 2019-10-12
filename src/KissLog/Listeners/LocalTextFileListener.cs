@@ -75,7 +75,7 @@ namespace KissLog.Listeners
                 {
                     using (StreamWriter sw = System.IO.File.AppendText(filePath))
                     {
-                        if (args.IsCreatedByHttpRequest == true)
+                        if (args.WebProperties != null)
                         {
                             sw.WriteLine(_textFormatter.FormatFlush(args.WebProperties));
                         }

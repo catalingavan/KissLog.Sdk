@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29409.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog", "KissLog\KissLog.csproj", "{53519D66-BD77-4363-A561-6CFFC17DF68A}"
 EndProject
@@ -12,8 +12,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KissLog.AspNet.WebApi", "KissLog.AspNet.WebApi\KissLog.AspNet.WebApi.csproj", "{C6842EC5-2765-42FF-B64C-840518F33903}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.AspNetCore", "KissLog.AspNetCore\KissLog.AspNetCore.csproj", "{AD2DFD6A-1C56-4D00-AE49-85FC80B7B40D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.HandlebarsNet", "KissLog.HandlebarsNet\KissLog.HandlebarsNet.csproj", "{4A7ACBAC-5786-4030-99AB-4BE87685A47C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.Adapters.log4net", "KissLog.Adapters.log4net\KissLog.Adapters.log4net.csproj", "{6665AFB2-F772-4E7B-8C2B-B281C722A85E}"
 EndProject
@@ -47,10 +45,6 @@ Global
 		{AD2DFD6A-1C56-4D00-AE49-85FC80B7B40D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD2DFD6A-1C56-4D00-AE49-85FC80B7B40D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD2DFD6A-1C56-4D00-AE49-85FC80B7B40D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4A7ACBAC-5786-4030-99AB-4BE87685A47C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4A7ACBAC-5786-4030-99AB-4BE87685A47C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4A7ACBAC-5786-4030-99AB-4BE87685A47C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4A7ACBAC-5786-4030-99AB-4BE87685A47C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6665AFB2-F772-4E7B-8C2B-B281C722A85E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6665AFB2-F772-4E7B-8C2B-B281C722A85E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6665AFB2-F772-4E7B-8C2B-B281C722A85E}.Release|Any CPU.ActiveCfg = Release|Any CPU

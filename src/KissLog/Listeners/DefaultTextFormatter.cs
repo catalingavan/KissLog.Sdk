@@ -3,7 +3,7 @@ using System.Text;
 
 namespace KissLog.Listeners
 {
-    internal class DefaultTextFormatter : ITextFormatter
+    public class DefaultTextFormatter : ITextFormatter
     {
         public string FormatBeginRequest(HttpRequest httpRequest)
         {
