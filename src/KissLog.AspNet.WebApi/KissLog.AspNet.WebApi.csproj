@@ -51,7 +51,6 @@
   <ItemGroup>
     <Compile Include="HttpNotFoundAwareControllerActionSelector.cs" />
     <Compile Include="HttpNotFoundAwareDefaultHttpControllerSelector.cs" />
-    <Compile Include="HttpRequestFactory.cs" />
     <Compile Include="KissLogExceptionLogger.cs" />
     <Compile Include="KissLogWebApiExceptionFilterAttribute.cs" />
     <Compile Include="PackageInit.cs" />

@@ -150,7 +150,17 @@ namespace KissLog.AspNet.Web
             {
                 if (sniffer != null)
                 {
-                    string responseContent = sniffer.GetContent();
+                    string responseContent = null;
+
+                    try
+                    {
+                        responseContent = sniffer.GetContent();
+                    }
+                    catch(Exception ex1)
+                    {
+                        InternalHelpers.Log(ex1.ToString(), LogLevel.Error);
+                    }
+
                     if (string.IsNullOrEmpty(responseContent) == false)
                     {
                         logger.Log(LogLevel.Error, responseContent);
