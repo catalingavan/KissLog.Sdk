@@ -1,4 +1,5 @@
 ﻿using KissLog.Web;
+using System;
 using System.Text;
 
 namespace KissLog.Listeners
@@ -11,11 +12,15 @@ namespace KissLog.Listeners
                 return string.Empty;
 
             string httpMethod = (httpRequest.HttpMethod ?? string.Empty).ToUpper();
+            string dateTime = FormatDateTime(httpRequest.StartDateTime);
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine();
-            sb.AppendLine();
-            sb.AppendLine(httpRequest.StartDateTime.ToString("o"));
+            sb.AppendLine(GetBeginRequestDelimiter());
+
+            if(!string.IsNullOrEmpty(dateTime))
+                sb.AppendLine(dateTime);
+
             sb.Append($"{httpMethod} {httpRequest.Url.PathAndQuery}");
 
             return sb.ToString();
@@ -56,6 +61,18 @@ namespace KissLog.Listeners
             sb.Append(response);
 
             return sb.ToString();
+        }
+
+        public Func<DateTime, string> FormatDateTime = (DateTime dateTime) =>
+        {
+            return dateTime.ToString("o");
+        };
+
+        public string BeginRequestDelimiter { get; set; } = null;
+
+        private string GetBeginRequestDelimiter()
+        {
+            return BeginRequestDelimiter ?? string.Empty;
         }
     }
 }

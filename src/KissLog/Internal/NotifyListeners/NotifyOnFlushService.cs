@@ -42,6 +42,11 @@ namespace KissLog.Internal
 
                 listener.OnFlush(args, defaultLogger);
             }
+
+            foreach (Logger logger in theLoggers)
+            {
+                logger.Reset();
+            }
         }
 
         internal static ArgsResult CreateArgs(ILogger[] loggers)
