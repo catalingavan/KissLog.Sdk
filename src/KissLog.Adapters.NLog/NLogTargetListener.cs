@@ -8,6 +8,17 @@ namespace KissLog.Listeners
 {
     public class NLogTargetListener : ILogListener
     {
+        private readonly ITextFormatter _textFormatter;
+
+        public NLogTargetListener() : this(new NLogTextFormatter())
+        {
+        }
+
+        public NLogTargetListener(ITextFormatter textFormatter)
+        {
+            _textFormatter = textFormatter;
+        }
+
         private Lazy<bool> HasKissLogTarget = new Lazy<bool>(() =>
         {
             var target = NLog.LogManager.Configuration.FindTargetByName<KissLogTarget>("KissLog");
@@ -33,7 +44,19 @@ namespace KissLog.Listeners
 
         public void OnBeginRequest(HttpRequest httpRequest, ILogger logger)
         {
-            
+            if (HasKissLogTarget.Value == true)
+                return;
+
+            if (ShouldWriteBeginRequestEvent(httpRequest) == false)
+                return;
+
+            var nLogLogger = NLog.LogManager.GetLogger(logger.CategoryName);
+
+            string message = _textFormatter.FormatBeginRequest(httpRequest);
+            if (string.IsNullOrEmpty(message))
+                return;
+
+            nLogLogger.Info(message);
         }
 
         public void OnMessage(LogMessage message, ILogger logger)
@@ -46,44 +69,69 @@ namespace KissLog.Listeners
 
         public void OnFlush(FlushLogArgs args, ILogger logger)
         {
-            
+            if (HasKissLogTarget.Value == true)
+                return;
+
+            if (ShouldWriteFlushEvent(args) == false)
+                return;
+
+            var nLogLogger = NLog.LogManager.GetLogger(logger.CategoryName);
+
+            string message = _textFormatter.FormatEndRequest(args.WebProperties.Request, args.WebProperties.Response);
+            if (string.IsNullOrEmpty(message))
+                return;
+
+            nLogLogger.Info(message);
         }
 
         private void WriteLogMessage(LogMessage message)
         {
-            if (Parser.ShouldLog(message, this) == false)
+            if (message == null)
                 return;
 
             var nLogLogger = NLog.LogManager.GetLogger(message.CategoryName);
 
+            string messageText = _textFormatter.FormatLogMessage(message);
+            if (string.IsNullOrEmpty(messageText))
+                messageText = message.Message;
+
             switch (message.LogLevel)
             {
                 case LogLevel.Trace:
-                    nLogLogger.Trace(message.Message);
+                    nLogLogger.Trace(messageText);
                     break;
 
                 case LogLevel.Debug:
-                    nLogLogger.Debug(message.Message);
+                    nLogLogger.Debug(messageText);
                     break;
 
                 case LogLevel.Information:
-                    nLogLogger.Info(message.Message);
+                    nLogLogger.Info(messageText);
                     break;
 
                 case LogLevel.Warning:
-                    nLogLogger.Warn(message.Message);
+                    nLogLogger.Warn(messageText);
                     break;
 
                 case LogLevel.Error:
                 case LogLevel.Critical:
-                    nLogLogger.Error(message.Message);
+                    nLogLogger.Error(messageText);
                     break;
 
                 default:
-                    nLogLogger.Debug(message.Message);
+                    nLogLogger.Debug(messageText);
                     break;
             }
         }
 
+        public Func<HttpRequest, bool> ShouldWriteBeginRequestEvent = (HttpRequest httpRequest) =>
+        {
+            return true;
+        };
+
+        public Func<FlushLogArgs, bool> ShouldWriteFlushEvent = (FlushLogArgs args) =>
+        {
+            return true;
+        };
     }
 }
