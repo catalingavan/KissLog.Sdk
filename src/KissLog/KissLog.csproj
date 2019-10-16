@@ -10,15 +10,15 @@
     <Description>KissLog package. Contains all the necessary components used for logging.
 Install this package on all the projects.</Description>
     <PackageReleaseNotes>Improvements for windows / console logging.
-More options implemented for ILogListener listeners.</PackageReleaseNotes>
+More options implemented for LogListenerParser.</PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>KissLog.net</Authors>
     <Company>KissLog.net</Company>
     <Product>KissLog.net</Product>
     <PackageTags>Logging, Error, Exception, Trace, Tracing, KissLog, Diagnostics, Reporing</PackageTags>
-    <Version>3.5.0</Version>
-    <AssemblyVersion>3.5.0.0</AssemblyVersion>
-    <FileVersion>3.5.0.0</FileVersion>
+    <Version>3.5.1</Version>
+    <AssemblyVersion>3.5.1.0</AssemblyVersion>
+    <FileVersion>3.5.1.0</FileVersion>
     <PackageId>KissLog</PackageId>
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>

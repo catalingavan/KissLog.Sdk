@@ -1,4 +1,5 @@
 ﻿using KissLog.Web;
+using System;
 using System.Collections.Generic;
 using System.Net;
 
@@ -66,6 +67,11 @@ namespace KissLog.Internal
 
             LoggerFiles.Dispose();
             LoggerFiles = new LoggerFiles(_logger);
+
+            if (WebProperties?.Request != null)
+            {
+                WebProperties.Request._KissLogRequestId = Guid.NewGuid().ToString();
+            }
         }
     }
 }

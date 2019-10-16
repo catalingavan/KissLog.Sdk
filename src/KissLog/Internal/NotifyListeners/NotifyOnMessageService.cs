@@ -1,17 +1,14 @@
-﻿using System.Linq;
-
-namespace KissLog.Internal
+﻿namespace KissLog.Internal
 {
     internal static class NotifyOnMessageService
     {
         public static void Notify(LogMessage message, Logger logger)
         {
-            if (KissLogConfiguration.Listeners == null || KissLogConfiguration.Listeners.Any() == false)
-                return;
-
-            foreach (ILogListener listener in KissLogConfiguration.Listeners)
+            foreach (LogListenerDecorator decorator in KissLogConfiguration.Listeners.Get())
             {
-                if (listener == null)
+                ILogListener listener = decorator.Listener;
+
+                if (decorator.ShouldSkipOnMessage(logger))
                     continue;
 
                 if (listener.Parser != null && listener.Parser.ShouldLog(message, listener) == false)

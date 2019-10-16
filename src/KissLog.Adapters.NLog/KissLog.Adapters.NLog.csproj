@@ -12,12 +12,12 @@
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>NLog, KissLog</PackageTags>
-    <PackageReleaseNotes>Implemented more customization options for NLogTargetListener</PackageReleaseNotes>
+    <PackageReleaseNotes>Adapted to KissLog 3.5.2 improvements</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.5.1</Version>
+    <Version>2.5.2</Version>
     <PackageId>KissLog.Adapters.NLog</PackageId>
-    <AssemblyVersion>2.5.1.0</AssemblyVersion>
-    <FileVersion>2.5.1.0</FileVersion>
+    <AssemblyVersion>2.5.2.0</AssemblyVersion>
+    <FileVersion>2.5.2.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

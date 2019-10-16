@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace KissLog
 {
     public static class KissLogConfiguration
     {
-        public static List<ILogListener> Listeners = new List<ILogListener>();
+        public static ListenersContainer Listeners { get; } = new ListenersContainer();
 
         public static Options Options { get; } = new Options();
 

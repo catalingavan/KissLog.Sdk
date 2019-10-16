@@ -32,6 +32,35 @@ namespace KissLog
             "video/"
         };
 
+        public virtual bool ShouldLog(BeginRequestArgs args, ILogListener logListener)
+        {
+            if (args.Request == null)
+                return true;
+
+            string localPath = args.Request.Url.LocalPath.ToLowerInvariant();
+            if (string.IsNullOrEmpty(localPath) == false)
+            {
+                if (UrlsToIgnore?.Any() == true)
+                {
+                    if (UrlsToIgnore.Any(p => localPath.Contains(p.ToLowerInvariant())))
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        public virtual bool ShouldLog(LogMessage logMessage, ILogListener logListener)
+        {
+            if (logMessage == null)
+                return false;
+
+            if (logMessage.LogLevel < logListener.MinimumLogMessageLevel)
+                return false;
+
+            return true;
+        }
+
         public virtual bool ShouldLog(FlushLogArgs args, ILogListener logListener)
         {
             if (args.IsCreatedByHttpRequest == false)
@@ -58,27 +87,6 @@ namespace KissLog
                     }
                 }
             }
-
-            string localPath = args.WebProperties.Request.Url?.LocalPath.ToLowerInvariant();
-            if (string.IsNullOrEmpty(localPath) == false)
-            {
-                if (UrlsToIgnore?.Any() == true)
-                {
-                    if (UrlsToIgnore.Any(p => localPath.Contains(p.ToLowerInvariant())))
-                        return false;
-                }
-            }
-
-            return true;
-        }
-
-        public virtual bool ShouldLog(LogMessage logMessage, ILogListener logListener)
-        {
-            if (logMessage == null)
-                return false;
-
-            if (logMessage.LogLevel < logListener.MinimumLogMessageLevel)
-                return false;
 
             return true;
         }

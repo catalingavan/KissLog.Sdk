@@ -4,6 +4,8 @@ namespace KissLog.Web
 {
     public class HttpRequest
     {
+        internal string _KissLogRequestId { get; set; }
+
         public Uri Url { get; set; }
 
         public string UserAgent { get; set; }
@@ -31,6 +33,7 @@ namespace KissLog.Web
         public HttpRequest()
         {
             Properties = new RequestProperties();
+            _KissLogRequestId = Guid.NewGuid().ToString();
         }
     }
 }
