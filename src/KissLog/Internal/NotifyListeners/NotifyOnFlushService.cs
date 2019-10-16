@@ -14,7 +14,7 @@ namespace KissLog.Internal
             if (loggers == null || !loggers.Any())
                 return;
 
-            if (KissLogConfiguration.Listeners == null || KissLogConfiguration.Listeners.Any() == false)
+            if (KissLogConfiguration.Listeners.Get().Any() == false)
                 return;
 
             Logger[] theLoggers = loggers.OfType<Logger>().ToArray();
@@ -31,14 +31,20 @@ namespace KissLog.Internal
 
             string defaultArgsJsonJson = JsonConvert.SerializeObject(defaultArgs);
 
-            foreach (ILogListener listener in KissLogConfiguration.Listeners)
+            foreach (LogListenerDecorator decorator in KissLogConfiguration.Listeners.Get())
             {
+                ILogListener listener = decorator.Listener;
+
+                if (decorator.ShouldSkipOnFlush(defaultArgs.WebProperties.Request))
+                    continue;
+
                 FlushLogArgs args = CreateFlushArgsForListener(defaultLogger, listener, defaultArgs, defaultArgsJsonJson, defaultFiles.ToList());
 
                 if (ShouldUseListener(listener, args) == false)
                     continue;
 
-                listener.Parser?.BeforeFlush(args, listener);
+                if(listener.Parser != null)
+                    listener.Parser.BeforeFlush(args, listener);
 
                 listener.OnFlush(args, defaultLogger);
             }
@@ -46,6 +52,11 @@ namespace KissLog.Internal
             foreach (Logger logger in theLoggers)
             {
                 logger.Reset();
+            }
+
+            foreach (LogListenerDecorator decorator in KissLogConfiguration.Listeners.Get())
+            {
+                decorator.Reset();
             }
         }
 

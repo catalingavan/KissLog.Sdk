@@ -32,7 +32,7 @@ namespace KissLog
             "video/"
         };
 
-        public virtual bool ShouldLog(BeginRequestArgs args)
+        public virtual bool ShouldLog(BeginRequestArgs args, ILogListener logListener)
         {
             if (args.Request == null)
                 return true;
@@ -85,16 +85,6 @@ namespace KissLog
                     {
                         return false;
                     }
-                }
-            }
-
-            string localPath = args.WebProperties.Request.Url?.LocalPath.ToLowerInvariant();
-            if (string.IsNullOrEmpty(localPath) == false)
-            {
-                if (UrlsToIgnore?.Any() == true)
-                {
-                    if (UrlsToIgnore.Any(p => localPath.Contains(p.ToLowerInvariant())))
-                        return false;
                 }
             }
 

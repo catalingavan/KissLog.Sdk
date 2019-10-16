@@ -1,5 +1,5 @@
-﻿using KissLog.Web;
-using System.Linq;
+﻿using KissLog.FlushArgs;
+using KissLog.Web;
 
 namespace KissLog.Internal
 {
@@ -7,16 +7,35 @@ namespace KissLog.Internal
     {
         public static void Notify(HttpRequest httpRequest, Logger logger)
         {
-            if (KissLogConfiguration.Listeners == null || KissLogConfiguration.Listeners.Any() == false)
-                return;
-
-            foreach (ILogListener listener in KissLogConfiguration.Listeners)
+            foreach (LogListenerDecorator decorator in KissLogConfiguration.Listeners.Get())
             {
-                if (listener == null)
+                ILogListener listener = decorator.Listener;
+
+                BeginRequestArgs args = new BeginRequestArgs
+                {
+                    IsCreatedByHttpRequest = logger.IsCreatedByHttpRequest(),
+                    Request = httpRequest
+                };
+
+                if (ShouldUseListener(listener, args) == false)
+                {
+                    // make the listener skip all the events for the current request
+                    decorator.SkipRequestIds.Add(args.Request._KissLogRequestId);
+
                     continue;
+                }
 
                 listener.OnBeginRequest(httpRequest, logger);
             }
+        }
+
+        private static bool ShouldUseListener(ILogListener listener, BeginRequestArgs args)
+        {
+            LogListenerParser parser = listener.Parser;
+            if (parser == null)
+                return true;
+
+            return parser.ShouldLog(args, listener);
         }
     }
 }

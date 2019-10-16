@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using KissLog.FlushArgs;
 using KissLog.Web;
 
