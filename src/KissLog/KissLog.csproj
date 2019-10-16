@@ -10,7 +10,7 @@
     <Description>KissLog package. Contains all the necessary components used for logging.
 Install this package on all the projects.</Description>
     <PackageReleaseNotes>Improvements for windows / console logging.
-More options implemented for ILogListener listeners.</PackageReleaseNotes>
+More options implemented for LogListenerParser.</PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>KissLog.net</Authors>
     <Company>KissLog.net</Company>

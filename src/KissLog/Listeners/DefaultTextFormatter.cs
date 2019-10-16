@@ -6,7 +6,7 @@ namespace KissLog.Listeners
 {
     public class DefaultTextFormatter : ITextFormatter
     {
-        public string FormatBeginRequest(HttpRequest httpRequest)
+        public virtual string FormatBeginRequest(HttpRequest httpRequest)
         {
             if (httpRequest == null)
                 return string.Empty;
@@ -26,7 +26,7 @@ namespace KissLog.Listeners
             return sb.ToString();
         }
 
-        public string FormatEndRequest(HttpRequest httpRequest, HttpResponse httpResponse)
+        public virtual string FormatEndRequest(HttpRequest httpRequest, HttpResponse httpResponse)
         {
             if (httpResponse == null)
                 return string.Empty;
@@ -41,7 +41,7 @@ namespace KissLog.Listeners
             return sb.ToString();
         }
 
-        public string FormatLogMessage(LogMessage logMessage)
+        public virtual string FormatLogMessage(LogMessage logMessage)
         {
             if (logMessage == null)
                 return string.Empty;

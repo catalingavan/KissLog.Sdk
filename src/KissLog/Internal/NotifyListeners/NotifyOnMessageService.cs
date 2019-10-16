@@ -14,7 +14,7 @@
                 if (listener.Parser != null && listener.Parser.ShouldLog(message, listener) == false)
                     continue;
 
-                decorator.Listener.OnMessage(message, logger);
+                listener.OnMessage(message, logger);
             }
         }
     }
