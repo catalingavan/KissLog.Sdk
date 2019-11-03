@@ -19,9 +19,8 @@ Some of the main features of KissLog are:
 - [ASP.NET MVC](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-AspNet-Mvc)
 - [Windows / Console apps](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-WindowsApp)
 
-Check the [Wiki page](https://github.com/KissLog-net/KissLog.Sdk/wiki) for a complete documentation.
+Check https://docs.kisslog.net for a complete documentation.
 
-View the [Change log](https://github.com/KissLog-net/KissLog.Sdk/wiki/ChangeLog).
 
 ## Table of contents
 
