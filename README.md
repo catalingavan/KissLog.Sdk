@@ -1,5 +1,4 @@
 # ![KissLog logo](https://kisslog.net/cdn/KissLog/logos/32.png) KissLog.net
-====
 
 [![Latest version](https://img.shields.io/nuget/v/KissLog.svg?style=flat-square&label=KissLog)](https://www.nuget.org/packages?q=kisslog) [![Downloads](https://img.shields.io/nuget/dt/KissLog.svg?style=flat-square&label=Downloads)](https://www.nuget.org/packages?q=kisslog)
 
