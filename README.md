@@ -12,81 +12,77 @@ Some of the main features of KissLog are:
 
 - Centralized logging using [KissLog.net](https://kisslog.net) cloud or on-premises integration
 
+Check the [documentation](https://docs.kisslog.net) for a complete list of features.
+
 ![KissLog.net centralized logging](https://docs.kisslog.net/_images/centralized-logging.png)
 
 ## Framework support
 
-- [.NET Core](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-Net-Core)
-- [ASP.NET WebApi](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-AspNet-WebApi)
-- [ASP.NET MVC](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-AspNet-Mvc)
-- [Windows / Console apps](https://github.com/KissLog-net/KissLog.Sdk/wiki/Install-WindowsApp)
+- [.NET Core](https://docs.kisslog.net/docs/install-instructions/netcore.html)
+- [ASP.NET WebApi](https://docs.kisslog.net/docs/install-instructions/aspnet-webapi.html)
+- [ASP.NET MVC](https://docs.kisslog.net/docs/install-instructions/aspnet-mvc.html)
+- [Windows / Console apps](https://docs.kisslog.net/docs/install-instructions/console-applications.html)
 
-Check https://docs.kisslog.net for a complete documentation.
+## Basic usage
 
+```csharp
+using KissLog;
 
-## Table of contents
+public class HomeController : Controller
+{
+    private readonly ILogger _logger;
+    public HomeController()
+    {
+        _logger = Logger.Factory.Get();
+    }
 
-- [Setup](#Setup)
-  - [Register listeners](#register-listeners)
-  - [Configuration](#configuration)
-- [Usage](#usage)
-- [Centralized logging](#centralized-logging)
-- [Integration with other loggers](#integration-with-other-loggers)
-- [Samples](#samples)
-- [Feedback](#feedback)
-- [Contributing](#contributing)
-- [License](#license)
+    public IActionResult Index()
+    {
+        _logger.Debug("Hello World!");
 
----
+        return View();
+    }
+}
+```
 
 ## Setup
 
 ### Register listeners
 
-Listeners are responsible for saving the log messages.
+KissLog saves the logs by using ILogListener listeners.
 
-KissLog comes with built-in listeners, and it is easy to create [custom implementations](https://github.com/KissLog-net/KissLog.Sdk/wiki/Custom-output).
+Listeners are registered at application startup using the `KissLogConfiguration.Listeners` container.
 
 ```csharp
-public Startup(IConfiguration configuration)
+protected void Application_Start()
 {
     // KissLog.net cloud listener
-    KissLogConfiguration.Listeners.Add(
-        new KissLogApiListener(new Application("KissLog_OrganizationId", "KissLog_ApplicationId"))
-    );
+    KissLogConfiguration.Listeners.Add(new KissLogApiListener(
+        new KissLog.Apis.v1.Auth.Application("d625d5c8-ef47-4cd5-bf2d-6b0a1fa7fda4", "39bb675d-5c13-4bd8-9b5a-1d368da020a2")
+    ));
 
-    // custom MongoDb listener
-    KissLogConfiguration.Listeners.Add(new MongoDbListener());
+    // NLog listener
+    KissLogConfiguration.Listeners.Add(new NLogTargetListener());
 }
 ```
 
 ### Configuration
 
-`Options` container provides a number of properties and runtime handlers used to customize the logs output.
+`KissLogConfiguration.Options` provides a number of properties and runtime handlers used to customize the logs output.
 
 ```csharp
-public Startup(IConfiguration configuration)
+protected void Application_Start()
 {
     KissLogConfiguration.Options
         .JsonSerializerSettings.Converters.Add(new StringEnumConverter());
 
     KissLogConfiguration.Options
-        .ShouldLogRequestFormData((ILogListener listener, FlushLogArgs args, string key) =>
+        .ShouldLogResponseBody((listener, logArgs, defaultValue) =>
         {
-            // do not log "CreditCard" parameter
-            if (string.Compare(key, "CreditCard", true) == 0)
-                return false;
-
-            return true;
+            int responseStatusCode = (int)logArgs.WebProperties.Response.HttpStatusCode;
+            return responseStatusCode >= 400;
         });
-}
-```
 
-Additional information about the captured exceptions can be logged by using the `AppendExceptionDetails(ex)` handler.
-
-```csharp
-public Startup(IConfiguration configuration)
-{
     KissLogConfiguration.Options
         .AppendExceptionDetails((Exception ex) =>
         {
@@ -98,7 +94,8 @@ public Startup(IConfiguration configuration)
 
                 foreach (var error in dbException.EntityValidationErrors.SelectMany(p => p.ValidationErrors))
                 {
-                    sb.AppendLine($"Field: {error.PropertyName}, Error: {error.ErrorMessage}");
+                    string message = string.Format("Field: {0}, Error: {1}", error.PropertyName, error.ErrorMessage);
+                    sb.AppendLine(message);
                 }
 
                 return sb.ToString();
@@ -107,104 +104,6 @@ public Startup(IConfiguration configuration)
             return null;
         });
 }
-```
-
-## Usage
-
-`ILogger` instance is acquired by using the `Logger.Factory.Get()` factory method.
-
-```csharp
-public class Service
-{
-    private readonly ILogger _logger;
-    public Service()
-    {
-        _logger = Logger.Factory.Get();
-    }
-
-    public void Foo(string productId, double price)
-    {
-        _logger.Debug($"Foo begin with args: {productId}, {price}");
-
-        // executing Foo
-
-        _logger.Debug("Foo completed");
-    }
-}
-```
-
-Additionally, you can log files, asynchronously.
-
-```csharp
-public class Service
-{
-    private readonly ILogger _logger;
-    public Service()
-    {
-        _logger = Logger.Factory.Get();
-    }
-
-    public void Foo()
-    {
-        byte[] archive = File.ReadAllBytes(@"C:\Files\bootstrap.zip");
-        _logger.LogAsFile(archive, "Bootstrap.zip");
-
-        string path = @"C:\Files\Invoice-16-11-2017.pdf";
-        _logger.LogFile(path, "Invoice.pdf");
-    }
-}
-```
-
-## Centralized logging
-
-When using `KissLogApiListener` listener, the logs will be saved to KissLog.net cloud or on-premises application.
-
-```csharp
-public Startup(IConfiguration configuration)
-{
-    KissLogConfiguration.Listeners.Add(new KissLogApiListener(new Application(
-        Configuration["KissLog.OrganizationId"],
-        Configuration["KissLog.ApplicationId"])
-    )
-    {
-        // URI to KissLog.net on-premises application
-        ApiUrl = "http://my-kisslog.net"
-    });
-}
-```
-
-## Integration with other loggers
-
-KissLog provides adapters used for saving **NLog** and **log4net** logs to [KissLog.net](https://kisslog.net).
-
-- NLog
-
-```xml
-<nlog>
-  <extensions>
-    <add assembly="KissLog.Adapters.NLog" />
-  </extensions>
-  <targets>
-    <target name="kisslog" type="KissLog" layout="${message}" />
-  </targets>
-  <rules>
-    <logger name="*" minlevel="Trace" writeTo="kisslog" />
-  </rules>
-</nlog>
-```
-
-- log4net
-
-```xml
-﻿<log4net>
-  <root>
-    <level value="ALL" />
-    <appender-ref ref="KissLog" />
-  </root>
-  <appender name="KissLog" type="KissLog.Adapters.log4net.KissLogAppender, KissLog.Adapters.log4net">
-    <layout type="log4net.Layout.SimpleLayout" />
-  </appender>
-</log4net>
 ```
 
 ## Samples
