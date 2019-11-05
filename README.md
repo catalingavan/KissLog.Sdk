@@ -4,13 +4,15 @@ KissLog represents a powerful logging and monitoring solution for .NET applicati
 
 Some of the main features of KissLog are:
 
-&#128313; Automatically logs all the exceptions
+- Automatically logs all the exceptions
 
-&#128313; Monitors all the HTTP traffic
+- Monitors all the HTTP traffic
 
-&#128313; Lightweight, powerful SDK
+- Lightweight, powerful SDK
 
-&#128313; Centralized logging using [KissLog.net](https://kisslog.net) cloud or on-premises integration
+- Centralized logging using [KissLog.net](https://kisslog.net) cloud or on-premises integration
+
+![KissLog.net centralized logging](https://docs.kisslog.net/_images/centralized-logging.png)
 
 ## Framework support
 
