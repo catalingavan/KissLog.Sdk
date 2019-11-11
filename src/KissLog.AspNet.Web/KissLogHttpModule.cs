@@ -188,11 +188,8 @@ namespace KissLog.AspNet.Web
 
             if (sniffer != null)
             {
-                response.Properties.ContentLength = sniffer.MirrorStream.Length;
-            }
+                response.Properties.ContentLength = ReadResponseLength(sniffer);
 
-            if (sniffer != null)
-            {
                 LogResponse(logger, response, sniffer);
             }
 
@@ -224,7 +221,7 @@ namespace KissLog.AspNet.Web
             }
         }
 
-        private static void LogResponse(Logger logger, KissLog.Web.HttpResponse response, ResponseSniffer sniffer)
+        private void LogResponse(Logger logger, KissLog.Web.HttpResponse response, ResponseSniffer sniffer)
         {
             try
             {
@@ -255,6 +252,29 @@ namespace KissLog.AspNet.Web
 
                 KissLog.Internal.InternalHelpers.Log(sb.ToString(), LogLevel.Error);
             }
+        }
+
+        private long ReadResponseLength(ResponseSniffer sniffer)
+        {
+            if (sniffer != null)
+            {
+                try
+                {
+                    return sniffer.MirrorStream.Length;
+                }
+                catch (Exception ex)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine("Error logging HTTP Response length");
+                    sb.AppendLine(ex.ToString());
+
+                    KissLog.Internal.InternalHelpers.Log(sb.ToString(), LogLevel.Error);
+
+                    return 0;
+                }
+            }
+
+            return 0;
         }
     }
 }
