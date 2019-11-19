@@ -151,7 +151,7 @@ namespace KissLog.Internal
             args.WebProperties.Response.Properties.Headers = defaultArgs.WebProperties.Response.Properties.Headers.Where(p => KissLogConfiguration.Options.ApplyShouldLogResponseHeader(listener, defaultArgs, p.Key)).ToList();
 
             List<LogMessagesGroup> messages = new List<LogMessagesGroup>();
-            foreach (var group in defaultArgs.MessagesGroups)
+            foreach (var group in args.MessagesGroups)
             {
                 messages.Add(new LogMessagesGroup
                 {

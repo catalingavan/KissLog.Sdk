@@ -18,7 +18,7 @@ namespace KissLog.Apis.v1.Apis
 
             try
             {
-                result = await _decorated.PostAsJsonAsync<T>(resource, request);
+                result = await _decorated.PostAsJsonAsync<T>(resource, request).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -55,7 +55,7 @@ namespace KissLog.Apis.v1.Apis
 
             try
             {
-                result = await _decorated.PostAsync<T>(resource, content);
+                result = await _decorated.PostAsync<T>(resource, content).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

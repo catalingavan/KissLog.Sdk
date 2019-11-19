@@ -77,12 +77,14 @@ namespace KissLog.Apis.v1.Listeners
                 // we need to copy files, because we start a new Thread, and the existing files will be deleted before accessing them
                 IList<LoggerFile> copy = CopyFiles(args.Files?.ToList());
 
-                Task.Factory.StartNew(async () =>
-                {
-                    IKissLogApi kissLogApi = new KissLogRestApi(ApiUrl);
-                    await Flusher.FlushAsync(kissLogApi, request, copy);
-                })
-                .ConfigureAwait(false);
+                //Task.Factory.StartNew(() =>
+                //{
+                //    IKissLogApi kissLogApi = new KissLogRestApi(ApiUrl);
+                //    Flusher.FlushAsync(kissLogApi, request, copy).ConfigureAwait(false);
+                //});
+
+                IKissLogApi kissLogApi = new KissLogRestApi(ApiUrl);
+                Flusher.FlushAsync(kissLogApi, request, copy).ConfigureAwait(false);
             }
             else
             {

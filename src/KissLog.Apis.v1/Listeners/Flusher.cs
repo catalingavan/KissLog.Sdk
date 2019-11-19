@@ -11,12 +11,12 @@ namespace KissLog.Apis.v1.Listeners
     {
         public static async Task FlushAsync(IKissLogApi kissLogApi, CreateRequestLogRequest request, IList<LoggerFile> files = null)
         {
-            ApiResult<RequestLog> requestLog = await kissLogApi.CreateRequestLogAsync(request);
+            ApiResult<RequestLog> requestLog = await kissLogApi.CreateRequestLogAsync(request).ConfigureAwait(false);
 
             if(files?.Any() == true)
             {
                 string requestLogId = requestLog?.Result?.Id;
-                await UploadFilesAsync(kissLogApi, requestLogId, request, files);
+                await UploadFilesAsync(kissLogApi, requestLogId, request, files).ConfigureAwait(false);
             }
         }
         public static void Flush(IKissLogApi kissLogApi, CreateRequestLogRequest request, IList<LoggerFile> files = null)
@@ -59,7 +59,7 @@ namespace KissLog.Apis.v1.Listeners
                     Files = requestFiles
                 };
 
-                await kissLogApi.UploadFilesAsync(uploadRequest);
+                await kissLogApi.UploadFilesAsync(uploadRequest).ConfigureAwait(false);
             }
             finally
             {
