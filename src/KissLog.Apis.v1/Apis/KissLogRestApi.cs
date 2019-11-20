@@ -1,7 +1,11 @@
 ﻿using KissLog.Apis.v1.Models;
 using KissLog.Apis.v1.Requests;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace KissLog.Apis.v1.Apis
@@ -69,6 +73,69 @@ namespace KissLog.Apis.v1.Apis
             }
 
             return form;
+        }
+
+        public async Task<ApiResult<RequestLog>> CreateRequestLogV2Async(CreateRequestLogRequest request, IList<File> files = null)
+        {
+            MultipartFormDataContent content = CreateCreateRequestLogV2Content(request, files);
+
+            string url = "api/logs/v1.0/createRequestLog/v2";
+            return await _apiClient.PostAsync<RequestLog>(url, content).ConfigureAwait(false);
+        }
+
+        private MultipartFormDataContent CreateCreateRequestLogV2Content(CreateRequestLogRequest request, IList<File> files = null)
+        {
+            if (request == null)
+                return null;
+
+            MultipartFormDataContent form = new MultipartFormDataContent();
+
+            request.SdkName = null;
+
+            if (request != null)
+            {
+                form.Add(CreateJsonHttpContent(request), "RequestLog");
+            }
+
+            if(files != null)
+            {
+                foreach (var file in files)
+                {
+                    if (!System.IO.File.Exists(file.FilePath))
+                        continue;
+
+                    form.Add(new ByteArrayContent(System.IO.File.ReadAllBytes(file.FilePath)), "Files", file.FullFileName);
+                }
+            }
+
+            return form;
+        }
+
+        private HttpContent CreateJsonHttpContent(object content)
+        {
+            HttpContent httpContent = null;
+
+            if (content != null)
+            {
+                var ms = new System.IO.MemoryStream();
+
+                using (var sw = new System.IO.StreamWriter(ms, new UTF8Encoding(false), 1024, true))
+                {
+                    using (var jtw = new JsonTextWriter(sw) { Formatting = Formatting.None })
+                    {
+                        var js = new JsonSerializer();
+                        js.Serialize(jtw, content);
+                        jtw.Flush();
+                    }
+                }
+
+                ms.Seek(0, System.IO.SeekOrigin.Begin);
+                httpContent = new StreamContent(ms);
+
+                httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            }
+
+            return httpContent;
         }
     }
 }

@@ -9,6 +9,62 @@ namespace KissLog.Apis.v1.Listeners
 {
     internal static class Flusher
     {
+        #region v2
+
+        public static async Task FlushAsync(IKissLogApiV2 kissLogApi, CreateRequestLogRequest request, IList<LoggerFile> files = null)
+        {
+            IList<File> requestFiles = null;
+
+            if(files != null)
+            {
+                requestFiles = (files ?? new List<LoggerFile>()).Select(p => new File
+                {
+                    FileName = p.FileName,
+                    Extension = p.Extension,
+                    FullFileName = p.FullFileName,
+                    FilePath = p.FilePath
+                }).ToList();
+            }
+
+            try
+            {
+                ApiResult<RequestLog> requestLog = await kissLogApi.CreateRequestLogAsync(request, requestFiles).ConfigureAwait(false);
+            }
+            finally
+            {
+                DeleteFiles(files);
+            }
+        }
+
+        public static void Flush(IKissLogApiV2 kissLogApi, CreateRequestLogRequest request, IList<LoggerFile> files = null)
+        {
+            IList<File> requestFiles = null;
+
+            if (files != null)
+            {
+                requestFiles = (files ?? new List<LoggerFile>()).Select(p => new File
+                {
+                    FileName = p.FileName,
+                    Extension = p.Extension,
+                    FullFileName = p.FullFileName,
+                    FilePath = p.FilePath
+                }).ToList();
+            }
+
+            try
+            {
+                ApiResult<RequestLog> requestLog = kissLogApi.CreateRequestLog(request, requestFiles);
+            }
+            finally
+            {
+                DeleteFiles(files);
+            }
+        }
+
+        #endregion
+
+        #region v1
+
         public static async Task FlushAsync(IKissLogApi kissLogApi, CreateRequestLogRequest request, IList<LoggerFile> files = null)
         {
             ApiResult<RequestLog> requestLog = await kissLogApi.CreateRequestLogAsync(request).ConfigureAwait(false);
@@ -19,6 +75,7 @@ namespace KissLog.Apis.v1.Listeners
                 await UploadFilesAsync(kissLogApi, requestLogId, request, files).ConfigureAwait(false);
             }
         }
+
         public static void Flush(IKissLogApi kissLogApi, CreateRequestLogRequest request, IList<LoggerFile> files = null)
         {
             ApiResult<RequestLog> requestLog = kissLogApi.CreateRequestLog(request);
@@ -103,6 +160,8 @@ namespace KissLog.Apis.v1.Listeners
                 DeleteFiles(files);
             }
         }
+
+        #endregion
 
         private static void DeleteFiles(IList<LoggerFile> files)
         {

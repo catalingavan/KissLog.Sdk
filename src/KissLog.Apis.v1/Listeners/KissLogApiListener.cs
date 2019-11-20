@@ -6,7 +6,6 @@ using KissLog.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace KissLog.Apis.v1.Listeners
 {
@@ -17,6 +16,7 @@ namespace KissLog.Apis.v1.Listeners
 
         public bool UseAsync { get; set; } = true;
         public string ApiUrl { get; set; } = "https://api.kisslog.net";
+        public ApiVersion ApiVersion { get; set; } = ApiVersion.v2;
 
         private readonly Application _application;
 
@@ -72,26 +72,34 @@ namespace KissLog.Apis.v1.Listeners
             request.ApplicationId = applicationId;
             request.Keywords = Configuration.Configuration.Options.ApplyAddRequestKeywordstHeader(args);
 
-            if(UseAsync == true)
+            // we need to copy files, because we start a new Thread, and the existing files will be deleted before accessing them
+            IList<LoggerFile> copy = CopyFiles(args.Files?.ToList());
+
+            if (UseAsync == true)
             {
-                // we need to copy files, because we start a new Thread, and the existing files will be deleted before accessing them
-                IList<LoggerFile> copy = CopyFiles(args.Files?.ToList());
-
-                //Task.Factory.StartNew(() =>
-                //{
-                //    IKissLogApi kissLogApi = new KissLogRestApi(ApiUrl);
-                //    Flusher.FlushAsync(kissLogApi, request, copy).ConfigureAwait(false);
-                //});
-
-                IKissLogApi kissLogApi = new KissLogRestApi(ApiUrl);
-                Flusher.FlushAsync(kissLogApi, request, copy).ConfigureAwait(false);
+                if(ApiVersion == ApiVersion.v1)
+                {
+                    IKissLogApi kissLogApi = new KissLogRestApi(ApiUrl);
+                    Flusher.FlushAsync(kissLogApi, request, copy).ConfigureAwait(false);
+                }
+                else if(ApiVersion == ApiVersion.v2)
+                {
+                    IKissLogApiV2 kissLogApi = new KissLogRestApiV2(ApiUrl);
+                    Flusher.FlushAsync(kissLogApi, request, copy).ConfigureAwait(false);
+                }
             }
             else
             {
-                IList<LoggerFile> copy = CopyFiles(args.Files?.ToList());
-
-                IKissLogApi kissLogApi = new KissLogRestApi(ApiUrl);
-                Flusher.Flush(kissLogApi, request, copy);
+                if (ApiVersion == ApiVersion.v1)
+                {
+                    IKissLogApi kissLogApi = new KissLogRestApi(ApiUrl);
+                    Flusher.Flush(kissLogApi, request, copy);
+                }
+                else if(ApiVersion == ApiVersion.v2)
+                {
+                    IKissLogApiV2 kissLogApi = new KissLogRestApiV2(ApiUrl);
+                    Flusher.Flush(kissLogApi, request, copy);
+                }
             }
         }
 
