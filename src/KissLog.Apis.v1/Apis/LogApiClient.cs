@@ -47,7 +47,7 @@ namespace KissLog.Apis.v1.Apis
             Uri uri = BuildRequestUri(resource);
             LogBegin("post", uri);
 
-            var result = await _decorated.PostAsJsonAsync<T>(resource, request);
+            var result = await _decorated.PostAsJsonAsync<T>(resource, request).ConfigureAwait(false);
 
             LogComplete("post", uri, result);
 
@@ -59,7 +59,7 @@ namespace KissLog.Apis.v1.Apis
             Uri uri = BuildRequestUri(resource);
             LogBegin("post", uri);
 
-            var result = await _decorated.PostAsync<T>(resource, content);
+            var result = await _decorated.PostAsync<T>(resource, content).ConfigureAwait(false);
 
             LogComplete("post", uri, result);
 

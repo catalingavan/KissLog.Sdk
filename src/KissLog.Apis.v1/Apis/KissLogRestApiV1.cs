@@ -1,15 +1,16 @@
 ﻿using KissLog.Apis.v1.Models;
 using KissLog.Apis.v1.Requests;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace KissLog.Apis.v1.Apis
 {
-    internal class KissLogRestApi : IKissLogApi
+    internal class KissLogRestApiV1 : IKissLogApi
     {
         private readonly IApiClient _apiClient;
-        public KissLogRestApi(string baseUrl)
+        public KissLogRestApiV1(string baseUrl)
         {
             _apiClient =
                 new LogApiClient(
@@ -19,19 +20,19 @@ namespace KissLog.Apis.v1.Apis
                 );
         }
 
-        public async Task<ApiResult<RequestLog>> CreateRequestLogAsync(CreateRequestLogRequest request)
+        public async Task<ApiResult<RequestLog>> CreateRequestLogAsync(CreateRequestLogRequest request, IList<File> files = null)
         {
             string url = "api/logs/v1.0/createRequestLog";
             return await _apiClient.PostAsJsonAsync<RequestLog>(url, request).ConfigureAwait(false);
         }
 
-        public ApiResult<RequestLog> CreateRequestLog(CreateRequestLogRequest request)
+        public ApiResult<RequestLog> CreateRequestLog(CreateRequestLogRequest request, IList<File> files = null)
         {
             string url = "api/logs/v1.0/createRequestLog";
             return _apiClient.PostAsJson<RequestLog>(url, request);
         }
 
-        public async Task<ApiResult<bool>> UploadFilesAsync(UploadFilesRequest request)
+        public async Task<ApiResult<bool>> UploadRequestLogFilesAsync(UploadFilesRequest request)
         {
             MultipartFormDataContent content = CreateUploadFilesContent(request);
 
@@ -39,7 +40,7 @@ namespace KissLog.Apis.v1.Apis
             return await _apiClient.PostAsync<bool>(url, content).ConfigureAwait(false);
         }
 
-        public ApiResult<bool> UploadFiles(UploadFilesRequest request)
+        public ApiResult<bool> UploadRequestLogFiles(UploadFilesRequest request)
         {
             MultipartFormDataContent content = CreateUploadFilesContent(request);
 

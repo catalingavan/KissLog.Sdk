@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>KissLog.AspNet.WebApi</id>
-    <version>3.5.2</version>
+    <version>3.5.3</version>
     <authors>KissLog.net</authors>
     <owners>KissLog.net</owners>
     <licenseUrl>https://opensource.org/licenses/BSD-3-Clause</licenseUrl>
@@ -10,12 +10,12 @@
     <iconUrl>https://kisslog.net/cdn/KissLog/logos/32.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>KissLog ASP.NET WebApi package. Install this package on ASP.NET WebApi applications.</description>
-    <releaseNotes>Adapted to KissLog 3.5.1</releaseNotes>
+    <releaseNotes>Improved async logging. Implemented multi-tenant support. Adapted to KissLog 3.5.2 improvements.</releaseNotes>
     <copyright>Copyright 2019</copyright>
     <tags>KissLog, WebApi, AspNet</tags>
     <repository type="git" url="https://github.com/KissLog-net/KissLog.Sdk" />
     <dependencies>
-      <dependency id="KissLog.AspNet.Web" version="3.5.2" />
+      <dependency id="KissLog.AspNet.Web" version="3.5.3" />
       <dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.4" />
     </dependencies>
   </metadata>
