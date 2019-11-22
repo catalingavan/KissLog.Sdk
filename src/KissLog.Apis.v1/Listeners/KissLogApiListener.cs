@@ -1,7 +1,8 @@
-﻿using KissLog.Apis.v1.Apis;
-using KissLog.Apis.v1.Auth;
+﻿using KissLog.Apis.v1.Auth;
 using KissLog.Apis.v1.Factories;
+using KissLog.Apis.v1.Flusher;
 using KissLog.FlushArgs;
+using KissLog.Internal;
 using KissLog.Web;
 using System;
 using System.Collections.Generic;
@@ -15,8 +16,10 @@ namespace KissLog.Apis.v1.Listeners
         public TruncateArgsService TruncateService { get; } = new TruncateArgsService();
 
         public bool UseAsync { get; set; } = true;
-        public string ApiUrl { get; set; } = "https://api.kisslog.net";
-        public ApiVersion ApiVersion { get; set; } = ApiVersion.v2;
+        public string ApiUrl { get; set; } = Defaults.ApiUrl;
+        public ApiVersion ApiVersion { get; set; } = Defaults.ApiVersion;
+
+        public Func<FlushLogArgs, FlushProperties> UpdateFlushProperties => null;
 
         private readonly Application _application;
 
@@ -55,51 +58,30 @@ namespace KissLog.Apis.v1.Listeners
 
         public void OnFlush(FlushLogArgs args, ILogger logger)
         {
-            string organizationId = _application?.OrganizationId;
-            string applicationId = _application?.ApplicationId;
-
-            if (string.IsNullOrEmpty(organizationId) || string.IsNullOrEmpty(applicationId) || string.IsNullOrEmpty(ApiUrl))
-                return;
-
-            if (!Uri.TryCreate(ApiUrl, UriKind.Absolute, out _))
+            FlushProperties flushProperties = GetAndValidateFlushProperties(args);
+            if (flushProperties == null)
                 return;
 
             ObfuscateService?.Obfuscate(args);
             TruncateService?.Truncate(args);
 
             Requests.CreateRequestLogRequest request = CreateRequestLogRequestFactory.Create(args);
-            request.OrganizationId = organizationId;
-            request.ApplicationId = applicationId;
+            request.OrganizationId = flushProperties.Application.OrganizationId;
+            request.ApplicationId = flushProperties.Application.ApplicationId;
             request.Keywords = Configuration.Configuration.Options.ApplyAddRequestKeywordstHeader(args);
 
             // we need to copy files, because we start a new Thread, and the existing files will be deleted before accessing them
             IList<LoggerFile> copy = CopyFiles(args.Files?.ToList());
 
+            IFlusher flusher = CreateFlusher(flushProperties);
+
             if (UseAsync == true)
             {
-                if(ApiVersion == ApiVersion.v1)
-                {
-                    IKissLogApi kissLogApi = new KissLogRestApi(ApiUrl);
-                    Flusher.FlushAsync(kissLogApi, request, copy).ConfigureAwait(false);
-                }
-                else if(ApiVersion == ApiVersion.v2)
-                {
-                    IKissLogApiV2 kissLogApi = new KissLogRestApiV2(ApiUrl);
-                    Flusher.FlushAsync(kissLogApi, request, copy).ConfigureAwait(false);
-                }
+                flusher.FlushAsync(request, copy).ConfigureAwait(false);
             }
             else
             {
-                if (ApiVersion == ApiVersion.v1)
-                {
-                    IKissLogApi kissLogApi = new KissLogRestApi(ApiUrl);
-                    Flusher.Flush(kissLogApi, request, copy);
-                }
-                else if(ApiVersion == ApiVersion.v2)
-                {
-                    IKissLogApiV2 kissLogApi = new KissLogRestApiV2(ApiUrl);
-                    Flusher.Flush(kissLogApi, request, copy);
-                }
+                flusher.Flush(request, copy);
             }
         }
 
@@ -121,6 +103,75 @@ namespace KissLog.Apis.v1.Listeners
             }
 
             return files;
+        }
+
+        private FlushProperties GetAndValidateFlushProperties(FlushLogArgs args)
+        {
+            FlushProperties result = null;
+
+            if(UpdateFlushProperties != null)
+            {
+                result = UpdateFlushProperties(args);
+            }
+
+            if(result == null)
+            {
+                result = new FlushProperties
+                {
+                    Application = _application,
+                    ApiUrl = ApiUrl,
+                    ApiVersion = ApiVersion
+                };
+            }
+
+            string organizationId = result.Application?.OrganizationId;
+            string applicationId = result.Application?.ApplicationId;
+            string apiUrl = result.ApiUrl;
+
+            if (string.IsNullOrEmpty(organizationId))
+            {
+                InternalHelpers.Log("KissLogApiListener: Application.OrganizationId is null", LogLevel.Error);
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(applicationId))
+            {
+                InternalHelpers.Log("KissLogApiListener: Application.applicationId is null", LogLevel.Error);
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(apiUrl))
+            {
+                InternalHelpers.Log("KissLogApiListener: ApiUrl is null", LogLevel.Error);
+                return null;
+            }
+
+            if (!Uri.TryCreate(apiUrl, UriKind.Absolute, out _))
+            {
+                InternalHelpers.Log($"KissLogApiListener: ApiUrl \"{apiUrl}\" is not a valid Uri", LogLevel.Error);
+                return null;
+            }
+
+            return result;
+        }
+        
+        private IFlusher CreateFlusher(FlushProperties flushProperties)
+        {
+            IFlusher flusher = null;
+            string apiUrl = flushProperties.ApiUrl;
+
+            switch (flushProperties.ApiVersion)
+            {
+                case ApiVersion.v1:
+                    flusher = new FlusherRestV1(apiUrl);
+                    break;
+
+                default:
+                    flusher = new FlusherRestV2(apiUrl);
+                    break;
+            }
+
+            return flusher;
         }
     }
 }

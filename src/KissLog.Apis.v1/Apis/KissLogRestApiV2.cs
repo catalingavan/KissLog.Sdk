@@ -9,9 +9,10 @@ using System.Threading.Tasks;
 
 namespace KissLog.Apis.v1.Apis
 {
-    internal class KissLogRestApiV2 : IKissLogApiV2
+    internal class KissLogRestApiV2 : IKissLogApi
     {
         private readonly IApiClient _apiClient;
+        private readonly IKissLogApi _v1Api;
         public KissLogRestApiV2(string baseUrl)
         {
             _apiClient =
@@ -20,6 +21,8 @@ namespace KissLog.Apis.v1.Apis
                         new ApiClient(baseUrl)
                     )
                 );
+
+            _v1Api = new KissLogRestApiV1(baseUrl);
         }
 
         public async Task<ApiResult<RequestLog>> CreateRequestLogAsync(CreateRequestLogRequest request, IList<File> files = null)
@@ -89,6 +92,16 @@ namespace KissLog.Apis.v1.Apis
             }
 
             return httpContent;
+        }
+
+        public async Task<ApiResult<bool>> UploadRequestLogFilesAsync(UploadFilesRequest request)
+        {
+            return await _v1Api.UploadRequestLogFilesAsync(request).ConfigureAwait(false);
+        }
+
+        public ApiResult<bool> UploadRequestLogFiles(UploadFilesRequest request)
+        {
+            return _v1Api.UploadRequestLogFiles(request);
         }
     }
 }
