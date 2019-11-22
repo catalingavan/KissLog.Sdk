@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace KissLog
 {
@@ -8,7 +9,7 @@ namespace KissLog
 
         public static Options Options { get; } = new Options();
 
-        public static Action<string, LogLevel> InternalLog { get; set; }
+        public static Action<string> InternalLog { get; set; } = (string message) => Debug.WriteLine(message);
 
         static KissLogConfiguration()
         {

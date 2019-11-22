@@ -112,7 +112,15 @@ namespace KissLog.Internal
             if (KissLogConfiguration.InternalLog == null)
                 return;
 
-            KissLogConfiguration.InternalLog.Invoke(message, logLevel);
+            string date = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ");
+            date = string.Format("{0,-22}", $"{date}");
+
+            string log = logLevel.ToString();
+            log = $"[{log}] ";
+
+            message = $"'KissLog' {date}{log}{message}";
+
+            KissLogConfiguration.InternalLog.Invoke(message);
         }
     }
 }

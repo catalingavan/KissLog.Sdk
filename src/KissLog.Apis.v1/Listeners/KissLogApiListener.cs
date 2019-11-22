@@ -19,7 +19,7 @@ namespace KissLog.Apis.v1.Listeners
         public string ApiUrl { get; set; } = Defaults.ApiUrl;
         public ApiVersion ApiVersion { get; set; } = Defaults.ApiVersion;
 
-        public Func<FlushLogArgs, FlushProperties> UpdateFlushProperties => null;
+        public Func<FlushLogArgs, FlushProperties> UpdateFlushProperties = (flushArgs) => null;
 
         private readonly Application _application;
 
@@ -62,6 +62,8 @@ namespace KissLog.Apis.v1.Listeners
             if (flushProperties == null)
                 return;
 
+            InternalHelpers.Log("KissLogApiListener: OnFlush begin", LogLevel.Trace);
+
             ObfuscateService?.Obfuscate(args);
             TruncateService?.Truncate(args);
 
@@ -83,6 +85,8 @@ namespace KissLog.Apis.v1.Listeners
             {
                 flusher.Flush(request, copy);
             }
+
+            InternalHelpers.Log("KissLogApiListener: OnFlush complete", LogLevel.Trace);
         }
 
         private List<LoggerFile> CopyFiles(IList<LoggerFile> source)

@@ -6,6 +6,6 @@ namespace KissLog.AspNetCore
     {
         ListenersContainer Listeners { get; }
         Options Options { get; }
-        Action<string, LogLevel> InternalLog { get; set; }
+        Action<string> InternalLog { get; set; }
     }
 }
