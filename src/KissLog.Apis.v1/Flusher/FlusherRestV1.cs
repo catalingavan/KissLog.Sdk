@@ -12,7 +12,7 @@ namespace KissLog.Apis.v1.Flusher
         private readonly IKissLogApi _kissLogApi;
         public FlusherRestV1(string baseUrl)
         {
-            _kissLogApi = new KissLogRestApiV2(baseUrl);
+            _kissLogApi = new KissLogRestApiV1(baseUrl);
         }
 
         public async Task FlushAsync(CreateRequestLogRequest request, IList<LoggerFile> files = null)
