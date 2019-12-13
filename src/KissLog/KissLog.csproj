@@ -6,7 +6,7 @@
     <RootNamespace>KissLog</RootNamespace>
     <PackageLicenseUrl>https://opensource.org/licenses/BSD-3-Clause</PackageLicenseUrl>
     <PackageProjectUrl>https://kisslog.net</PackageProjectUrl>
-    <PackageIconUrl>https://kisslog.net/cdn/KissLog/logos/32.png</PackageIconUrl>
+    <PackageIconUrl>https://kisslog.net/cdn/KissLog/favicon/96.png</PackageIconUrl>
     <Description>KissLog package. Contains all the necessary components used for logging.
 Install this package on all the projects.</Description>
     <PackageReleaseNotes>Improved async logging. Implemented multi-tenant support.</PackageReleaseNotes>
@@ -15,9 +15,9 @@ Install this package on all the projects.</Description>
     <Company>KissLog.net</Company>
     <Product>KissLog.net</Product>
     <PackageTags>Logging, Error, Exception, Trace, Tracing, KissLog, Diagnostics, Reporing</PackageTags>
-    <Version>3.5.2</Version>
-    <AssemblyVersion>3.5.2.0</AssemblyVersion>
-    <FileVersion>3.5.2.0</FileVersion>
+    <Version>3.5.5</Version>
+    <AssemblyVersion>3.5.5.0</AssemblyVersion>
+    <FileVersion>3.5.5.0</FileVersion>
     <PackageId>KissLog</PackageId>
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
