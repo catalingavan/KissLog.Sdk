@@ -55,84 +55,126 @@ namespace KissLog
 
         public Options GetUser(Func<RequestProperties, UserDetails> handler)
         {
+            if (handler == null)
+                return this;
+
             GetUserFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestHeader(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
+            if (handler == null)
+                return this;
+
             ShouldLogRequestHeaderKeyFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestCookie(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
+            if (handler == null)
+                return this;
+
             ShouldLogRequestCookieKeyFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestQueryString(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
+            if (handler == null)
+                return this;
+
             ShouldLogRequestQueryStringKeyFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestFormData(Func<HttpRequest, bool> handler)
         {
+            if (handler == null)
+                return this;
+
             ShouldLogRequestFormDataFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestFormData(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
+            if (handler == null)
+                return this;
+
             ShouldLogRequestFormDataKeyFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestServerVariable(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
+            if (handler == null)
+                return this;
+
             ShouldLogRequestServerVariableKeyFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestClaim(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
+            if (handler == null)
+                return this;
+
             ShouldLogRequestClaimKeyFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestInputStream(Func<ILogListener, FlushLogArgs, bool> handler)
         {
+            if (handler == null)
+                return this;
+
             ShouldLogRequestInputStreamForListenerFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestInputStream(Func<HttpRequest, bool> handler)
         {
+            if (handler == null)
+                return this;
+
             ShouldLogRequestInputStreamFn = handler;
             return this;
         }
 
         public Options ShouldLogResponseHeader(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
+            if (handler == null)
+                return this;
+
             ShouldLogResponseHeaderFn = handler;
             return this;
         }
 
         public Options ShouldLogResponseBody(Func<ILogListener, FlushLogArgs, bool, bool> handler)
         {
+            if (handler == null)
+                return this;
+
             ShouldLogResponseBodyFn = handler;
             return this;
         }
 
         public Options ToggleListener(Func<ILogListener, FlushLogArgs, bool> handler)
         {
+            if (handler == null)
+                return this;
+
             ToggleListenerFn = handler;
             return this;
         }
 
         public Options AppendExceptionDetails(Func<Exception, string> handler)
         {
+            if (handler == null)
+                return this;
+
             AppendExceptionDetailsFn = handler;
             return this;
         }

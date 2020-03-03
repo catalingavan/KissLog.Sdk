@@ -9,7 +9,7 @@
     <PackageIconUrl>https://kisslog.net/cdn/KissLog/favicon/96.png</PackageIconUrl>
     <Description>KissLog package. Contains all the necessary components used for logging.
 Install this package on all the projects.</Description>
-    <PackageReleaseNotes>Improved async logging. Implemented multi-tenant support.</PackageReleaseNotes>
+    <PackageReleaseNotes>General improvements</PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>KissLog.net</Authors>
     <Company>KissLog.net</Company>
