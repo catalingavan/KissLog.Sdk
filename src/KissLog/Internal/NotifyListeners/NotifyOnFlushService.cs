@@ -143,7 +143,7 @@ namespace KissLog.Internal
             args.WebProperties.Request.Properties.Headers = defaultArgs.WebProperties.Request.Properties.Headers.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestHeader(listener, defaultArgs, p.Key)).ToList();
             args.WebProperties.Request.Properties.Cookies = defaultArgs.WebProperties.Request.Properties.Cookies.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestCookie(listener, defaultArgs, p.Key)).ToList();
             args.WebProperties.Request.Properties.QueryString = defaultArgs.WebProperties.Request.Properties.QueryString.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestQueryString(listener, defaultArgs, p.Key)).ToList();
-            args.WebProperties.Request.Properties.FormData = defaultArgs.WebProperties.Request.Properties.FormData.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestFormData(listener, defaultArgs, p.Key)).ToList();
+            args.WebProperties.Request.Properties.FormData = defaultArgs.WebProperties.Request.Properties.FormData.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestFormDataKey(listener, defaultArgs, p.Key)).ToList();
             args.WebProperties.Request.Properties.ServerVariables = defaultArgs.WebProperties.Request.Properties.ServerVariables.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestServerVariable(listener, defaultArgs, p.Key)).ToList();
             args.WebProperties.Request.Properties.Claims = defaultArgs.WebProperties.Request.Properties.Claims.Where(p => KissLogConfiguration.Options.ApplyShouldLogRequestClaim(listener, defaultArgs, p.Key)).ToList();
             args.WebProperties.Request.Properties.InputStream = inputStream;

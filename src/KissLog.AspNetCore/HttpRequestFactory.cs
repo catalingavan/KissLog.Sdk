@@ -97,7 +97,7 @@ namespace KissLog.AspNetCore
                 );
             }
 
-            if (request.HasFormContentType)
+            if (request.HasFormContentType && KissLogConfiguration.Options.ApplyShouldLogRequestFormData(result))
             {
                 foreach (string key in request.Form.Keys)
                 {
@@ -106,7 +106,7 @@ namespace KissLog.AspNetCore
                 }
             }
 
-            if (InternalHelpers.ShouldLogInputStream(properties.Headers))
+            if (InternalHelpers.ShouldLogInputStream(properties.Headers) && KissLogConfiguration.Options.ApplyShouldLogRequestInputStream(result))
             {
                 inputStream = ReadInputStream(request);
             }

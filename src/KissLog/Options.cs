@@ -31,13 +31,18 @@ namespace KissLog
             };
         };
 
-        internal Func<ILogListener, FlushLogArgs, bool> ShouldLogRequestInputStreamFn = (ILogListener listener, FlushLogArgs args) => true;
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestHeaderFn = (ILogListener listener, FlushLogArgs args, string name) => true;
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestCookieFn = (ILogListener listener, FlushLogArgs args, string name) => false;
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestQueryStringFn = (ILogListener listener, FlushLogArgs args, string name) => true;
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestFormDataFn = (ILogListener listener, FlushLogArgs args, string name) => true;
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestServerVariableFn = (ILogListener listener, FlushLogArgs args, string name) => true;
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestClaimFn = (ILogListener listener, FlushLogArgs args, string name) => true;
+        internal Func<HttpRequest, bool> ShouldLogRequestInputStreamFn = (HttpRequest request) => true;
+        internal Func<ILogListener, FlushLogArgs, bool> ShouldLogRequestInputStreamForListenerFn = (ILogListener listener, FlushLogArgs args) => true;
+
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestHeaderKeyFn = (ILogListener listener, FlushLogArgs args, string name) => true;
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestCookieKeyFn = (ILogListener listener, FlushLogArgs args, string name) => false;
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestQueryStringKeyFn = (ILogListener listener, FlushLogArgs args, string name) => true;
+
+        internal Func<HttpRequest, bool> ShouldLogRequestFormDataFn = (HttpRequest request) => true;
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestFormDataKeyFn = (ILogListener listener, FlushLogArgs args, string name) => true;
+        
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestServerVariableKeyFn = (ILogListener listener, FlushLogArgs args, string name) => true;
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestClaimKeyFn = (ILogListener listener, FlushLogArgs args, string name) => true;
 
         internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogResponseHeaderFn = (ILogListener listener, FlushLogArgs args, string name) => true;
         internal Func<ILogListener, FlushLogArgs, bool, bool> ShouldLogResponseBodyFn = (ILogListener listener, FlushLogArgs args, bool defaultValue) => defaultValue;
@@ -56,41 +61,53 @@ namespace KissLog
 
         public Options ShouldLogRequestHeader(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
-            ShouldLogRequestHeaderFn = handler;
+            ShouldLogRequestHeaderKeyFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestCookie(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
-            ShouldLogRequestCookieFn = handler;
+            ShouldLogRequestCookieKeyFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestQueryString(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
-            ShouldLogRequestQueryStringFn = handler;
+            ShouldLogRequestQueryStringKeyFn = handler;
             return this;
         }
 
-        public Options ShouldLogRequestFormData(Func<ILogListener, FlushLogArgs, string, bool> handler)
+        public Options ShouldLogRequestFormData(Func<HttpRequest, bool> handler)
         {
             ShouldLogRequestFormDataFn = handler;
             return this;
         }
 
+        public Options ShouldLogRequestFormData(Func<ILogListener, FlushLogArgs, string, bool> handler)
+        {
+            ShouldLogRequestFormDataKeyFn = handler;
+            return this;
+        }
+
         public Options ShouldLogRequestServerVariable(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
-            ShouldLogRequestServerVariableFn = handler;
+            ShouldLogRequestServerVariableKeyFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestClaim(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
-            ShouldLogRequestClaimFn = handler;
+            ShouldLogRequestClaimKeyFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestInputStream(Func<ILogListener, FlushLogArgs, bool> handler)
+        {
+            ShouldLogRequestInputStreamForListenerFn = handler;
+            return this;
+        }
+
+        public Options ShouldLogRequestInputStream(Func<HttpRequest, bool> handler)
         {
             ShouldLogRequestInputStreamFn = handler;
             return this;
