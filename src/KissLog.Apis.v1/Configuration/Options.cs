@@ -6,14 +6,14 @@ namespace KissLog.Apis.v1.Configuration
 {
     internal class Options
     {
-        internal Func<FlushLogArgs, IEnumerable<string>> AddRequestKeywordsFn = (FlushLogArgs args) => null;
+        internal Func<FlushLogArgs, IList<string>, IList<string>> GenerateKeywordsFn = (FlushLogArgs args, IList<string> defaultKeywords) => defaultKeywords;
 
-        internal IEnumerable<string> ApplyAddRequestKeywordstHeader(FlushLogArgs args)
+        internal IList<string> ApplyGenerateKeywords(FlushLogArgs args, IList<string> defaultKeywords)
         {
-            if (AddRequestKeywordsFn == null)
+            if (GenerateKeywordsFn == null)
                 return null;
 
-            return AddRequestKeywordsFn(args);
+            return GenerateKeywordsFn(args, defaultKeywords);
         }
     }
 }

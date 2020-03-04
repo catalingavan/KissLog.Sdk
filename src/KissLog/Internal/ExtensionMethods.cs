@@ -14,37 +14,47 @@ namespace KissLog.Internal
 
         public static bool ApplyShouldLogRequestHeader(this Options options, ILogListener listener, FlushLogArgs args, string name)
         {
-            return options.ShouldLogRequestHeaderFn(listener, args, name);
+            return options.ShouldLogRequestHeaderKeyFn(listener, args, name);
         }
 
-        public static bool ApplyShouldLogRequestCookie(this Options options, ILogListener listener, FlushLogArgs args, string cookieName)
+        public static bool ApplyShouldLogRequestCookie(this Options options, ILogListener listener, FlushLogArgs args, string name)
         {
-            return options.ShouldLogRequestCookieFn(listener, args, cookieName);
+            return options.ShouldLogRequestCookieKeyFn(listener, args, name);
         }
 
-        public static bool ApplyShouldLogRequestQueryString(this Options options, ILogListener listener, FlushLogArgs args, string cookieName)
+        public static bool ApplyShouldLogRequestQueryString(this Options options, ILogListener listener, FlushLogArgs args, string name)
         {
-            return options.ShouldLogRequestQueryStringFn(listener, args, cookieName);
+            return options.ShouldLogRequestQueryStringKeyFn(listener, args, name);
         }
 
-        public static bool ApplyShouldLogRequestFormData(this Options options, ILogListener listener, FlushLogArgs args, string cookieName)
+        public static bool ApplyShouldLogRequestFormData(this Options options, HttpRequest request)
         {
-            return options.ShouldLogRequestFormDataFn(listener, args, cookieName);
+            return options.ShouldLogRequestFormDataFn(request);
         }
 
-        public static bool ApplyShouldLogRequestServerVariable(this Options options, ILogListener listener, FlushLogArgs args, string cookieName)
+        public static bool ApplyShouldLogRequestFormDataKey(this Options options, ILogListener listener, FlushLogArgs args, string name)
         {
-            return options.ShouldLogRequestServerVariableFn(listener, args, cookieName);
+            return options.ShouldLogRequestFormDataKeyFn(listener, args, name);
         }
 
-        public static bool ApplyShouldLogRequestClaim(this Options options, ILogListener listener, FlushLogArgs args, string cookieName)
+        public static bool ApplyShouldLogRequestServerVariable(this Options options, ILogListener listener, FlushLogArgs args, string name)
         {
-            return options.ShouldLogRequestClaimFn(listener, args, cookieName);
+            return options.ShouldLogRequestServerVariableKeyFn(listener, args, name);
+        }
+
+        public static bool ApplyShouldLogRequestClaim(this Options options, ILogListener listener, FlushLogArgs args, string name)
+        {
+            return options.ShouldLogRequestClaimKeyFn(listener, args, name);
+        }
+
+        public static bool ApplyShouldLogRequestInputStream(this Options options, HttpRequest request)
+        {
+            return options.ShouldLogRequestInputStreamFn(request);
         }
 
         public static bool ApplyShouldLogRequestInputStream(this Options options, ILogger logger, ILogListener listener, FlushLogArgs args)
         {
-            return options.ShouldLogRequestInputStreamFn(listener, args);
+            return options.ShouldLogRequestInputStreamForListenerFn(listener, args);
         }
 
         public static bool ApplyShouldLogResponseHeader(this Options options, ILogListener listener, FlushLogArgs args, string name)

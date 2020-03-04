@@ -31,13 +31,18 @@ namespace KissLog
             };
         };
 
-        internal Func<ILogListener, FlushLogArgs, bool> ShouldLogRequestInputStreamFn = (ILogListener listener, FlushLogArgs args) => true;
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestHeaderFn = (ILogListener listener, FlushLogArgs args, string name) => true;
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestCookieFn = (ILogListener listener, FlushLogArgs args, string name) => false;
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestQueryStringFn = (ILogListener listener, FlushLogArgs args, string name) => true;
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestFormDataFn = (ILogListener listener, FlushLogArgs args, string name) => true;
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestServerVariableFn = (ILogListener listener, FlushLogArgs args, string name) => true;
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestClaimFn = (ILogListener listener, FlushLogArgs args, string name) => true;
+        internal Func<HttpRequest, bool> ShouldLogRequestInputStreamFn = (HttpRequest request) => true;
+        internal Func<ILogListener, FlushLogArgs, bool> ShouldLogRequestInputStreamForListenerFn = (ILogListener listener, FlushLogArgs args) => true;
+
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestHeaderKeyFn = (ILogListener listener, FlushLogArgs args, string name) => true;
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestCookieKeyFn = (ILogListener listener, FlushLogArgs args, string name) => false;
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestQueryStringKeyFn = (ILogListener listener, FlushLogArgs args, string name) => true;
+
+        internal Func<HttpRequest, bool> ShouldLogRequestFormDataFn = (HttpRequest request) => true;
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestFormDataKeyFn = (ILogListener listener, FlushLogArgs args, string name) => true;
+        
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestServerVariableKeyFn = (ILogListener listener, FlushLogArgs args, string name) => true;
+        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestClaimKeyFn = (ILogListener listener, FlushLogArgs args, string name) => true;
 
         internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogResponseHeaderFn = (ILogListener listener, FlushLogArgs args, string name) => true;
         internal Func<ILogListener, FlushLogArgs, bool, bool> ShouldLogResponseBodyFn = (ILogListener listener, FlushLogArgs args, bool defaultValue) => defaultValue;
@@ -50,72 +55,126 @@ namespace KissLog
 
         public Options GetUser(Func<RequestProperties, UserDetails> handler)
         {
+            if (handler == null)
+                return this;
+
             GetUserFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestHeader(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
-            ShouldLogRequestHeaderFn = handler;
+            if (handler == null)
+                return this;
+
+            ShouldLogRequestHeaderKeyFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestCookie(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
-            ShouldLogRequestCookieFn = handler;
+            if (handler == null)
+                return this;
+
+            ShouldLogRequestCookieKeyFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestQueryString(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
-            ShouldLogRequestQueryStringFn = handler;
+            if (handler == null)
+                return this;
+
+            ShouldLogRequestQueryStringKeyFn = handler;
+            return this;
+        }
+
+        public Options ShouldLogRequestFormData(Func<HttpRequest, bool> handler)
+        {
+            if (handler == null)
+                return this;
+
+            ShouldLogRequestFormDataFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestFormData(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
-            ShouldLogRequestFormDataFn = handler;
+            if (handler == null)
+                return this;
+
+            ShouldLogRequestFormDataKeyFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestServerVariable(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
-            ShouldLogRequestServerVariableFn = handler;
+            if (handler == null)
+                return this;
+
+            ShouldLogRequestServerVariableKeyFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestClaim(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
-            ShouldLogRequestClaimFn = handler;
+            if (handler == null)
+                return this;
+
+            ShouldLogRequestClaimKeyFn = handler;
             return this;
         }
 
         public Options ShouldLogRequestInputStream(Func<ILogListener, FlushLogArgs, bool> handler)
         {
+            if (handler == null)
+                return this;
+
+            ShouldLogRequestInputStreamForListenerFn = handler;
+            return this;
+        }
+
+        public Options ShouldLogRequestInputStream(Func<HttpRequest, bool> handler)
+        {
+            if (handler == null)
+                return this;
+
             ShouldLogRequestInputStreamFn = handler;
             return this;
         }
 
         public Options ShouldLogResponseHeader(Func<ILogListener, FlushLogArgs, string, bool> handler)
         {
+            if (handler == null)
+                return this;
+
             ShouldLogResponseHeaderFn = handler;
             return this;
         }
 
         public Options ShouldLogResponseBody(Func<ILogListener, FlushLogArgs, bool, bool> handler)
         {
+            if (handler == null)
+                return this;
+
             ShouldLogResponseBodyFn = handler;
             return this;
         }
 
         public Options ToggleListener(Func<ILogListener, FlushLogArgs, bool> handler)
         {
+            if (handler == null)
+                return this;
+
             ToggleListenerFn = handler;
             return this;
         }
 
         public Options AppendExceptionDetails(Func<Exception, string> handler)
         {
+            if (handler == null)
+                return this;
+
             AppendExceptionDetailsFn = handler;
             return this;
         }

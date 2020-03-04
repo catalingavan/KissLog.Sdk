@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 
 namespace KissLog.AspNet.Web
@@ -31,27 +32,24 @@ namespace KissLog.AspNet.Web
 
             var headers = DataParser.ToDictionary(request.Unvalidated.Headers);
             headers = FilterHeaders(headers);
-
-            var queryString = DataParser.ToDictionary(request.Unvalidated.QueryString);
-            var formData = DataParser.ToDictionary(request.Unvalidated.Form);
+            
             var serverVariables = DataParser.ToDictionary(request.ServerVariables);
             serverVariables = FilterServerVariables(serverVariables);
 
-            var cookies = DataParser.ToDictionary(request.Unvalidated.Cookies);
-
             properties.Headers = headers;
-            properties.QueryString = queryString;
-            properties.FormData = formData;
+            properties.QueryString = DataParser.ToDictionary(request.Unvalidated.QueryString);
             properties.ServerVariables = serverVariables;
-            properties.Cookies = cookies;
-            string inputStream = null;
+            properties.Cookies = DataParser.ToDictionary(request.Unvalidated.Cookies);
 
-            if (InternalHelpers.ShouldLogInputStream(headers))
+            if(KissLogConfiguration.Options.ApplyShouldLogRequestFormData(result))
             {
-                inputStream = ReadInputStream(request);
+                properties.FormData = DataParser.ToDictionary(request.Unvalidated.Form);
             }
 
-            properties.InputStream = inputStream;
+            if (InternalHelpers.ShouldLogInputStream(headers) && KissLogConfiguration.Options.ApplyShouldLogRequestInputStream(result))
+            {
+                properties.InputStream = ReadInputStream(request);
+            }
 
             return result;
         }
@@ -82,24 +80,38 @@ namespace KissLog.AspNet.Web
 
         private static string ReadInputStream(HttpRequest request)
         {
-            string content = string.Empty;
-            if (request.InputStream.CanRead == false)
-                return content;
-
-            using (MemoryStream ms = new MemoryStream())
+            try
             {
-                request.InputStream.CopyTo(ms);
+                string content = string.Empty;
+                if (request.InputStream.CanRead == false)
+                    return content;
 
-                request.InputStream.Position = 0;
-                ms.Position = 0;
-
-                using (StreamReader readStream = new StreamReader(ms, request.ContentEncoding))
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    content = readStream.ReadToEndAsync().Result;
+                    request.InputStream.CopyTo(ms);
+
+                    request.InputStream.Position = 0;
+                    ms.Position = 0;
+
+                    using (StreamReader readStream = new StreamReader(ms, request.ContentEncoding))
+                    {
+                        content = readStream.ReadToEndAsync().Result;
+                    }
                 }
+
+                return content;
+            }
+            catch (Exception ex)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("ReadInputStream error:");
+                sb.AppendLine(ex.ToString());
+
+                KissLog.Internal.InternalHelpers.Log(sb.ToString(), LogLevel.Error);
             }
 
-            return content;
+            return string.Empty;
+
         }
 
         private static List<KeyValuePair<string, string>> FilterHeaders(List<KeyValuePair<string, string>> values)

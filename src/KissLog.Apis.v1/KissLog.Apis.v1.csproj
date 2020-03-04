@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3;netstandard1.4;netstandard2.0;net45</TargetFrameworks>
-    <Version>2.5.5</Version>
+    <Version>2.5.6</Version>
     <Authors>KissLog.net</Authors>
     <Company>KissLog.net</Company>
     <Product>KissLog.net</Product>
@@ -13,9 +13,9 @@
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>KissLog</PackageTags>
-    <PackageReleaseNotes>Improved async logging. Implemented multi-tenant support. Adapted to KissLog 3.5.5 improvements.</PackageReleaseNotes>
+    <PackageReleaseNotes>Adapted to KissLog 3.5.6 improvements.</PackageReleaseNotes>
     <PackageId>KissLog.Apis.v1</PackageId>
-    <AssemblyVersion>2.5.5.0</AssemblyVersion>
+    <AssemblyVersion>2.5.6.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

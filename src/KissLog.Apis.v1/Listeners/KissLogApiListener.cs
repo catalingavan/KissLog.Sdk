@@ -7,6 +7,7 @@ using KissLog.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace KissLog.Apis.v1.Listeners
 {
@@ -14,6 +15,7 @@ namespace KissLog.Apis.v1.Listeners
     {
         public ObfuscateArgsService ObfuscateService { get; } = new ObfuscateArgsService();
         public TruncateArgsService TruncateService { get; } = new TruncateArgsService();
+        public GenerateKeywordsService GenerateKeywordsService { get; } = new GenerateKeywordsService();
 
         public bool UseAsync { get; set; } = true;
         public string ApiUrl { get; set; } = Defaults.ApiUrl;
@@ -70,7 +72,7 @@ namespace KissLog.Apis.v1.Listeners
             Requests.CreateRequestLogRequest request = CreateRequestLogRequestFactory.Create(args);
             request.OrganizationId = flushProperties.Application.OrganizationId;
             request.ApplicationId = flushProperties.Application.ApplicationId;
-            request.Keywords = Configuration.Configuration.Options.ApplyAddRequestKeywordstHeader(args);
+            request.Keywords = GenerateKeywords(args);
 
             // we need to copy files, because we start a new Thread, and the existing files will be deleted before accessing them
             IList<LoggerFile> copy = CopyFiles(args.Files?.ToList());
@@ -176,6 +178,28 @@ namespace KissLog.Apis.v1.Listeners
             }
 
             return flusher;
+        }
+
+        private IList<string> GenerateKeywords(FlushLogArgs args)
+        {
+            try
+            {
+                IList<string> defaultKeywords = GenerateKeywordsService.CreateKeywords(args) ?? new List<string>();
+
+                IList<string> keywords = Configuration.Configuration.Options.ApplyGenerateKeywords(args, defaultKeywords);
+
+                return keywords ?? new List<string>();
+            }
+            catch(Exception ex)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("GenerateKeywordsService error:");
+                sb.AppendLine(ex.ToString());
+
+                InternalHelpers.Log(sb.ToString(), LogLevel.Error);
+            }
+
+            return new List<string>();
         }
     }
 }

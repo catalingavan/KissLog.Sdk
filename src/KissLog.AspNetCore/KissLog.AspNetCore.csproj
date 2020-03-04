@@ -12,10 +12,10 @@ Install this package on ASP.NET Core web applications.</Description>
     <PackageIconUrl>https://kisslog.net/cdn/KissLog/favicon/96.png</PackageIconUrl>
     <PackageTags>KissLog, AspNetCore, NetCore, Core</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>2.5.5</Version>
-    <AssemblyVersion>2.5.5.0</AssemblyVersion>
-    <FileVersion>2.5.5.0</FileVersion>
-    <PackageReleaseNotes>Improved async logging. Implemented multi-tenant support. Adapted to KissLog 3.5.5 improvements.</PackageReleaseNotes>
+    <Version>2.5.6</Version>
+    <AssemblyVersion>2.5.6.0</AssemblyVersion>
+    <FileVersion>2.5.6.0</FileVersion>
+    <PackageReleaseNotes>Adapted to KissLog 3.5.6 improvements.</PackageReleaseNotes>
     <PackageId>KissLog.AspNetCore</PackageId>
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
