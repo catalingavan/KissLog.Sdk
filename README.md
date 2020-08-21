@@ -6,13 +6,13 @@ KissLog represents a powerful logging and monitoring solution for .NET applicati
 
 Some of the main features of KissLog are:
 
-- Automatically logs all the exceptions
+- Automatically captures and logs all the exceptions
 
 - Monitors all the HTTP traffic
 
 - Lightweight, powerful SDK
 
-- Centralized logging using [KissLog.net](https://kisslog.net) cloud or on-premises integration
+- Centralized logging using [kisslog.net](https://kisslog.net) or KissLog on-premises integration
 
 Check the [documentation](https://docs.kisslog.net) for a complete list of features.
 
@@ -20,10 +20,11 @@ Check the [documentation](https://docs.kisslog.net) for a complete list of featu
 
 ## Framework support
 
-- [.NET Core](https://docs.kisslog.net/docs/install-instructions/netcore.html)
-- [ASP.NET WebApi](https://docs.kisslog.net/docs/install-instructions/aspnet-webapi.html)
-- [ASP.NET MVC](https://docs.kisslog.net/docs/install-instructions/aspnet-mvc.html)
-- [Windows / Console apps](https://docs.kisslog.net/docs/install-instructions/console-applications.html)
+- [.NET Core 2.x](https://docs.kisslog.net/SDK/install-instructions/netcore20.html)
+- [.NET Core 3.x](https://docs.kisslog.net/SDK/install-instructions/netcore30.html)
+- [ASP.NET WebApi](https://docs.kisslog.net/SDK/install-instructions/aspnet-webapi.html)
+- [ASP.NET MVC](https://docs.kisslog.net/SDK/install-instructions/aspnet-mvc.html)
+- [Windows / Console apps](https://docs.kisslog.net/SDK/install-instructions/console-applications.html)
 
 ## Basic usage
 
@@ -49,28 +50,44 @@ public class HomeController : Controller
 
 ## Setup
 
-### Register listeners
+### Logs output
 
-KissLog saves the logs by using ILogListener listeners.
+KissLog saves the logs to multiple output locations by using log listeners.
 
-Listeners are registered at application startup using the `KissLogConfiguration.Listeners` container.
+Log listeners are registered at application startup using the `KissLogConfiguration.Listeners` container.
+
+Check the [documentation](https://docs.kisslog.net/SDK/logs-output/index.html) for more logs output examples.
 
 ```csharp
-protected void Application_Start()
+namespace MyApplication
 {
-    // KissLog.net cloud listener
-    KissLogConfiguration.Listeners.Add(new KissLogApiListener(
-        new KissLog.Apis.v1.Auth.Application("d625d5c8-ef47-4cd5-bf2d-6b0a1fa7fda4", "39bb675d-5c13-4bd8-9b5a-1d368da020a2")
-    ));
+    public class MvcApplication : System.Web.HttpApplication
+    {
+        // [...]
 
-    // NLog listener
-    KissLogConfiguration.Listeners.Add(new NLogTargetListener());
+        private void RegisterKissLogListeners()
+        {
+            // register KissLog.net cloud listener
+            KissLogConfiguration.Listeners.Add(new KissLogApiListener(new Application("d625d5c8-ef47-4cd5-bf2d-6b0a1fa7fda4", "39bb675d-5c13-4bd8-9b5a-1d368da020a2"))
+            {
+                ApiUrl = "https://api.kisslog.net"
+            });
+			
+            // register NLog listener
+            KissLogConfiguration.Listeners.Add(new NLogTargetListener());
+            
+            // register MongoDB listener
+            KissLogConfiguration.Listeners.Add(new MongoDbListener());
+        }
+    }
 }
 ```
 
 ### Configuration
 
-`KissLogConfiguration.Options` provides a number of properties and runtime handlers used to customize the logs output.
+Logging behavior can be customized by using `KissLogConfiguration.Options` container.
+
+Complete list of configuration options can be found on the [documentation](https://docs.kisslog.net/SDK/configuration/index.html) page.
 
 ```csharp
 protected void Application_Start()
