@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard1.4;netstandard2.0;net40;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard1.4;netstandard2.0;net45</TargetFrameworks>
     <AssemblyName>KissLog</AssemblyName>
     <RootNamespace>KissLog</RootNamespace>
     <PackageLicenseUrl>https://opensource.org/licenses/BSD-3-Clause</PackageLicenseUrl>
