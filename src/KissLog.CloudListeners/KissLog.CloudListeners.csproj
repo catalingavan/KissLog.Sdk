@@ -2,6 +2,17 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3;netstandard1.4;netstandard2.0;net45</TargetFrameworks>
+    <Version>3.6.0</Version>
+    <Authors>KissLog.net</Authors>
+    <Product>KissLog.net</Product>
+    <PackageIconUrl>https://kisslog.net/cdn/KissLog/favicon/96.png</PackageIconUrl>
+    <PackageIcon>PackageIcon.png</PackageIcon>
+    <PackageProjectUrl>https://kisslog.net</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Description>KissLog.net cloud / on-premises listeners.</Description>
+    <PackageReleaseNotes>Adapted to KissLog 3.6.0 improvements.</PackageReleaseNotes>
+    <PackageTags>KissLog</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,6 +21,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KissLog\KissLog.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="PackageIcon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

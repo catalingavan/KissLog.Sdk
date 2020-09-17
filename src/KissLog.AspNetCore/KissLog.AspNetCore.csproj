@@ -10,12 +10,13 @@ Install this package on ASP.NET Core web applications.</Description>
     <PackageLicenseUrl>https://opensource.org/licenses/BSD-3-Clause</PackageLicenseUrl>
     <PackageProjectUrl>https://kisslog.net</PackageProjectUrl>
     <PackageIconUrl>https://kisslog.net/cdn/KissLog/favicon/96.png</PackageIconUrl>
+    <PackageIcon>PackageIcon.png</PackageIcon>
     <PackageTags>KissLog, AspNetCore, NetCore, Core</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>2.5.6</Version>
-    <AssemblyVersion>2.5.6.0</AssemblyVersion>
-    <FileVersion>2.5.6.0</FileVersion>
-    <PackageReleaseNotes>Adapted to KissLog 3.5.6 improvements.</PackageReleaseNotes>
+    <Version>3.6.0</Version>
+    <AssemblyVersion>3.6.0.0</AssemblyVersion>
+    <FileVersion>3.6.0.0</FileVersion>
+    <PackageReleaseNotes>Adapted to KissLog 3.6.0 improvements.</PackageReleaseNotes>
     <PackageId>KissLog.AspNetCore</PackageId>
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -31,8 +32,16 @@ Install this package on ASP.NET Core web applications.</Description>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\KissLog.Apis.v1\KissLog.Apis.v1.csproj" />
+    <ProjectReference Include="..\KissLog.CloudListeners\KissLog.CloudListeners.csproj" />
     <ProjectReference Include="..\KissLog\KissLog.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="PackageIcon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -7,16 +7,6 @@ namespace KissLog
 {
     public class LogListenerParser
     {
-        #region Obsolete >= 08-04-2019
-
-        [Obsolete("AlterDataBeforePersisting is obsolete. Use BeforeFlush(FlushLogArgs args, ILogListener logListener) instead.", true)]
-        public virtual void AlterDataBeforePersisting(FlushLogArgs args)
-        {
-            
-        }
-
-        #endregion
-
         public List<string> UrlsToIgnore = new List<string>();
 
         public List<string> ContentTypesToIgnore = new List<string>

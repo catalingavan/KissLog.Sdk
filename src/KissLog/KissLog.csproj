@@ -7,6 +7,7 @@
     <PackageLicenseUrl>https://opensource.org/licenses/BSD-3-Clause</PackageLicenseUrl>
     <PackageProjectUrl>https://kisslog.net</PackageProjectUrl>
     <PackageIconUrl>https://kisslog.net/cdn/KissLog/favicon/96.png</PackageIconUrl>
+    <PackageIcon>PackageIcon.png</PackageIcon>
     <Description>KissLog package. Contains all the necessary components used for logging.
 Install this package on all the projects.</Description>
     <PackageReleaseNotes>General improvements</PackageReleaseNotes>
@@ -15,9 +16,9 @@ Install this package on all the projects.</Description>
     <Company>KissLog.net</Company>
     <Product>KissLog.net</Product>
     <PackageTags>Logging, Error, Exception, Trace, Tracing, KissLog, Diagnostics, Reporing</PackageTags>
-    <Version>3.5.6</Version>
-    <AssemblyVersion>3.5.6.0</AssemblyVersion>
-    <FileVersion>3.5.6.0</FileVersion>
+    <Version>3.6.0</Version>
+    <AssemblyVersion>3.6.0.0</AssemblyVersion>
+    <FileVersion>3.6.0.0</FileVersion>
     <PackageId>KissLog</PackageId>
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -26,6 +27,14 @@ Install this package on all the projects.</Description>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="PackageIcon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

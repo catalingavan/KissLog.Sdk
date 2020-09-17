@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace KissLog.PeriodicListener
 {
-    public class PeriodicTimer : IDisposable
+    internal class PeriodicTimer : IDisposable
     {
         private readonly Timer _timer;
         private readonly CancellationTokenSource _cancelToken;

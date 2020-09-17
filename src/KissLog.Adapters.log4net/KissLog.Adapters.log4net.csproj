@@ -9,14 +9,15 @@
     <PackageLicenseUrl>https://opensource.org/licenses/BSD-3-Clause</PackageLicenseUrl>
     <PackageProjectUrl>https://kisslog.net</PackageProjectUrl>
     <PackageIconUrl>https://kisslog.net/cdn/KissLog/favicon/96.png</PackageIconUrl>
+    <PackageIcon>PackageIcon.png</PackageIcon>
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>log4net, KissLog</PackageTags>
-    <PackageReleaseNotes>Adapted to KissLog 3.5.6 improvements.</PackageReleaseNotes>
+    <PackageReleaseNotes>Adapted to KissLog 3.6.0 improvements.</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.5.6</Version>
-    <AssemblyVersion>2.5.6.0</AssemblyVersion>
-    <FileVersion>2.5.6.0</FileVersion>
+    <Version>3.6.0</Version>
+    <AssemblyVersion>3.6.0.0</AssemblyVersion>
+    <FileVersion>3.6.0.0</FileVersion>
     <PackageId>KissLog.Adapters.log4net</PackageId>
   </PropertyGroup>
 
@@ -26,6 +27,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KissLog\KissLog.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="PackageIcon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

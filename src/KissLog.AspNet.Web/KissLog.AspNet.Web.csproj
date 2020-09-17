@@ -59,5 +59,10 @@
   <ItemGroup>
     <None Include="KissLog.AspNet.Web.nuspec" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="PackageIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

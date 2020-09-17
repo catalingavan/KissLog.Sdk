@@ -1,6 +1,6 @@
 ﻿using KissLog.FlushArgs;
+using KissLog.Formatting;
 using KissLog.Internal;
-using KissLog.Listeners;
 using KissLog.Web;
 using System;
 using System.Collections.Concurrent;

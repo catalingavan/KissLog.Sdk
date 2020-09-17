@@ -80,5 +80,10 @@
       <Name>KissLog</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="PackageIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

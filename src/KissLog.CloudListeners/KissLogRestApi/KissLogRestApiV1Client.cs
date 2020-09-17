@@ -88,7 +88,7 @@ namespace KissLog.CloudListeners.KissLogRestApi
 
                 using (var sw = new System.IO.StreamWriter(ms, new UTF8Encoding(false), 1024, true))
                 {
-                    using (var jtw = new JsonTextWriter(sw) { Formatting = Formatting.None })
+                    using (var jtw = new JsonTextWriter(sw) { Formatting = Newtonsoft.Json.Formatting.None })
                     {
                         var js = new JsonSerializer();
                         js.Serialize(jtw, content);

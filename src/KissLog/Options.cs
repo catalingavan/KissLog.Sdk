@@ -15,7 +15,7 @@ namespace KissLog
         internal JsonSerializerSettings JsonSerializerSettingsValue = new JsonSerializerSettings
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            Formatting = Formatting.Indented
+            Formatting = Newtonsoft.Json.Formatting.Indented
         };
         internal Func<RequestProperties, UserDetails> GetUserFn = (RequestProperties request) =>
         {

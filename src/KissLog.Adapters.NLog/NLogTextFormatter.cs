@@ -1,12 +1,11 @@
-﻿using KissLog.Listeners;
+﻿using KissLog.Formatting;
 using KissLog.Web;
-using System.Text;
 
 namespace KissLog.Adapters.NLog
 {
-    internal class NLogTextFormatter : ITextFormatter
+    internal class NLogTextFormatter : TextFormatter
     {
-        public string FormatBeginRequest(HttpRequest httpRequest)
+        public override string FormatBeginRequest(HttpRequest httpRequest)
         {
             if (httpRequest == null)
                 return string.Empty;
@@ -16,7 +15,7 @@ namespace KissLog.Adapters.NLog
             return $"[{httpMethod} {httpRequest.Url.PathAndQuery}]";
         }
 
-        public string FormatEndRequest(HttpRequest httpRequest, HttpResponse httpResponse)
+        public override string FormatEndRequest(HttpRequest httpRequest, HttpResponse httpResponse)
         {
             if (httpRequest == null || httpResponse == null)
                 return string.Empty;
@@ -30,24 +29,12 @@ namespace KissLog.Adapters.NLog
             return $"[{httpStatusCode} {httpStatusCodeText}][{httpMethod} {httpRequest.Url.PathAndQuery}] Duration: {duration}ms";
         }
 
-        public string FormatLogMessage(LogMessage logMessage)
+        public override string FormatLogMessage(LogMessage logMessage)
         {
             if (logMessage == null)
                 return string.Empty;
 
             return logMessage.Message;
-        }
-
-        public string FormatFlush(WebProperties webProperties)
-        {
-            string request = FormatBeginRequest(webProperties.Request);
-            string response = FormatEndRequest(webProperties.Request, webProperties.Response);
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(request);
-            sb.Append(response);
-
-            return sb.ToString();
         }
     }
 }
