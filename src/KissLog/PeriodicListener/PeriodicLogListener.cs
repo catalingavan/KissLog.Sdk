@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace KissLog.PeriodicListener
 {
-    public class PeriodicLogListener : ILogListener, IDisposable
+    public class PeriodicLogListener : ILogListener
     {
         private readonly PeriodicTimer _timer;
         private readonly TimeSpan _triggerInterval;
-        private readonly ITextFormatter _textFormatter;
+        private readonly TextFormatter _textFormatter;
 
         private readonly ConcurrentQueue<string> _queue = new ConcurrentQueue<string>();
 
@@ -47,6 +47,18 @@ namespace KissLog.PeriodicListener
         {
             string text = _textFormatter.FormatEndRequest(args.WebProperties.Request, args.WebProperties.Response);
             AddToQueue(text);
+
+            _timerScheduled = false;
+            _timer.ScheduleExecution(TimeSpan.Zero);
+
+            try
+            {
+                TimerCallbackAsync().Wait();
+            }
+            catch
+            {
+
+            }
         }
 
         public void OnMessage(LogMessage message, ILogger logger)
@@ -99,18 +111,6 @@ namespace KissLog.PeriodicListener
                 _timer.ScheduleExecution(_triggerInterval);
                 _timerScheduled = true;
             }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposing) return;
-
-            var a = 1;
         }
     }
 }
