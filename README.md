@@ -139,4 +139,4 @@ All contributions are very welcomed: code, documentation, samples, bug reports, 
 
 ## License
 
-[BSD license](LICENSE.md)
+[Apache-2.0](LICENSE.md)
