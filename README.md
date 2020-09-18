@@ -68,7 +68,7 @@ namespace MyApplication
         private void RegisterKissLogListeners()
         {
             // register KissLog.net cloud listener
-            KissLogConfiguration.Listeners.Add(new KissLogApiListener(new Application("d625d5c8-ef47-4cd5-bf2d-6b0a1fa7fda4", "39bb675d-5c13-4bd8-9b5a-1d368da020a2"))
+            KissLogConfiguration.Listeners.Add(new RequestLogsApiListener(new Application("d625d5c8-ef47-4cd5-bf2d-6b0a1fa7fda4", "39bb675d-5c13-4bd8-9b5a-1d368da020a2"))
             {
                 ApiUrl = "https://api.kisslog.net"
             });

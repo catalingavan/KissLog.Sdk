@@ -2,22 +2,23 @@
 <package >
   <metadata>
     <id>KissLog.AspNet.Web</id>
-    <version>3.6.0</version>
+    <version>4.0.0</version>
     <authors>KissLog.net</authors>
     <owners>KissLog.net</owners>
-    <licenseUrl>https://opensource.org/licenses/BSD-3-Clause</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">Apache-2.0</license>
+    <licenseUrl>https://licenses.nuget.org/Apache-2.0</licenseUrl>
     <projectUrl>http://kisslog.net</projectUrl>
     <iconUrl>https://kisslog.net/cdn/KissLog/favicon/96.png</iconUrl>
     <icon>PackageIcon.png</icon>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>KissLog Web package. You should not manually install this package, as it will be installed as a dependency.</description>
-    <releaseNotes>Adapted to KissLog 3.6.0 improvements.</releaseNotes>
+    <releaseNotes>Adapted to KissLog 4.0.0 improvements.</releaseNotes>
     <copyright>Copyright 2019</copyright>
     <tags>KissLog</tags>
     <repository type="git" url="https://github.com/KissLog-net/KissLog.Sdk" />
     <dependencies>
-      <dependency id="KissLog" version="3.6.0" />
-      <dependency id="KissLog.CloudListeners" version="3.6.0" />
+      <dependency id="KissLog" version="4.0.0" />
+      <dependency id="KissLog.CloudListeners" version="4.0.0" />
     </dependencies>
   </metadata>
   <files>
