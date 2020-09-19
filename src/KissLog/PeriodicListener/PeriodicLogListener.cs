@@ -5,6 +5,7 @@ using KissLog.Web;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace KissLog.PeriodicListener
@@ -55,9 +56,18 @@ namespace KissLog.PeriodicListener
             {
                 TimerCallbackAsync().Wait();
             }
-            catch
+            catch(Exception ex)
             {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("PeriodicLogListener.OnFlush() Exception:");
+                sb.AppendLine(ex.ToString());
 
+                KissLog.Internal.InternalHelpers.Log(sb.ToString(), LogLevel.Error);
+            }
+            finally
+            {
+                _timerScheduled = false;
+                _timer.ScheduleExecution(TimeSpan.Zero);
             }
         }
 
