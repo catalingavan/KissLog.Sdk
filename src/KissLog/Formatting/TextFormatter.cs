@@ -2,23 +2,23 @@
 using System;
 using System.Text;
 
-namespace KissLog.Listeners
+namespace KissLog.Formatting
 {
-    public class DefaultTextFormatter : ITextFormatter
+    public class TextFormatter
     {
         public virtual string FormatBeginRequest(HttpRequest httpRequest)
         {
             if (httpRequest == null)
-                return string.Empty;
+                return null;
 
             string httpMethod = (httpRequest.HttpMethod ?? string.Empty).ToUpper();
             string dateTime = FormatDateTime(httpRequest.StartDateTime);
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine();
-            sb.AppendLine(GetBeginRequestDelimiter());
+            sb.AppendLine();
 
-            if(!string.IsNullOrEmpty(dateTime))
+            if (!string.IsNullOrEmpty(dateTime))
                 sb.AppendLine(dateTime);
 
             sb.Append($"{httpMethod} {httpRequest.Url.PathAndQuery}");
@@ -28,8 +28,8 @@ namespace KissLog.Listeners
 
         public virtual string FormatEndRequest(HttpRequest httpRequest, HttpResponse httpResponse)
         {
-            if (httpResponse == null)
-                return string.Empty;
+            if (httpRequest == null || httpResponse == null)
+                return null;
 
             string httpStatusCodeText = httpResponse.HttpStatusCode.ToString();
             int httpStatusCode = (int)httpResponse.HttpStatusCode;
@@ -44,35 +44,16 @@ namespace KissLog.Listeners
         public virtual string FormatLogMessage(LogMessage logMessage)
         {
             if (logMessage == null)
-                return string.Empty;
+                return null;
 
             string logLevel = string.Format("{0,-20}", $"[{logMessage.LogLevel.ToString()}]");
 
             return $"{logLevel} {logMessage.Message}";
         }
 
-        public string FormatFlush(WebProperties webProperties)
-        {
-            string request = FormatBeginRequest(webProperties.Request);
-            string response = FormatEndRequest(webProperties.Request, webProperties.Response);
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(request);
-            sb.Append(response);
-
-            return sb.ToString();
-        }
-
-        public Func<DateTime, string> FormatDateTime = (DateTime dateTime) =>
+        public virtual string FormatDateTime(DateTime dateTime)
         {
             return dateTime.ToString("o");
-        };
-
-        public string BeginRequestDelimiter { get; set; } = null;
-
-        private string GetBeginRequestDelimiter()
-        {
-            return BeginRequestDelimiter ?? string.Empty;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using KissLog.Adapters.NLog;
 using KissLog.FlushArgs;
+using KissLog.Formatting;
 using KissLog.Web;
 using System;
 using System.Text;
@@ -8,13 +9,13 @@ namespace KissLog.Listeners
 {
     public class NLogTargetListener : ILogListener
     {
-        private readonly ITextFormatter _textFormatter;
+        private readonly TextFormatter _textFormatter;
 
         public NLogTargetListener() : this(new NLogTextFormatter())
         {
         }
 
-        public NLogTargetListener(ITextFormatter textFormatter)
+        public NLogTargetListener(TextFormatter textFormatter)
         {
             _textFormatter = textFormatter;
         }

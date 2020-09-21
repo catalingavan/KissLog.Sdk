@@ -1,4 +1,5 @@
 ﻿using KissLog.FlushArgs;
+using KissLog.Formatting;
 using KissLog.Web;
 using System;
 using System.Collections.Generic;
@@ -11,16 +12,16 @@ namespace KissLog.Listeners
     {
         private static readonly object Locker = new object();
 
-        private readonly ITextFormatter _textFormatter;
+        private readonly TextFormatter _textFormatter;
         private readonly string _logsDirectoryFullPath;
 
         public LocalTextFileListener(string logsDirectoryFullPath) :
-            this(new DefaultTextFormatter(), logsDirectoryFullPath)
+            this(new TextFormatter(), logsDirectoryFullPath)
         {
         }
 
         public LocalTextFileListener(
-            ITextFormatter textFormatter,
+            TextFormatter textFormatter,
             string logsDirectoryFullPath)
         {
             _textFormatter = textFormatter;
@@ -36,13 +37,17 @@ namespace KissLog.Listeners
         {
             if (FlushTrigger == FlushTrigger.OnMessage)
             {
+                string value = _textFormatter.FormatBeginRequest(httpRequest);
+                if (string.IsNullOrEmpty(value))
+                    return;
+                
                 string filePath = GetFileName(_logsDirectoryFullPath);
 
                 lock (Locker)
                 {
                     using (StreamWriter sw = System.IO.File.AppendText(filePath))
                     {
-                        sw.WriteLine(_textFormatter.FormatBeginRequest(httpRequest));
+                        sw.WriteLine(value);
                     }
                 }
             }
@@ -52,13 +57,17 @@ namespace KissLog.Listeners
         {
             if (FlushTrigger == FlushTrigger.OnMessage)
             {
+                string value = _textFormatter.FormatLogMessage(message);
+                if (string.IsNullOrEmpty(value))
+                    return;
+
                 string filePath = GetFileName(_logsDirectoryFullPath);
 
                 lock (Locker)
                 {
                     using (StreamWriter sw = System.IO.File.AppendText(filePath))
                     {
-                        sw.WriteLine(_textFormatter.FormatLogMessage(message));
+                        sw.WriteLine(value);
                     }
                 }
             }
@@ -71,31 +80,42 @@ namespace KissLog.Listeners
                 IEnumerable<LogMessage> logMessages = args.MessagesGroups.SelectMany(p => p.Messages).OrderBy(p => p.DateTime).ToList();
                 string filePath = GetFileName(_logsDirectoryFullPath);
 
+                string beginRequest = _textFormatter.FormatBeginRequest(args.WebProperties.Request);
+                string endRequest = _textFormatter.FormatEndRequest(args.WebProperties.Request, args.WebProperties.Response);
+
                 lock (Locker)
                 {
                     using (StreamWriter sw = System.IO.File.AppendText(filePath))
                     {
-                        if (args.WebProperties != null)
-                        {
-                            sw.WriteLine(_textFormatter.FormatFlush(args.WebProperties));
-                        }
+                        if (!string.IsNullOrEmpty(beginRequest))
+                            sw.WriteLine(beginRequest);
+
+                        if (!string.IsNullOrEmpty(endRequest))
+                            sw.WriteLine(endRequest);
 
                         foreach (var logMessage in logMessages)
                         {
-                            sw.WriteLine(_textFormatter.FormatLogMessage(logMessage));
+                            string value = _textFormatter.FormatLogMessage(logMessage);
+                            
+                            if (!string.IsNullOrEmpty(value))
+                                sw.WriteLine(value);
                         }
                     }
                 }
             }
             else if(FlushTrigger == FlushTrigger.OnMessage)
             {
+                string value = _textFormatter.FormatEndRequest(args.WebProperties.Request, args.WebProperties.Response);
+                if (string.IsNullOrEmpty(value))
+                    return;
+
                 string filePath = GetFileName(_logsDirectoryFullPath);
 
                 lock (Locker)
                 {
                     using (StreamWriter sw = System.IO.File.AppendText(filePath))
                     {
-                        sw.WriteLine(_textFormatter.FormatEndRequest(args.WebProperties.Request, args.WebProperties.Response));
+                        sw.WriteLine(value);
                     }
                 }
             }

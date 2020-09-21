@@ -11,6 +11,7 @@ using System.Text;
 
 namespace KissLog.Apis.v1.Listeners
 {
+    [Obsolete("Install KissLog.CloudListeners NuGet package and replace with RequestLogsApiListener(). https://docs.kisslog.net/SDK/change-log/index.html#kisslog-4-0-0", true)]
     public class KissLogApiListener : ILogListener
     {
         public ObfuscateArgsService ObfuscateService { get; } = new ObfuscateArgsService();

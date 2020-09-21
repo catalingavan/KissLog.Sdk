@@ -2,20 +2,24 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3;netstandard1.4;netstandard2.0;net45</TargetFrameworks>
-    <Version>2.5.6</Version>
+    <Version>4.0.0</Version>
     <Authors>KissLog.net</Authors>
     <Company>KissLog.net</Company>
     <Product>KissLog.net</Product>
-    <Description>KissLog.net cloud / on-premises listener.</Description>
-    <PackageLicenseUrl>https://opensource.org/licenses/BSD-3-Clause</PackageLicenseUrl>
+    <Description>This package has been deprecated. Please use KissLog.CloudListeners instead.
+https://docs.kisslog.net/SDK/change-log/index.html#kisslog-4-0-0</Description>
+    <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://kisslog.net</PackageProjectUrl>
-    <PackageIconUrl>https://kisslog.net/cdn/KissLog/favicon/96.png</PackageIconUrl>
+    <PackageIconUrl></PackageIconUrl>
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>KissLog</PackageTags>
-    <PackageReleaseNotes>Adapted to KissLog 3.5.6 improvements.</PackageReleaseNotes>
+    <PackageReleaseNotes>This package has been deprecated. Please use KissLog.CloudListeners instead.
+https://docs.kisslog.net/SDK/change-log/index.html#kisslog-4-0-0</PackageReleaseNotes>
     <PackageId>KissLog.Apis.v1</PackageId>
-    <AssemblyVersion>2.5.6.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <PackageIcon>PackageIcon.png</PackageIcon>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,6 +28,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KissLog\KissLog.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="PackageIcon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
