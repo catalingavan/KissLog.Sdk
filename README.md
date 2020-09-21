@@ -26,6 +26,14 @@ Check the [documentation](https://docs.kisslog.net) for a complete list of featu
 - [ASP.NET MVC](https://docs.kisslog.net/SDK/install-instructions/aspnet-mvc.html)
 - [Windows / Console apps](https://docs.kisslog.net/SDK/install-instructions/console-applications.html)
 
+## Why KissLog?
+
+KissLog is a logging framework which is focused primarily on web applications behaviour.
+
+For each HTTP request, KissLog automatically captures all the available properties: User Agent, Request Headers, Form Data, Request Body, SessionId, Response Headers, Status Code, Response Body.
+
+All the log messages are grouped per each HTTP request, making it easier to follow the execution details.
+
 ## Basic usage
 
 ```csharp
