@@ -28,11 +28,11 @@ Check the [documentation](https://docs.kisslog.net) for a complete list of featu
 
 ## Why KissLog?
 
-KissLog is a logging framework which is focused primarily on web applications behaviour.
+KissLog is a logging framework which is focused primarily on HTTP behaviour.
 
-For each HTTP request, KissLog automatically captures all the available properties: User Agent, Request Headers, Form Data, Request Body, SessionId, Response Headers, Status Code, Response Body.
+For each HTTP request, KissLog automatically captures all the available properties, including: User Agent, Request Headers, Form Data, Request Body, SessionId, Response Headers, Status Code, Response Body.
 
-All the log messages are grouped per each HTTP request, making it easier to follow the execution details.
+Log messages are grouped per each unique HTTP request, making it easy to follow the execution details.
 
 ## Basic usage
 
