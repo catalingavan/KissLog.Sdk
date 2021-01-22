@@ -16,7 +16,7 @@ namespace KissLog.AspNet.WebApi
             {
                 return base.SelectAction(controllerContext);
             }
-            catch (HttpResponseException ex)
+            catch (HttpResponseException)
             {
                 throw;
             }

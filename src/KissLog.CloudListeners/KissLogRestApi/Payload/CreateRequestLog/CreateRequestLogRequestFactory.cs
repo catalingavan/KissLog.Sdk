@@ -102,7 +102,7 @@ namespace KissLog.CloudListeners.KissLogRestApi.Payload.CreateRequestLog
             if (item == null)
                 return null;
 
-            return new KissLog.CloudListeners.KissLogRestApi.Payload.CreateRequestLog.LogMessage
+            var result = new KissLog.CloudListeners.KissLogRestApi.Payload.CreateRequestLog.LogMessage
             {
                 CategoryName = item.CategoryName,
                 LogLevel = item.LogLevel.ToString(),
@@ -112,6 +112,8 @@ namespace KissLog.CloudListeners.KissLogRestApi.Payload.CreateRequestLog
                 MemberName = item.MemberName,
                 LineNumber = item.LineNumber
             };
+
+            return result;
         }
 
         private static KissLog.CloudListeners.KissLogRestApi.Payload.CreateRequestLog.User ToUser(KissLog.Web.UserDetails item)

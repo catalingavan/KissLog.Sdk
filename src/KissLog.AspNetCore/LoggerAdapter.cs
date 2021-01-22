@@ -1,20 +1,17 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 
 namespace KissLog.AspNetCore
 {
     internal class LoggerAdapter : Microsoft.Extensions.Logging.ILogger
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly string _categoryName;
-        public LoggerAdapter(IHttpContextAccessor httpContextAccessor, string categoryName)
+        private readonly string _category;
+        public LoggerAdapter(string category)
         {
-            _httpContextAccessor = httpContextAccessor;
-            _categoryName = categoryName;
+            _category = category;
         }
 
-        private ILogger GetLogger() => Logger.Factory.Get(_categoryName);
+        private ILogger Logger => KissLog.Logger.Factory.Get(categoryName: _category);
 
         public void Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
@@ -23,31 +20,31 @@ namespace KissLog.AspNetCore
             switch (logLevel)
             {
                 case Microsoft.Extensions.Logging.LogLevel.Trace:
-                    GetLogger().Trace(message);
+                default:
+                    Logger.Trace(message);
                     break;
 
                 case Microsoft.Extensions.Logging.LogLevel.Debug:
-                    GetLogger().Debug(message);
+                    Logger.Debug(message);
                     break;
 
                 case Microsoft.Extensions.Logging.LogLevel.Information:
-                    GetLogger().Info(message);
+                    Logger.Info(message);
                     break;
 
                 case Microsoft.Extensions.Logging.LogLevel.Warning:
-                    GetLogger().Warn(message);
+                    Logger.Warn(message);
+                    break;
+
+                case Microsoft.Extensions.Logging.LogLevel.Error:
+                    Logger.Error(message);
                     break;
 
                 case Microsoft.Extensions.Logging.LogLevel.Critical:
-                case Microsoft.Extensions.Logging.LogLevel.Error:
-                    GetLogger().Error(message);
+                    Logger.Critical(message);
                     break;
 
                 case Microsoft.Extensions.Logging.LogLevel.None:
-                    break;
-
-                default:
-                    GetLogger().Trace(message);
                     break;
             }
         }
