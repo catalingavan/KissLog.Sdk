@@ -1,10 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 namespace KissLog
 {
     public class TemporaryFile : IDisposable
     {
+        private static readonly string[] AllowedExtensions = new[] { "tmp", "png", "jpg", "jpeg", "jfif", "gif", "bm", "bmp", "txt", "log" };
+
         public string FileName { get; private set; }
 
         private static string GenerateSalt()
@@ -12,9 +15,17 @@ namespace KissLog
             return Guid.NewGuid().ToString("N").Substring(0, 12);
         }
 
-        private static string GetTempFileName()
+        private static string GetTempFileName(string extension = null)
         {
-            string path = Path.Combine(Path.GetTempPath(), "KissLog", $"{GenerateSalt()}.tmp");
+            if (string.IsNullOrEmpty(extension))
+                extension = "tmp";
+
+            extension = extension.Replace(".", string.Empty).Trim().ToLowerInvariant();
+
+            if (AllowedExtensions.Any(p => extension == p) == false)
+                extension = "tmp";
+
+            string path = Path.Combine(Path.GetTempPath(), "KissLog", $"{GenerateSalt()}.{extension}");
 
             try
             {
@@ -50,13 +61,14 @@ namespace KissLog
             return path;
         }
 
-        public TemporaryFile() : this(GetTempFileName())
+        public TemporaryFile()
         {
+            FileName = GetTempFileName(null);
         }
 
-        public TemporaryFile(string fileName)
+        public TemporaryFile(string extension)
         {
-            FileName = fileName;
+            FileName = GetTempFileName(extension);
         }
 
         public void Dispose()

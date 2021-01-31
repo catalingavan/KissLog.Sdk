@@ -28,7 +28,7 @@ namespace KissLog.AspNet.WebApi
             {
                 return base.SelectController(request);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

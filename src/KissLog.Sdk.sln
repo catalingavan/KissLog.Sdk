@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.Adapters.NLog", "Ki
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.Apis.v1", "KissLog.Apis.v1\KissLog.Apis.v1.csproj", "{5FE61AF6-73B0-4573-B254-7F29A48FA0C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KissLog.CloudListeners", "KissLog.CloudListeners\KissLog.CloudListeners.csproj", "{7D496C09-40E1-4E3E-91D2-9DC115BC32E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.CloudListeners", "KissLog.CloudListeners\KissLog.CloudListeners.csproj", "{7D496C09-40E1-4E3E-91D2-9DC115BC32E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

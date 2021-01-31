@@ -28,6 +28,7 @@ namespace KissLog.CloudListeners.HttpApiClient
             }
 
             result.HttpStatusCode = (int)response.StatusCode;
+            result.ResponseContent = stringResponse;
 
             return result;
         }

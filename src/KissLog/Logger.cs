@@ -313,5 +313,13 @@ namespace KissLog
             ArgsResult args = NotifyOnFlushService.CreateArgs(loggers);
             return args?.Args;
         }
+
+        public static void SetFactory(IKissLoggerFactory factory)
+        {
+            if (factory == null)
+                return;
+
+            Factory = factory;
+        }
     }
 }

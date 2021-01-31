@@ -101,6 +101,12 @@ namespace KissLog.CloudListeners.HttpApiClient
                 sb.Append(new string(' ', 5) + result.Exception.Description);
             }
 
+            if (!string.IsNullOrEmpty(result.Exception.ResponseContent))
+            {
+                sb.AppendLine();
+                sb.Append(new string(' ', 5) + result.Exception.ResponseContent);
+            }
+
             KissLog.Internal.InternalHelpers.Log(sb.ToString(), LogLevel.Error);
         }
     }

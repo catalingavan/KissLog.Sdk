@@ -1,19 +1,21 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace KissLog.AspNetCore
 {
-    public class LoggerProvider : ILoggerProvider
+    internal class LoggerProvider : ILoggerProvider
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public LoggerProvider(IHttpContextAccessor httpContextAccessor)
+        private readonly KissLogAspNetCoreOptions _options;
+        public LoggerProvider() :this(null)
         {
-            _httpContextAccessor = httpContextAccessor;
+        }
+        public LoggerProvider(KissLogAspNetCoreOptions options)
+        {
+            _options = options;
         }
 
         public Microsoft.Extensions.Logging.ILogger CreateLogger(string categoryName)
         {
-            return new LoggerAdapter(_httpContextAccessor, categoryName);
+            return new LoggerAdapter(categoryName, _options);
         }
 
         public void Dispose()
