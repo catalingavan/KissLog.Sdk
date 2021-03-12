@@ -20,11 +20,13 @@ Check the [documentation](https://docs.kisslog.net) for a complete list of featu
 
 ## Framework support
 
-- [.NET Core 2.x](https://docs.kisslog.net/SDK/install-instructions/netcore20.html)
+- [.NET Core 5.x](https://docs.kisslog.net/SDK/install-instructions/netcore50.html)
 - [.NET Core 3.x](https://docs.kisslog.net/SDK/install-instructions/netcore30.html)
+- [.NET Core 2.x](https://docs.kisslog.net/SDK/install-instructions/netcore20.html)
 - [ASP.NET WebApi](https://docs.kisslog.net/SDK/install-instructions/aspnet-webapi.html)
 - [ASP.NET MVC](https://docs.kisslog.net/SDK/install-instructions/aspnet-mvc.html)
 - [Windows / Console apps](https://docs.kisslog.net/SDK/install-instructions/console-applications.html)
+- [NLog integration](https://docs.kisslog.net/SDK/nlog/index.html)
 
 ## Why KissLog?
 
