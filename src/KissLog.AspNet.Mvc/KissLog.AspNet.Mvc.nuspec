@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>KissLog.AspNet.Mvc</id>
-    <version>4.1.0</version>
+    <version>4.2.0</version>
     <authors>KissLog.net</authors>
     <owners>KissLog.net</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -12,12 +12,12 @@
     <iconUrl>https://kisslog.net/cdn/KissLog/favicon/96.png</iconUrl>
     <icon>PackageIcon.png</icon>
     <description>KissLog ASP.NET MVC package. Install this package on ASP.NET MVC web applications.</description>
-    <releaseNotes>Adapted to KissLog 4.1.0 improvements.</releaseNotes>
+    <releaseNotes>Adapted to KissLog.CloudListeners 4.2.0 improvements.</releaseNotes>
     <copyright>Copyright 2021</copyright>
     <tags>KissLog, MVC, AspNet</tags>
     <repository type="git" url="https://github.com/KissLog-net/KissLog.Sdk" />
     <dependencies>
-      <dependency id="KissLog.AspNet.Web" version="4.1.0" />
+      <dependency id="KissLog.AspNet.Web" version="4.2.0" />
       <dependency id="Microsoft.AspNet.Mvc" version="5.2.4" />
     </dependencies>
   </metadata>
