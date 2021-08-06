@@ -1,9 +1,12 @@
 ﻿using KissLog.CloudListeners.Auth;
+using KissLog.CloudListeners.HttpApiClient;
 using KissLog.CloudListeners.KissLogRestApi;
 using KissLog.CloudListeners.KissLogRestApi.Payload.CreateRequestLog;
+using KissLog.CloudListeners.Models;
 using KissLog.FlushArgs;
 using KissLog.Internal;
 using KissLog.Web;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,15 +70,29 @@ namespace KissLog.CloudListeners.RequestLogsListener
             // we need to copy files, because we start a new Thread, and the existing files will be deleted before accessing them
             IList<LoggerFile> copy = CopyFiles(args.Files?.ToList());
 
+            Action<ApiException> exceptionHandler = (ApiException ex) =>
+            {
+                ExceptionArgs exceptionArgs = new ExceptionArgs
+                {
+                    FlushArgs = args,
+                    Payload = JsonConvert.SerializeObject(request),
+                    Files = copy,
+                    Exception = string.IsNullOrEmpty(ex.Description) ? ex.ErrorMessage : ex.Description,
+                    HttpStatusCode = ex.HttpStatusCode,
+                };
+
+                ConfigurationOptions.ApplyOnRequestLogsApiListenerException(exceptionArgs);
+            };
+
             IKissLogRestApi kissLogRestApi = new KissLogRestApiV1Client(flushProperties.ApiUrl);
 
             if (UseAsync == true)
             {
-                Flusher.FlushAsync(kissLogRestApi, request, copy).ConfigureAwait(false);
+                Flusher.FlushAsync(kissLogRestApi, request, copy, exceptionHandler).ConfigureAwait(false);
             }
             else
             {
-                Flusher.Flush(kissLogRestApi, request, copy);
+                Flusher.Flush(kissLogRestApi, request, copy, exceptionHandler);
             }
 
             InternalHelpers.Log("RequestLogsApiListener: OnFlush complete", LogLevel.Trace);
