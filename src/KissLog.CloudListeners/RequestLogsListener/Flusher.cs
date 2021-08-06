@@ -5,12 +5,13 @@ using KissLog.CloudListeners.HttpApiClient;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace KissLog.CloudListeners.RequestLogsListener
 {
     internal static class Flusher
     {
-        public static void Flush(IKissLogRestApi apiClient, CreateRequestLogRequest request, IList<LoggerFile> files = null)
+        public static void Flush(IKissLogRestApi apiClient, CreateRequestLogRequest request, IList<LoggerFile> files, Action<ApiException> exceptionHandler)
         {
             IList<File> requestFiles = files == null ? null : files.Select(p => new File
             {
@@ -23,6 +24,11 @@ namespace KissLog.CloudListeners.RequestLogsListener
             try
             {
                 ApiResult<RequestLog> requestLog = apiClient.CreateRequestLog(request, requestFiles);
+
+                if (requestLog.HasException)
+                {
+                    exceptionHandler(requestLog.Exception);
+                }
             }
             finally
             {
@@ -30,7 +36,7 @@ namespace KissLog.CloudListeners.RequestLogsListener
             }
         }
 
-        public static async Task FlushAsync(IKissLogRestApi apiClient, CreateRequestLogRequest request, IList<LoggerFile> files = null)
+        public static async Task FlushAsync(IKissLogRestApi apiClient, CreateRequestLogRequest request, IList<LoggerFile> files, Action<ApiException> exceptionHandler)
         {
             IList<File> requestFiles = files == null ? null : files.Select(p => new File
             {
@@ -43,6 +49,11 @@ namespace KissLog.CloudListeners.RequestLogsListener
             try
             {
                 ApiResult<RequestLog> requestLog = await apiClient.CreateRequestLogAsync(request, requestFiles).ConfigureAwait(false);
+
+                if(requestLog.HasException)
+                {
+                    exceptionHandler(requestLog.Exception);
+                }
             }
             finally
             {
