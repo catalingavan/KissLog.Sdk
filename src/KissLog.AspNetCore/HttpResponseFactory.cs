@@ -1,39 +1,27 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Primitives;
+﻿using KissLog.Http;
 using System;
-using System.Collections.Generic;
-using System.Net;
 
 namespace KissLog.AspNetCore
 {
     internal static class HttpResponseFactory
     {
-        public static KissLog.Web.HttpResponse Create(HttpResponse response)
+        public static HttpResponse Create(Microsoft.AspNetCore.Http.HttpResponse httpResponse, long contentLength)
         {
-            KissLog.Web.HttpResponse result = new KissLog.Web.HttpResponse();
+            if (httpResponse == null)
+                throw new ArgumentNullException(nameof(httpResponse));
 
-            if (response == null)
-                return result;
+            if (contentLength < 0)
+                throw new ArgumentException(nameof(contentLength));
 
-            result.HttpStatusCode = (HttpStatusCode)response.StatusCode;
-            result.EndDateTime = DateTime.UtcNow;
-
-            KissLog.Web.ResponseProperties properties = new KissLog.Web.ResponseProperties();
-            result.Properties = properties;
-
-            foreach (string key in response.Headers.Keys)
+            var options = new HttpResponse.CreateOptions();
+            options.StatusCode = httpResponse.StatusCode;
+            options.Properties = new ResponseProperties(new ResponseProperties.CreateOptions
             {
-                StringValues values;
-                response.Headers.TryGetValue(key, out values);
+                Headers = InternalHelpers.ToKeyValuePair(httpResponse.Headers),
+                ContentLength = contentLength
+            });
 
-                string value = values.ToString();
-
-                properties.Headers.Add(
-                    new KeyValuePair<string, string>(key, value)
-                );
-            }
-
-            return result;
+            return new HttpResponse(options);
         }
     }
 }

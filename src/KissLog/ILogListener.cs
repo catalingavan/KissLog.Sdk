@@ -1,18 +1,13 @@
-﻿using KissLog.FlushArgs;
-using KissLog.Web;
+﻿using KissLog.Http;
 
 namespace KissLog
 {
     public interface ILogListener
     {
-        int MinimumResponseHttpStatusCode { get; }
-        LogLevel MinimumLogMessageLevel { get; }
-        LogListenerParser Parser { get; }
+        ILogListenerInterceptor Interceptor { get; }
 
-        void OnBeginRequest(HttpRequest httpRequest, ILogger logger);
-
-        void OnMessage(LogMessage message, ILogger logger);
-
-        void OnFlush(FlushLogArgs args, ILogger logger);
+        void OnBeginRequest(HttpRequest httpRequest);
+        void OnMessage(LogMessage message);
+        void OnFlush(FlushLogArgs args);
     }
 }

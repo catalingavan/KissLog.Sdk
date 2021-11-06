@@ -1,192 +1,108 @@
 ﻿using KissLog.CloudListeners.Auth;
-using KissLog.CloudListeners.HttpApiClient;
-using KissLog.CloudListeners.KissLogRestApi;
-using KissLog.CloudListeners.KissLogRestApi.Payload.CreateRequestLog;
-using KissLog.CloudListeners.Models;
-using KissLog.FlushArgs;
-using KissLog.Internal;
-using KissLog.Web;
-using Newtonsoft.Json;
+using KissLog.Http;
+using KissLog.RestClient.Api;
+using KissLog.RestClient.Requests.CreateRequestLog;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace KissLog.CloudListeners.RequestLogsListener
 {
     public class RequestLogsApiListener : ILogListener
     {
-        public ObfuscateArgsService ObfuscateService { get; } = new ObfuscateArgsService();
-        public TruncateArgsService TruncateService { get; } = new TruncateArgsService();
-        public GenerateKeywordsService GenerateKeywordsService { get; } = new GenerateKeywordsService();
+        internal static Options Options { get; } = new Options();
+
+        private readonly IPublicApi _kisslogApi;
+        private readonly Application _application;
+
+        public ILogListenerInterceptor Interceptor { get; set; }
 
         public bool UseAsync { get; set; } = true;
-        public string ApiUrl { get; set; } = Defaults.KissLogNetUrl;
-
-        public Func<FlushLogArgs, FlushProperties> UpdateFlushProperties = (flushArgs) => null;
-
-        public int MinimumResponseHttpStatusCode { get; set; } = 0;
-        public LogLevel MinimumLogMessageLevel { get; set; } = LogLevel.Trace;
-        public LogListenerParser Parser { get; set; } = new LogListenerParser();
-
-        private readonly Application _application;
+        public string ApiUrl { get; set; } = Constants.KissLogApiUrl;
+        public bool IgnoreSslCertificate { get; set; } = false;
+        public Action<ExceptionArgs> OnException { get; set; }
+        public IObfuscationService ObfuscationService { get; set; } = new ObfuscationService();
 
         public RequestLogsApiListener(Application application)
         {
-            if (application == null)
-                throw new ArgumentNullException(nameof(application));
-
-            _application = application;
+            _application = application ?? throw new ArgumentNullException(nameof(application));
+        }
+        internal RequestLogsApiListener(Application application, IPublicApi kisslogApi) : this(application)
+        {
+            _kisslogApi = kisslogApi;
         }
 
-        public void OnBeginRequest(HttpRequest httpRequest, ILogger logger)
+        public void OnBeginRequest(HttpRequest httpRequest)
         {
-            // Do nothing
-            // RequestLogsApiListener saves the logs only at the end of the request
+            
         }
 
-        public void OnMessage(LogMessage message, ILogger logger)
+        public void OnMessage(LogMessage message)
         {
-            // Do nothing
-            // RequestLogsApiListener saves the logs only at the end of the request
+            
         }
 
-        public void OnFlush(FlushLogArgs args, ILogger logger)
+        public void OnFlush(FlushLogArgs args)
         {
-            FlushProperties flushProperties = GetAndValidateFlushProperties(args);
-            if (flushProperties == null)
+            bool isValid = ValidateProperties();
+            if (!isValid)
                 return;
 
-            InternalHelpers.Log("RequestLogsApiListener: OnFlush begin", LogLevel.Trace);
+            InternalLogger.Log("RequestLogsApiListener: OnFlush begin", LogLevel.Trace);
 
-            ObfuscateService?.Obfuscate(args);
-            TruncateService?.Truncate(args);
+            ObfuscateFlushLogArgsService obfuscateService = new ObfuscateFlushLogArgsService(ObfuscationService);
+            obfuscateService.Obfuscate(args);
 
-            CreateRequestLogRequest request = CreateRequestLogRequestFactory.Create(args);
-            request.OrganizationId = flushProperties.Application.OrganizationId;
-            request.ApplicationId = flushProperties.Application.ApplicationId;
-            request.Keywords = GenerateKeywords(args);
+            CreateRequestLogRequest request = PayloadFactory.Create(args);
+            request.OrganizationId = _application.OrganizationId;
+            request.ApplicationId = _application.ApplicationId;
+            request.Keywords = InternalHelpers.WrapInTryCatch(() => Options.Handlers.GenerateSearchKeywords(args));
 
-            // we need to copy files, because we start a new Thread, and the existing files will be deleted before accessing them
-            IList<LoggerFile> copy = CopyFiles(args.Files?.ToList());
-
-            Action<ApiException> exceptionHandler = (ApiException ex) =>
+            FlushOptions flushOptions = new FlushOptions
             {
-                ExceptionArgs exceptionArgs = new ExceptionArgs
-                {
-                    FlushArgs = args,
-                    Payload = JsonConvert.SerializeObject(request),
-                    Files = copy,
-                    Exception = string.IsNullOrEmpty(ex.Description) ? ex.ErrorMessage : ex.Description,
-                    HttpStatusCode = ex.HttpStatusCode,
-                };
-
-                ConfigurationOptions.ApplyOnRequestLogsApiListenerException(exceptionArgs);
+                UseAsync = UseAsync,
+                OnException = OnException
             };
 
-            IKissLogRestApi kissLogRestApi = new KissLogRestApiV1Client(flushProperties.ApiUrl);
+            IPublicApi kisslogApi = _kisslogApi ?? new PublicRestApi(ApiUrl, IgnoreSslCertificate);
 
-            if (UseAsync == true)
-            {
-                Flusher.FlushAsync(kissLogRestApi, request, copy, exceptionHandler).ConfigureAwait(false);
-            }
-            else
-            {
-                Flusher.Flush(kissLogRestApi, request, copy, exceptionHandler);
-            }
+            Flusher.FlushAsync(flushOptions, kisslogApi, args, request).ConfigureAwait(false);
 
-            InternalHelpers.Log("RequestLogsApiListener: OnFlush complete", LogLevel.Trace);
+            InternalLogger.Log("RequestLogsApiListener: OnFlush complete", LogLevel.Trace);
         }
 
-        private List<LoggerFile> CopyFiles(IList<LoggerFile> source)
+        internal bool ValidateProperties()
         {
-            List<LoggerFile> files = new List<LoggerFile>();
-            if (source == null || !source.Any())
-                return files;
+            string organizationId = _application.OrganizationId;
+            string applicationId = _application.ApplicationId;
+            string apiUrl = ApiUrl;
 
-            foreach (var file in source)
+            if (string.IsNullOrWhiteSpace(organizationId))
             {
-                if (!System.IO.File.Exists(file.FilePath))
-                    continue;
-
-                TemporaryFile tempFile = new TemporaryFile();
-                System.IO.File.Copy(file.FilePath, tempFile.FileName, true);
-
-                files.Add(new LoggerFile(tempFile.FileName, file.FullFileName));
+                InternalLogger.Log("RequestLogsApiListener: Application.OrganizationId is null", LogLevel.Error);
+                return false;
             }
 
-            return files;
-        }
-
-        private FlushProperties GetAndValidateFlushProperties(FlushLogArgs args)
-        {
-            FlushProperties result = null;
-
-            if (UpdateFlushProperties != null)
+            if (string.IsNullOrWhiteSpace(applicationId))
             {
-                result = UpdateFlushProperties(args);
+                InternalLogger.Log("RequestLogsApiListener: Application.applicationId is null", LogLevel.Error);
+                return false;
             }
 
-            if (result == null)
+            Uri uri = null;
+
+            if (!Uri.TryCreate(apiUrl, UriKind.Absolute, out uri))
             {
-                result = new FlushProperties
-                {
-                    Application = _application,
-                    ApiUrl = ApiUrl
-                };
+                InternalLogger.Log("RequestLogsApiListener: ApiUrl is null", LogLevel.Error);
+                return false;
             }
 
-            string organizationId = result.Application?.OrganizationId;
-            string applicationId = result.Application?.ApplicationId;
-            string apiUrl = result.ApiUrl;
-
-            if (string.IsNullOrEmpty(organizationId))
+            if (new[] { "http", "https" }.Any(p => string.Compare(p, uri.Scheme, true) == 0) == false)
             {
-                InternalHelpers.Log("RequestLogsApiListener: Application.OrganizationId is null", LogLevel.Error);
-                return null;
+                InternalLogger.Log($"RequestLogsApiListener: ApiUrl is not a valid Uri: {uri}", LogLevel.Error);
+                return false;
             }
 
-            if (string.IsNullOrEmpty(applicationId))
-            {
-                InternalHelpers.Log("RequestLogsApiListener: Application.applicationId is null", LogLevel.Error);
-                return null;
-            }
-
-            if (string.IsNullOrEmpty(apiUrl))
-            {
-                InternalHelpers.Log("RequestLogsApiListener: ApiUrl is null", LogLevel.Error);
-                return null;
-            }
-
-            if (!Uri.TryCreate(apiUrl, UriKind.Absolute, out _))
-            {
-                InternalHelpers.Log($"RequestLogsApiListener: ApiUrl \"{apiUrl}\" is not a valid Uri", LogLevel.Error);
-                return null;
-            }
-
-            return result;
-        }
-
-        private IList<string> GenerateKeywords(FlushLogArgs args)
-        {
-            try
-            {
-                IList<string> defaultKeywords = GenerateKeywordsService.CreateKeywords(args) ?? new List<string>();
-
-                IList<string> keywords = ConfigurationOptions.ApplyGenerateKeywords(args, defaultKeywords);
-
-                return keywords ?? new List<string>();
-            }
-            catch (Exception ex)
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine("GenerateKeywordsService error:");
-                sb.AppendLine(ex.ToString());
-
-                InternalHelpers.Log(sb.ToString(), LogLevel.Error);
-            }
-
-            return new List<string>();
+            return true;
         }
     }
 }

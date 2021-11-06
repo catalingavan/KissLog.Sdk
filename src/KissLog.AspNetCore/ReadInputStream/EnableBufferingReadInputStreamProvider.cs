@@ -9,36 +9,28 @@ namespace KissLog.AspNetCore.ReadInputStream
     {
         public string ReadInputStream(HttpRequest request)
         {
-            string content = string.Empty;
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
 
-            try
+            if (request.Body.CanRead == false)
+                return null;
+
+            string content = null;
+
+            // Allows using several time the stream in ASP.Net Core
+            request.EnableBuffering();
+
+            // Arguments: Stream, Encoding, detect encoding, buffer size 
+            // AND, the most important: keep stream opened
+            using (StreamReader reader = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true))
             {
-                if (request.Body.CanRead == false)
-                    return content;
+                var task = reader.ReadToEndAsync();
+                task.Wait();
 
-                // Allows using several time the stream in ASP.Net Core
-                request.EnableBuffering();
-
-                // Arguments: Stream, Encoding, detect encoding, buffer size 
-                // AND, the most important: keep stream opened
-                using (StreamReader reader = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true))
-                {
-                    var task = reader.ReadToEndAsync();
-                    task.Wait();
-
-                    content = task.Result;
-                }
-
-                request.Body.Position = 0;
+                content = task.Result;
             }
-            catch (Exception ex)
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine("Error reading Request.InputStream");
-                sb.AppendLine(ex.ToString());
 
-                KissLog.Internal.InternalHelpers.Log(sb.ToString(), LogLevel.Error);
-            }
+            request.Body.Position = 0;
 
             return content;
         }

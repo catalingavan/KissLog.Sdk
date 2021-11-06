@@ -1,0 +1,22 @@
+[
+  {
+    "IsEnabled": false,
+    "Limits": [
+      {
+        "RequestLimit": 1,
+        "IntervalInSeconds": 5,
+        "LessThanStatusCode": 600
+      }
+    ]
+  },
+  {
+    "IsEnabled": true,
+    "Limits": [
+      {
+        "RequestLimit": 1,
+        "IntervalInSeconds": 5,
+        "LessThanStatusCode": 600
+      }
+    ]
+  }
+]

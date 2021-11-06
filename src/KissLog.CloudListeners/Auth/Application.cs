@@ -7,8 +7,8 @@
 
         public Application(string organizationId, string applicationId)
         {
-            OrganizationId = organizationId;
-            ApplicationId = applicationId;
+            OrganizationId = organizationId?.Trim();
+            ApplicationId = applicationId?.Trim();
         }
     }
 }

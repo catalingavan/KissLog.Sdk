@@ -3,68 +3,62 @@ using System;
 
 namespace KissLog.AspNetCore
 {
-    internal class LoggerAdapter : Microsoft.Extensions.Logging.ILogger
+    internal class LoggerAdapter : ILogger
     {
         private readonly string _category;
-        private readonly IKissLoggerFactory _factory;
-        private readonly Func<object, Exception, string> _formatter;
-        public LoggerAdapter(string category) : this(category, null)
+        private readonly LoggerOptions _options;
+        public LoggerAdapter(LoggerOptions options, string category = null)
         {
-        }
-        public LoggerAdapter(string category, KissLogAspNetCoreOptions options)
-        {
+            _options = options ?? throw new ArgumentNullException(nameof(options));
             _category = category;
-            _factory = options?.Factory;
-            _formatter = options?.Formatter;
-        }
-
-        private ILogger Logger
-        {
-            get
-            {
-                IKissLoggerFactory factory = _factory == null ? KissLog.Logger.Factory : _factory;
-                return factory.Get(categoryName: _category);
-            }
         }
 
         public void Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
-            string message = null;
-            if(_formatter != null)
-            {
-                message = _formatter(state, exception);
-            }
+            Logger logger = GetLogger();
 
-            if(string.IsNullOrEmpty(message))
+            string message = formatter(state, exception);
+
+            if (_options.Formatter != null)
             {
-                message = formatter(state, exception);
+                FormatterArgs formatterArgs = new FormatterArgs(new FormatterArgs.CreateOptions
+                {
+                    State = state,
+                    Exception = exception,
+                    DefaultValue = message,
+                    Logger = logger
+                });
+
+                string custom = _options.Formatter.Invoke(formatterArgs);
+
+                message = string.IsNullOrEmpty(custom) ? message : custom;
             }
 
             switch (logLevel)
             {
                 case Microsoft.Extensions.Logging.LogLevel.Trace:
                 default:
-                    Logger.Trace(message);
+                    logger.Trace(message);
                     break;
 
                 case Microsoft.Extensions.Logging.LogLevel.Debug:
-                    Logger.Debug(message);
+                    logger.Debug(message);
                     break;
 
                 case Microsoft.Extensions.Logging.LogLevel.Information:
-                    Logger.Info(message);
+                    logger.Info(message);
                     break;
 
                 case Microsoft.Extensions.Logging.LogLevel.Warning:
-                    Logger.Warn(message);
+                    logger.Warn(message);
                     break;
 
                 case Microsoft.Extensions.Logging.LogLevel.Error:
-                    Logger.Error(message);
+                    logger.Error(message);
                     break;
 
                 case Microsoft.Extensions.Logging.LogLevel.Critical:
-                    Logger.Critical(message);
+                    logger.Critical(message);
                     break;
 
                 case Microsoft.Extensions.Logging.LogLevel.None:
@@ -72,22 +66,22 @@ namespace KissLog.AspNetCore
             }
         }
 
+        public IDisposable BeginScope<TState>(TState state)
+        {
+            Logger logger = GetLogger();
+
+            return new KissLogScope<TState>(state, logger, _options);
+        }
+
         public bool IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel)
         {
             return true;
         }
 
-        public IDisposable BeginScope<TState>(TState state)
+        internal Logger GetLogger()
         {
-            return new NoopDisposable();
-        }
-    }
-
-    class NoopDisposable : IDisposable
-    {
-        public void Dispose()
-        {
-
+            ILoggerFactory factory = _options.Factory == null ? Logger.Factory : _options.Factory;
+            return factory.Get(categoryName: _category);
         }
     }
 }

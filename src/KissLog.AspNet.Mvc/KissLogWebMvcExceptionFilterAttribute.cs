@@ -1,7 +1,6 @@
-﻿using System.Net;
+﻿using System;
 using System.Web;
 using System.Web.Mvc;
-using KissLog.AspNet.Web;
 
 namespace KissLog.AspNet.Mvc
 {
@@ -9,23 +8,40 @@ namespace KissLog.AspNet.Mvc
     {
         static KissLogWebMvcExceptionFilterAttribute()
         {
-            PackageInit.Init();
+            InternalHelpers.WrapInTryCatch(() =>
+            {
+                ModuleInitializer.Init();
+            });
         }
 
         public override void OnException(ExceptionContext filterContext)
         {
-            ILogger logger = Logger.Factory.Get();
-            logger.Log(LogLevel.Error, filterContext.Exception);
+            if (filterContext == null || filterContext.Exception == null)
+                return;
 
-            if (filterContext.Exception is HttpException)
+            OnException(filterContext.Exception, filterContext.HttpContext);
+        }
+
+        internal void OnException(Exception exception, HttpContextBase httpContext)
+        {
+            if (exception == null)
+                throw new ArgumentNullException(nameof(exception));
+
+            if (httpContext == null)
+                throw new ArgumentNullException(nameof(httpContext));
+
+            var factory = new KissLog.AspNet.Web.LoggerFactory();
+            Logger logger = factory.GetInstance(httpContext);
+
+            logger.Error(exception);
+
+            if (exception is HttpException)
             {
-                HttpException httpException = (HttpException)filterContext.Exception;
-                HttpStatusCode statusCode = (HttpStatusCode)httpException.GetHttpCode();
+                HttpException httpException = (HttpException)exception;
+                int statusCode = httpException.GetHttpCode();
 
-                logger.SetHttpStatusCode(statusCode);
+                logger.SetStatusCode(statusCode);
             }
-
-            base.OnException(filterContext);
         }
     }
 }

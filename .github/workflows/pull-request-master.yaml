@@ -1,0 +1,41 @@
+name: Test changes made on master branch
+on:
+    pull_request:
+        branches: master
+        paths-ignore:
+            - '**.md'
+
+jobs:
+    build_sln:
+        runs-on: windows-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Setup .NET Core
+              uses: actions/setup-dotnet@v1
+              with:
+                dotnet-version: 3.1.x
+
+            - name: Setup .NET Core
+              uses: actions/setup-dotnet@v1
+              with:
+                dotnet-version: 5.0.x
+
+            - name: Setup NuGet
+              uses: nuget/setup-nuget@v1
+
+            - name: Build Solution
+              working-directory: src
+              run: |
+                nuget restore KissLog.AspNet.Web\packages.config -PackagesDirectory packages
+                nuget restore KissLog.AspNet.Mvc\packages.config -PackagesDirectory packages
+                nuget restore KissLog.AspNet.WebApi\packages.config -PackagesDirectory packages
+                nuget restore ..\tests\KissLog.AspNet.Web.Tests\packages.config -PackagesDirectory ..\src\packages
+                nuget restore ..\tests\KissLog.AspNet.Mvc.Tests\packages.config -PackagesDirectory ..\src\packages
+                nuget restore ..\tests\KissLog.AspNet.WebApi.Tests\packages.config -PackagesDirectory ..\src\packages
+                dotnet build --configuration Release
+            
+            - name: Run Tests
+              working-directory: src
+              run: dotnet test --no-build --configuration Release --verbosity n

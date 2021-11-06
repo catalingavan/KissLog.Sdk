@@ -1,19 +1,24 @@
-﻿using System;
+﻿using KissLog.Json;
+using System;
 using System.Diagnostics;
 
 namespace KissLog
 {
     public static class KissLogConfiguration
     {
-        public static ListenersContainer Listeners { get; } = new ListenersContainer();
+        internal static IJsonSerializer JsonSerializer { get; } = new SystemTextJsonSerializer();
+        internal static KissLogPackagesContainer KissLogPackages { get; private set; } = new KissLogPackagesContainer();
 
-        public static Options Options { get; } = new Options();
-
+        public static LogListenersContainer Listeners { get; private set; } = new LogListenersContainer();
+        public static Options Options { get; private set; } = new Options();
         public static Action<string> InternalLog { get; set; } = (string message) => Debug.WriteLine(message);
 
         static KissLogConfiguration()
         {
-            Internal.PackageInit.Init();
+            InternalHelpers.WrapInTryCatch(() =>
+            {
+                ModuleInitializer.Init();
+            });
         }
     }
 }

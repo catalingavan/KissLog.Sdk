@@ -1,46 +1,65 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace KissLog
 {
     public class LogMessage
     {
-        public string CategoryName { get; set; } 
-        public LogLevel LogLevel { get; set; }
-        public string Message { get; set; }
-        public DateTime DateTime { get; set; }
-        public int Index { get; set; }
+        public string CategoryName { get; }
+        public LogLevel LogLevel { get; }
+        public string Message { get; }
+        public DateTime DateTime { get; }
+        public string MemberType { get; }
+        public string MemberName { get; }
+        public int LineNumber { get; }
 
-        public string MemberType { get; set; }
-        public string MemberName { get; set; }
-        public int LineNumber { get; set; }
-
-        public Dictionary<string, object> CustomProperties { get; private set; }
-
-        public LogMessage AddProp(string key, object value)
+        internal LogMessage(CreateOptions options)
         {
-            if (CustomProperties == null)
-                CustomProperties = new Dictionary<string, object>();
+            if (options == null)
+                throw new ArgumentNullException(nameof(options));
 
-            if (CustomProperties.ContainsKey(key))
-            {
-                CustomProperties[key] = value;
-            }
-            else
-            {
-                CustomProperties.Add(key, value);
-            }
+            if (string.IsNullOrWhiteSpace(options.CategoryName))
+                throw new ArgumentNullException(nameof(options.CategoryName));
 
-            return this;
+            if (string.IsNullOrWhiteSpace(options.Message))
+                throw new ArgumentNullException(nameof(options.Message));
+
+            CategoryName = options.CategoryName;
+            LogLevel = options.LogLevel;
+            Message = options.Message;
+            MemberType = options.MemberType;
+            MemberName = options.MemberName;
+            LineNumber = options.LineNumber;
+            DateTime = options.DateTime;
         }
 
-        public object GetProp(string key)
+        internal class CreateOptions
         {
-            if (CustomProperties == null || !CustomProperties.ContainsKey(key))
-                return null;
+            public string CategoryName { get; set; }
+            public LogLevel LogLevel { get; set; }
+            public string Message { get; set; }
+            public string MemberType { get; set; }
+            public string MemberName { get; set; }
+            public int LineNumber { get; set; }
+            public DateTime DateTime { get; set; }
 
-            return CustomProperties[key];
+            public CreateOptions()
+            {
+                DateTime = DateTime.UtcNow;
+            }
+        }
+
+        internal LogMessage Clone()
+        {
+            return new LogMessage(new CreateOptions
+            {
+                CategoryName = CategoryName,
+                LogLevel = LogLevel,
+                Message = Message,
+                MemberType = MemberType,
+                MemberName = MemberName,
+                LineNumber = LineNumber,
+                DateTime = DateTime
+            });
         }
     }
 }
-

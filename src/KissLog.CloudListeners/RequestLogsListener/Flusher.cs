@@ -1,33 +1,43 @@
-﻿using KissLog.CloudListeners.KissLogRestApi;
-using KissLog.CloudListeners.Models;
-using KissLog.CloudListeners.KissLogRestApi.Payload.CreateRequestLog;
-using KissLog.CloudListeners.HttpApiClient;
+﻿using KissLog.RestClient;
+using KissLog.RestClient.Api;
+using KissLog.RestClient.Models;
+using KissLog.RestClient.Requests.CreateRequestLog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
 
 namespace KissLog.CloudListeners.RequestLogsListener
 {
     internal static class Flusher
     {
-        public static void Flush(IKissLogRestApi apiClient, CreateRequestLogRequest request, IList<LoggerFile> files, Action<ApiException> exceptionHandler)
+        public static async Task FlushAsync(FlushOptions options, IPublicApi kisslogApi, FlushLogArgs flushArgs, CreateRequestLogRequest request)
         {
-            IList<File> requestFiles = files == null ? null : files.Select(p => new File
+            IEnumerable<LoggedFile> files = CopyFiles(flushArgs);
+            flushArgs.SetFiles(files);
+
+            IEnumerable<File> requestFiles = files.Select(p => new File
             {
                 FileName = p.FileName,
-                Extension = p.Extension,
-                FullFileName = p.FullFileName,
                 FilePath = p.FilePath
             }).ToList();
 
             try
             {
-                ApiResult<RequestLog> requestLog = apiClient.CreateRequestLog(request, requestFiles);
+                ApiResult<RequestLog> result = null;
 
-                if (requestLog.HasException)
+                if (options.UseAsync)
                 {
-                    exceptionHandler(requestLog.Exception);
+                    result = await kisslogApi.CreateRequestLogAsync(request, requestFiles).ConfigureAwait(false);
+                }
+                else
+                {
+                    result = kisslogApi.CreateRequestLog(request, requestFiles);
+                }
+
+                if (result.HasException && options.OnException != null)
+                {
+                    options.OnException.Invoke(new ExceptionArgs(flushArgs, result));
                 }
             }
             finally
@@ -36,32 +46,28 @@ namespace KissLog.CloudListeners.RequestLogsListener
             }
         }
 
-        public static async Task FlushAsync(IKissLogRestApi apiClient, CreateRequestLogRequest request, IList<LoggerFile> files, Action<ApiException> exceptionHandler)
+        private static IEnumerable<LoggedFile> CopyFiles(FlushLogArgs args)
         {
-            IList<File> requestFiles = files == null ? null : files.Select(p => new File
-            {
-                FileName = p.FileName,
-                Extension = p.Extension,
-                FullFileName = p.FullFileName,
-                FilePath = p.FilePath
-            }).ToList();
+            if (args.Files == null || !args.Files.Any())
+                return new List<LoggedFile>();
 
-            try
-            {
-                ApiResult<RequestLog> requestLog = await apiClient.CreateRequestLogAsync(request, requestFiles).ConfigureAwait(false);
+            List<LoggedFile> result = new List<LoggedFile>();
 
-                if(requestLog.HasException)
-                {
-                    exceptionHandler(requestLog.Exception);
-                }
-            }
-            finally
+            foreach (var file in args.Files)
             {
-                DeleteFiles(files);
+                if (!System.IO.File.Exists(file.FilePath))
+                    continue;
+
+                TemporaryFile tempFile = new TemporaryFile();
+                System.IO.File.Copy(file.FilePath, tempFile.FileName, true);
+
+                result.Add(new LoggedFile(file.FileName, tempFile.FileName, file.FileSize));
             }
+
+            return result;
         }
 
-        private static void DeleteFiles(IList<LoggerFile> files)
+        private static void DeleteFiles(IEnumerable<LoggedFile> files)
         {
             if (files == null || !files.Any())
                 return;
@@ -74,9 +80,9 @@ namespace KissLog.CloudListeners.RequestLogsListener
                     {
                         System.IO.File.Delete(item.FilePath);
                     }
-                    catch
+                    catch(Exception ex)
                     {
-                        // ignored
+                        InternalLogger.LogException(ex);
                     }
                 }
             }

@@ -4,7 +4,7 @@ namespace KissLog.AspNetCore
 {
     internal class OptionsBuilder : IOptionsBuilder
     {
-        public ListenersContainer Listeners => KissLogConfiguration.Listeners;
+        public LogListenersContainer Listeners => KissLogConfiguration.Listeners;
         public Options Options => KissLogConfiguration.Options;
         public Action<string> InternalLog
         {

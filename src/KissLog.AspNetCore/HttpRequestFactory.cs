@@ -1,191 +1,142 @@
-﻿using KissLog.Internal;
+﻿using KissLog.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
+using System.Security.Principal;
 
 namespace KissLog.AspNetCore
 {
-    internal static class HttpRequestFactory
+    internal class HttpRequestFactory
     {
-        public static KissLog.Web.HttpRequest Create(HttpRequest request)
+        public static KissLog.Http.HttpRequest Create(Microsoft.AspNetCore.Http.HttpRequest httpRequest)
         {
-            KissLog.Web.HttpRequest result = new Web.HttpRequest();
+            if (httpRequest == null)
+                throw new ArgumentNullException(nameof(httpRequest));
 
-            if (request == null)
-                return result;
+            Session session = KissLog.InternalHelpers.WrapInTryCatch(() => GetSession(httpRequest));
+            session = session ?? new Session();
 
-            try
+            bool isAuthenticated = httpRequest.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
+
+            KissLog.Http.HttpRequest result = new KissLog.Http.HttpRequest(new KissLog.Http.HttpRequest.CreateOptions
             {
-                if (request.HttpContext.Session != null && request.HttpContext.Session.IsAvailable)
-                {
-                    bool isNewSession = false;
+                Url = new Uri(httpRequest.GetDisplayUrl()),
+                HttpMethod = httpRequest.Method,
+                UserAgent = GetUserAgent(httpRequest.Headers),
+                HttpReferer = GetHttpReferrer(httpRequest.Headers),
+                RemoteAddress = httpRequest.HttpContext?.Connection?.RemoteIpAddress?.ToString(),
+                MachineName = InternalHelpers.GetMachineName(),
+                IsNewSession = session.IsNewSession,
+                SessionId = session.SessionId,
+                IsAuthenticated = isAuthenticated
+            });
 
-                    string lastSessionId = request.HttpContext.Session.GetString("X-KissLogSessionId");
-                    if (string.IsNullOrEmpty(lastSessionId) || string.Compare(lastSessionId, request.HttpContext.Session.Id, StringComparison.OrdinalIgnoreCase) != 0)
+            RequestProperties.CreateOptions propertiesOptions = new RequestProperties.CreateOptions();
+            propertiesOptions.Cookies = InternalHelpers.ToKeyValuePair(httpRequest.Cookies);
+            propertiesOptions.Headers = InternalHelpers.ToKeyValuePair(httpRequest.Headers);
+            propertiesOptions.QueryString = InternalHelpers.ToKeyValuePair(httpRequest.Query);
+            propertiesOptions.Claims = GetClaims(httpRequest);
+
+            if(httpRequest.HasFormContentType)
+            {
+                if (KissLogConfiguration.Options.Handlers.ShouldLogFormData.Invoke(result) == true)
+                {
+                    propertiesOptions.FormData = InternalHelpers.ToKeyValuePair(httpRequest.Form);
+                }
+            }
+
+            if (KissLog.InternalHelpers.CanReadRequestInputStream(propertiesOptions.Headers))
+            {
+                if (KissLogConfiguration.Options.Handlers.ShouldLogInputStream.Invoke(result) == true)
+                {
+                    propertiesOptions.InputStream = KissLog.InternalHelpers.WrapInTryCatch(() =>
                     {
-                        isNewSession = true;
-                        request.HttpContext.Session.SetString("X-KissLogSessionId", request.HttpContext.Session.Id);
-                    }
-
-                    result.IsNewSession = isNewSession;
-                    result.SessionId = request.HttpContext.Session.Id;
-                }
-            }
-            catch
-            {
-                // ignored
-            }
-
-            result.StartDateTime = DateTime.UtcNow;
-            result.UserAgent = request.Headers[HeaderNames.UserAgent].ToString();
-
-            string url = request.GetDisplayUrl();
-            result.Url = new Uri(url);
-
-            result.MachineName = GetMachineName();
-
-            KissLog.Web.RequestProperties properties = new KissLog.Web.RequestProperties();
-            result.Properties = properties;
-
-            AddUserClaims(request, result);
-
-            result.RemoteAddress = request.HttpContext.Connection?.RemoteIpAddress?.ToString();
-            result.HttpMethod = request.Method;
-
-            string httpReferer = null;
-            string requestContentType = null;
-            string inputStream = null;
-
-            foreach (string key in request.Headers.Keys)
-            {
-                if (string.Compare(key, "Cookie", StringComparison.OrdinalIgnoreCase) == 0)
-                    continue;
-
-                StringValues values;
-                request.Headers.TryGetValue(key, out values);
-
-                string value = values.ToString();
-
-                properties.Headers.Add(new KeyValuePair<string, string>(key, value));
-
-                if (string.Compare(key, "Referer", StringComparison.OrdinalIgnoreCase) == 0)
-                    httpReferer = value;
-
-                if (string.Compare(key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0)
-                    requestContentType = value;
-            }
-
-            foreach (string key in request.Cookies.Keys)
-            {
-                string value = request.Cookies[key];
-
-                properties.Cookies.Add(new KeyValuePair<string, string>(key, value));
-            }
-
-            foreach (string key in request.Query.Keys)
-            {
-                string value = string.Join("; ", request.Query[key]);
-
-                properties.QueryString.Add(
-                    new KeyValuePair<string, string>(key, value)
-                );
-            }
-
-            if (request.HasFormContentType && KissLogConfiguration.Options.ApplyShouldLogRequestFormData(result))
-            {
-                foreach (string key in request.Form.Keys)
-                {
-                    string value = string.Join("; ", request.Form[key]);
-                    properties.FormData.Add(new KeyValuePair<string, string>(key, value));
+                        return ModuleInitializer.ReadInputStreamProvider.ReadInputStream(httpRequest);
+                    });
                 }
             }
 
-            if (InternalHelpers.ShouldLogInputStream(properties.Headers) && KissLogConfiguration.Options.ApplyShouldLogRequestInputStream(result))
-            {
-                inputStream = ReadInputStream(request);
-            }
-
-            result.HttpReferer = httpReferer;
-            result.Properties.InputStream = inputStream;
+            result.SetProperties(new RequestProperties(propertiesOptions));
 
             return result;
         }
 
-        private static void AddUserClaims(HttpRequest request, KissLog.Web.HttpRequest requestProperties)
+        private static string GetUserAgent(IDictionary<string, StringValues> requestHeaders)
         {
-            if (request.HttpContext.User?.Identity == null || request.HttpContext.User.Identity.IsAuthenticated == false)
-                return;
+            if (requestHeaders == null)
+                return null;
 
-            if ((request.HttpContext.User != null) == false)
-                return;
+            if(requestHeaders.ContainsKey(HeaderNames.UserAgent))
+                return requestHeaders[HeaderNames.UserAgent].ToString();
 
-            ClaimsPrincipal claimsPrincipal = (ClaimsPrincipal)request.HttpContext.User;
-            ClaimsIdentity identity = (ClaimsIdentity)claimsPrincipal?.Identity;
-
-            if (identity == null)
-                return;
-
-            List<KeyValuePair<string, string>> claims = ToDictionary(identity);
-            requestProperties.Properties.Claims = claims;
-
-            requestProperties.IsAuthenticated = true;
-
-            KissLog.Web.UserDetails user = KissLogConfiguration.Options.ApplyGetUser(requestProperties.Properties);
-            requestProperties.User = user;
+            return null;
         }
 
-        private static string GetMachineName()
+        private static string GetHttpReferrer(IDictionary<string, StringValues> requestHeaders)
         {
-            string name = null;
+            if (requestHeaders == null)
+                return null;
 
-            try
-            {
-                name =
-                    Environment.GetEnvironmentVariable("CUMPUTERNAME") ??
-                    Environment.GetEnvironmentVariable("HOSTNAME") ??
-                    System.Net.Dns.GetHostName();
-            }
-            catch
-            {
-                // ignored
-            }
+            if (requestHeaders.ContainsKey(HeaderNames.Referer))
+                return requestHeaders[HeaderNames.Referer].ToString();
 
-            return name;
+            return null;
         }
 
-        private static string ReadInputStream(HttpRequest request)
+        private static IEnumerable<KeyValuePair<string, string>> GetClaims(Microsoft.AspNetCore.Http.HttpRequest httpRequest)
         {
-            try
-            {
-                return PackageInit.ReadInputStreamProvider.ReadInputStream(request);
-            }
-            catch (Exception ex)
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine("Error on WebRequestPropertiesFactory.ReadInputStream()");
-                sb.AppendLine(ex.ToString());
+            if (httpRequest == null)
+                throw new ArgumentNullException(nameof(httpRequest));
 
-                KissLog.Internal.InternalHelpers.Log(sb.ToString(), LogLevel.Error);
-            }
+            IIdentity identity = httpRequest.HttpContext?.User?.Identity;
+            if(identity == null)
+                return new List<KeyValuePair<string, string>>();
 
-            return string.Empty;
-        }
+            if (identity is ClaimsIdentity == false)
+                return new List<KeyValuePair<string, string>>();
 
-        public static List<KeyValuePair<string, string>> ToDictionary(ClaimsIdentity identity)
-        {
-            List<KeyValuePair<string, string>> claims =
-                identity.Claims
-                    .Where(p => string.IsNullOrEmpty(p.Type) == false)
-                    .Select(p => new KeyValuePair<string, string>(p.Type, p.Value))
-                    .ToList();
+            ClaimsIdentity claimsIdentity = identity as ClaimsIdentity;
+
+            List<KeyValuePair<string, string>> claims = InternalHelpers.ToKeyValuePair(claimsIdentity);
 
             return claims;
+        }
+
+        private static Session GetSession(Microsoft.AspNetCore.Http.HttpRequest httpRequest)
+        {
+            if (httpRequest == null)
+                throw new ArgumentNullException(nameof(httpRequest));
+
+            bool isNewSession = false;
+            string sessionId = null;
+
+            if (httpRequest.HttpContext?.Session != null && httpRequest.HttpContext.Session.IsAvailable == true)
+            {
+                sessionId = httpRequest.HttpContext.Session.GetString("X-KissLogSessionId");
+                if(string.IsNullOrEmpty(sessionId) || string.Compare(sessionId, httpRequest.HttpContext.Session.Id, true) != 0)
+                {
+                    isNewSession = true;
+                    httpRequest.HttpContext.Session.SetString("X-KissLogSessionId", httpRequest.HttpContext.Session.Id);
+                }
+
+                sessionId = httpRequest.HttpContext.Session.Id;
+            }
+
+            return new Session
+            {
+                IsNewSession = isNewSession,
+                SessionId = sessionId
+            };
+        }
+
+        class Session
+        {
+            public string SessionId { get; set; }
+            public bool IsNewSession { get; set; }
         }
     }
 }

@@ -1,37 +1,28 @@
 ﻿namespace KissLog
 {
-    public static partial class ExtensionMethods
+    public static class LogFilesExtensionMethods
     {
-        /// <summary>
-        /// <para>Logs a file</para>
-        /// </summary>
-        public static void LogFile(this ILogger logger, string sourceFilePath, string fileName)
+        public static void LogAsFile(this IKLogger logger, string contents, string fileName = null)
         {
-            if (logger is Logger theLogger)
+            if(logger != null && logger is Logger _logger)
             {
-                theLogger.DataContainer.LoggerFiles.LogFile(sourceFilePath, fileName);
+                _logger.DataContainer.FilesContainer.LogAsFile(contents, fileName);
             }
         }
 
-        /// <summary>
-        /// <para>Logs a file</para>
-        /// </summary>
-        public static void LogAsFile(this ILogger logger, byte[] content, string fileName)
+        public static void LogAsFile(this IKLogger logger, byte[] contents, string fileName = null)
         {
-            if (logger is Logger theLogger)
+            if (logger != null && logger is Logger _logger)
             {
-                theLogger.DataContainer.LoggerFiles.LogAsFile(content, fileName);
+                _logger.DataContainer.FilesContainer.LogAsFile(contents, fileName);
             }
         }
 
-        /// <summary>
-        /// <para>Logs a file</para>
-        /// </summary>
-        public static void LogAsFile(this ILogger logger, string content, string fileName)
+        public static void LogFile(this IKLogger logger, string sourceFilePath, string fileName = null)
         {
-            if (logger is Logger theLogger)
+            if (logger != null && logger is Logger _logger)
             {
-                theLogger.DataContainer.LoggerFiles.LogAsFile(content, fileName);
+                _logger.DataContainer.FilesContainer.LogFile(sourceFilePath, fileName);
             }
         }
     }

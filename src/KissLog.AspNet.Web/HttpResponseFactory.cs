@@ -1,27 +1,27 @@
-﻿using System;
-using System.Net;
-using System.Web;
+﻿using KissLog.Http;
+using System;
 
 namespace KissLog.AspNet.Web
 {
     internal static class HttpResponseFactory
     {
-        public static KissLog.Web.HttpResponse Create(HttpResponse response)
+        public static HttpResponse Create(System.Web.HttpResponseBase httpResponse, long contentLength)
         {
-            KissLog.Web.HttpResponse result = new KissLog.Web.HttpResponse();
-            if (response == null)
-                return result;
+            if (httpResponse == null)
+                throw new ArgumentNullException(nameof(httpResponse));
 
-            result.HttpStatusCode = (HttpStatusCode)response.StatusCode;
-            result.EndDateTime = DateTime.UtcNow;
+            if (contentLength < 0)
+                throw new ArgumentException(nameof(contentLength));
 
-            KissLog.Web.ResponseProperties properties = new KissLog.Web.ResponseProperties
+            var options = new HttpResponse.CreateOptions();
+            options.StatusCode = httpResponse.StatusCode;
+            options.Properties = new ResponseProperties(new ResponseProperties.CreateOptions
             {
-                Headers = DataParser.ToDictionary(response.Headers)
-            };
-            result.Properties = properties;
+                Headers = InternalHelpers.ToKeyValuePair(httpResponse.Headers),
+                ContentLength = contentLength
+            });
 
-            return result;
+            return new HttpResponse(options);
         }
     }
 }

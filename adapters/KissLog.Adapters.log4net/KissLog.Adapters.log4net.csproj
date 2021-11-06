@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+      <TargetFrameworks>netstandard2.1;netstandard2.0;net461</TargetFrameworks>
+      <Authors>KissLog.net</Authors>
+      <Product>KissLog.net</Product>
+      <Version>5.0.0</Version>
+      <Description>Adapter for saving log4Net messages to KissLog.net cloud / on-premises.</Description>
+      <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+      <PackageProjectUrl>https://kisslog.net</PackageProjectUrl>
+      <PackageIcon>PackageIcon.png</PackageIcon>
+      <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
+      <RepositoryType>git</RepositoryType>
+      <PackageTags>log4net, KissLog</PackageTags>
+      <PackageReleaseNotes>Major improvements. Introduced 630+ unit tests. Contains few breaking changes.
+https://docs.kisslog.net/SDK/change-log/index.html#kisslog-5-0-0</PackageReleaseNotes>
+  </PropertyGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>KissLog.Adapters.log4net.Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.12" />
+  </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\KissLog\KissLog.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="PackageIcon.png">
+        <Pack>True</Pack>
+        <PackagePath></PackagePath>
+      </None>
+    </ItemGroup>
+
+</Project>

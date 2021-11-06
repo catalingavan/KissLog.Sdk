@@ -1,162 +1,53 @@
-﻿using KissLog.Internal;
+﻿using KissLog.Http;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Web;
 
 namespace KissLog.AspNet.Web
 {
-    internal static class HttpRequestFactory
+    internal class HttpRequestFactory
     {
-        private static readonly string[] ServerVariablesKeysToIgnore = { "all_http", "all_raw" };
-
-        public static KissLog.Web.HttpRequest Create(HttpRequest request)
+        public static HttpRequest Create(System.Web.HttpRequestBase httpRequest)
         {
-            KissLog.Web.HttpRequest result = new KissLog.Web.HttpRequest();
+            if (httpRequest == null)
+                throw new ArgumentNullException(nameof(httpRequest));
 
-            if (request == null)
-                return result;
-
-            result.StartDateTime = DateTime.UtcNow;
-            result.UserAgent = request.UserAgent;
-            result.Url = request.Url;
-            result.HttpMethod = request.HttpMethod;
-            result.HttpReferer = request.UrlReferrer?.AbsolutePath;
-            result.RemoteAddress = request.UserHostAddress;
-            result.MachineName = GetMachineName(request);
-
-            KissLog.Web.RequestProperties properties = new KissLog.Web.RequestProperties();
-            result.Properties = properties;
-
-            var headers = DataParser.ToDictionary(request.Unvalidated.Headers);
-            headers = FilterHeaders(headers);
-            
-            var serverVariables = DataParser.ToDictionary(request.ServerVariables);
-            serverVariables = FilterServerVariables(serverVariables);
-
-            properties.Headers = headers;
-            properties.QueryString = DataParser.ToDictionary(request.Unvalidated.QueryString);
-            properties.ServerVariables = serverVariables;
-            properties.Cookies = DataParser.ToDictionary(request.Unvalidated.Cookies);
-
-            if(KissLogConfiguration.Options.ApplyShouldLogRequestFormData(result))
+            HttpRequest result = new HttpRequest(new HttpRequest.CreateOptions
             {
-                properties.FormData = DataParser.ToDictionary(request.Unvalidated.Form);
-            }
+                Url = httpRequest.Url,
+                HttpMethod = httpRequest.HttpMethod,
+                UserAgent = httpRequest.UserAgent,
+                HttpReferer = httpRequest.UrlReferrer?.ToString(),
+                RemoteAddress = httpRequest.UserHostAddress,
+                MachineName = InternalHelpers.GetMachineName(httpRequest)
+            });
 
-            if (InternalHelpers.ShouldLogInputStream(headers) && KissLogConfiguration.Options.ApplyShouldLogRequestInputStream(result))
+            RequestProperties.CreateOptions propertiesOptions = new RequestProperties.CreateOptions();
+
+            propertiesOptions.ServerVariables = InternalHelpers.ToKeyValuePair(httpRequest.ServerVariables);
+
+            if(httpRequest.Unvalidated != null)
             {
-                properties.InputStream = ReadInputStream(request);
-            }
+                propertiesOptions.Headers = InternalHelpers.ToKeyValuePair(httpRequest.Unvalidated.Headers);
+                propertiesOptions.Cookies = InternalHelpers.ToKeyValuePair(httpRequest.Unvalidated.Cookies);
+                propertiesOptions.QueryString = InternalHelpers.ToKeyValuePair(httpRequest.Unvalidated.QueryString);
 
-            return result;
-        }
-
-        private static string GetMachineName(HttpRequest request)
-        {
-            string machineName = string.Empty;
-
-            try
-            {
-                machineName = Environment.MachineName;
-            }
-            catch
-            {
-                // ignored
-            }
-
-            if (string.IsNullOrEmpty(machineName))
-            {
-                if (!string.IsNullOrEmpty(request.ServerVariables["SERVER_NAME"]))
+                if(KissLogConfiguration.Options.Handlers.ShouldLogFormData.Invoke(result) == true)
                 {
-                    machineName = request.ServerVariables["SERVER_NAME"];
+                    propertiesOptions.FormData = InternalHelpers.ToKeyValuePair(httpRequest.Unvalidated.Form);
                 }
             }
 
-            return machineName;
-        }
-
-        private static string ReadInputStream(HttpRequest request)
-        {
-            try
+            if(KissLog.InternalHelpers.CanReadRequestInputStream(propertiesOptions.Headers))
             {
-                string content = string.Empty;
-                if (request.InputStream.CanRead == false)
-                    return content;
-
-                using (MemoryStream ms = new MemoryStream())
+                if(KissLogConfiguration.Options.Handlers.ShouldLogInputStream.Invoke(result) == true)
                 {
-                    request.InputStream.CopyTo(ms);
-
-                    request.InputStream.Position = 0;
-                    ms.Position = 0;
-
-                    using (StreamReader readStream = new StreamReader(ms, request.ContentEncoding))
+                    propertiesOptions.InputStream = KissLog.InternalHelpers.WrapInTryCatch(() =>
                     {
-                        content = readStream.ReadToEndAsync().Result;
-                    }
+                        return InternalHelpers.ReadInputStream(httpRequest);
+                    });
                 }
-
-                return content;
-            }
-            catch (Exception ex)
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine("ReadInputStream error:");
-                sb.AppendLine(ex.ToString());
-
-                KissLog.Internal.InternalHelpers.Log(sb.ToString(), LogLevel.Error);
             }
 
-            return string.Empty;
-
-        }
-
-        private static List<KeyValuePair<string, string>> FilterHeaders(List<KeyValuePair<string, string>> values)
-        {
-            if (values == null || !values.Any())
-                return values;
-
-            List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
-
-            foreach (var item in values)
-            {
-                if (string.IsNullOrEmpty(item.Key))
-                    continue;
-
-                if (string.Compare(item.Key, "Cookie", StringComparison.OrdinalIgnoreCase) == 0)
-                    continue;
-
-                result.Add(new KeyValuePair<string, string>(item.Key, item.Value));
-            }
-
-            return result;
-        }
-
-        private static List<KeyValuePair<string, string>> FilterServerVariables(List<KeyValuePair<string, string>> values)
-        {
-            if (values == null || !values.Any())
-                return values;
-
-            List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
-
-            foreach (var item in values)
-            {
-                if (string.IsNullOrEmpty(item.Key))
-                    continue;
-
-                string key = item.Key.ToLower();
-
-                if (ServerVariablesKeysToIgnore.Contains(key))
-                    continue;
-
-                if (key.StartsWith("http_"))
-                    continue;
-
-                result.Add(new KeyValuePair<string, string>(item.Key, item.Value));
-            }
+            result.SetProperties(new RequestProperties(propertiesOptions));
 
             return result;
         }
