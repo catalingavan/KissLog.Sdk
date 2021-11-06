@@ -1,6 +1,4 @@
-﻿using KissLog.FlushArgs;
-using KissLog.Web;
-using Newtonsoft.Json;
+﻿using KissLog.Http;
 using System;
 using System.Linq;
 
@@ -8,166 +6,11 @@ namespace KissLog
 {
     public class Options
     {
-        private static readonly string[] UserNameClaims = { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", "name", "email" };
-        private static readonly string[] EmailClaims = { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress", "email", "emailaddress" };
-        private static readonly string[] AvatarClaims = { "avatar", "picture", "image" };
+        internal HandlersContainer Handlers { get; }
 
-        internal JsonSerializerSettings JsonSerializerSettingsValue = new JsonSerializerSettings
+        public Options()
         {
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            Formatting = Newtonsoft.Json.Formatting.Indented
-        };
-        internal Func<RequestProperties, UserDetails> GetUserFn = (RequestProperties request) =>
-        {
-            string userName = request.Claims?.FirstOrDefault(p => UserNameClaims.Contains(p.Key.ToLower())).Value;
-            string emailAddress = request.Claims?.FirstOrDefault(p => EmailClaims.Contains(p.Key.ToLower())).Value;
-            string avatar = request.Claims?.FirstOrDefault(p => AvatarClaims.Contains(p.Key.ToLower())).Value;
-
-            return new UserDetails
-            {
-                Name = userName,
-                EmailAddress = emailAddress,
-                Avatar = avatar
-            };
-        };
-
-        internal Func<HttpRequest, bool> ShouldLogRequestInputStreamFn = (HttpRequest request) => true;
-        internal Func<ILogListener, FlushLogArgs, bool> ShouldLogRequestInputStreamForListenerFn = (ILogListener listener, FlushLogArgs args) => true;
-
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestHeaderKeyFn = (ILogListener listener, FlushLogArgs args, string name) => true;
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestCookieKeyFn = (ILogListener listener, FlushLogArgs args, string name) => false;
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestQueryStringKeyFn = (ILogListener listener, FlushLogArgs args, string name) => true;
-
-        internal Func<HttpRequest, bool> ShouldLogRequestFormDataFn = (HttpRequest request) => true;
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestFormDataKeyFn = (ILogListener listener, FlushLogArgs args, string name) => true;
-        
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestServerVariableKeyFn = (ILogListener listener, FlushLogArgs args, string name) => true;
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogRequestClaimKeyFn = (ILogListener listener, FlushLogArgs args, string name) => true;
-
-        internal Func<ILogListener, FlushLogArgs, string, bool> ShouldLogResponseHeaderFn = (ILogListener listener, FlushLogArgs args, string name) => true;
-        internal Func<ILogListener, FlushLogArgs, bool, bool> ShouldLogResponseBodyFn = (ILogListener listener, FlushLogArgs args, bool defaultValue) => defaultValue;
-
-        internal Func<Exception, string> AppendExceptionDetailsFn = (Exception ex) => null;
-
-        internal Func<ILogListener, FlushLogArgs, bool> ToggleListenerFn = (ILogListener listener, FlushLogArgs args) => true;
-
-        public JsonSerializerSettings JsonSerializerSettings => JsonSerializerSettingsValue;
-
-        public Options GetUser(Func<RequestProperties, UserDetails> handler)
-        {
-            if (handler == null)
-                return this;
-
-            GetUserFn = handler;
-            return this;
-        }
-
-        public Options ShouldLogRequestHeader(Func<ILogListener, FlushLogArgs, string, bool> handler)
-        {
-            if (handler == null)
-                return this;
-
-            ShouldLogRequestHeaderKeyFn = handler;
-            return this;
-        }
-
-        public Options ShouldLogRequestCookie(Func<ILogListener, FlushLogArgs, string, bool> handler)
-        {
-            if (handler == null)
-                return this;
-
-            ShouldLogRequestCookieKeyFn = handler;
-            return this;
-        }
-
-        public Options ShouldLogRequestQueryString(Func<ILogListener, FlushLogArgs, string, bool> handler)
-        {
-            if (handler == null)
-                return this;
-
-            ShouldLogRequestQueryStringKeyFn = handler;
-            return this;
-        }
-
-        public Options ShouldLogRequestFormData(Func<HttpRequest, bool> handler)
-        {
-            if (handler == null)
-                return this;
-
-            ShouldLogRequestFormDataFn = handler;
-            return this;
-        }
-
-        public Options ShouldLogRequestFormData(Func<ILogListener, FlushLogArgs, string, bool> handler)
-        {
-            if (handler == null)
-                return this;
-
-            ShouldLogRequestFormDataKeyFn = handler;
-            return this;
-        }
-
-        public Options ShouldLogRequestServerVariable(Func<ILogListener, FlushLogArgs, string, bool> handler)
-        {
-            if (handler == null)
-                return this;
-
-            ShouldLogRequestServerVariableKeyFn = handler;
-            return this;
-        }
-
-        public Options ShouldLogRequestClaim(Func<ILogListener, FlushLogArgs, string, bool> handler)
-        {
-            if (handler == null)
-                return this;
-
-            ShouldLogRequestClaimKeyFn = handler;
-            return this;
-        }
-
-        public Options ShouldLogRequestInputStream(Func<ILogListener, FlushLogArgs, bool> handler)
-        {
-            if (handler == null)
-                return this;
-
-            ShouldLogRequestInputStreamForListenerFn = handler;
-            return this;
-        }
-
-        public Options ShouldLogRequestInputStream(Func<HttpRequest, bool> handler)
-        {
-            if (handler == null)
-                return this;
-
-            ShouldLogRequestInputStreamFn = handler;
-            return this;
-        }
-
-        public Options ShouldLogResponseHeader(Func<ILogListener, FlushLogArgs, string, bool> handler)
-        {
-            if (handler == null)
-                return this;
-
-            ShouldLogResponseHeaderFn = handler;
-            return this;
-        }
-
-        public Options ShouldLogResponseBody(Func<ILogListener, FlushLogArgs, bool, bool> handler)
-        {
-            if (handler == null)
-                return this;
-
-            ShouldLogResponseBodyFn = handler;
-            return this;
-        }
-
-        public Options ToggleListener(Func<ILogListener, FlushLogArgs, bool> handler)
-        {
-            if (handler == null)
-                return this;
-
-            ToggleListenerFn = handler;
-            return this;
+            Handlers = new HandlersContainer();
         }
 
         public Options AppendExceptionDetails(Func<Exception, string> handler)
@@ -175,8 +18,137 @@ namespace KissLog
             if (handler == null)
                 return this;
 
-            AppendExceptionDetailsFn = handler;
+            Handlers.AppendExceptionDetails = handler;
             return this;
+        }
+
+        public Options ShouldLogRequestHeader(Func<OptionsArgs.LogListenerHeaderArgs, bool> handler)
+        {
+            if (handler == null)
+                return this;
+
+            Handlers.ShouldLogRequestHeaderForListener = handler;
+            return this;
+        }
+
+        public Options ShouldLogRequestCookie(Func<OptionsArgs.LogListenerCookieArgs, bool> handler)
+        {
+            if (handler == null)
+                return this;
+
+            Handlers.ShouldLogRequestCookieForListener = handler;
+            return this;
+        }
+
+        public Options ShouldLogFormData(Func<OptionsArgs.LogListenerFormDataArgs, bool> handler)
+        {
+            if (handler == null)
+                return this;
+
+            Handlers.ShouldLogFormDataForListener = handler;
+            return this;
+        }
+
+        public Options ShouldLogServerVariable(Func<OptionsArgs.LogListenerServerVariableArgs, bool> handler)
+        {
+            if (handler == null)
+                return this;
+
+            Handlers.ShouldLogServerVariableForListener = handler;
+            return this;
+        }
+
+        public Options ShouldLogClaim(Func<OptionsArgs.LogListenerClaimArgs, bool> handler)
+        {
+            if (handler == null)
+                return this;
+
+            Handlers.ShouldLogClaimForListener = handler;
+            return this;
+        }
+
+        public Options ShouldLogInputStream(Func<OptionsArgs.LogListenerInputStreamArgs, bool> handler)
+        {
+            if (handler == null)
+                return this;
+
+            Handlers.ShouldLogInputStreamForListener = handler;
+            return this;
+        }
+
+        public Options ShouldLogResponseHeader(Func<OptionsArgs.LogListenerHeaderArgs, bool> handler)
+        {
+            if (handler == null)
+                return this;
+
+            Handlers.ShouldLogResponseHeaderForListener = handler;
+            return this;
+        }
+
+        public Options ShouldLogFormData(Func<HttpRequest, bool> handler)
+        {
+            if (handler == null)
+                return this;
+
+            Handlers.ShouldLogFormData = handler;
+            return this;
+        }
+
+        public Options ShouldLogInputStream(Func<HttpRequest, bool> handler)
+        {
+            if (handler == null)
+                return this;
+
+            Handlers.ShouldLogInputStream = handler;
+            return this;
+        }
+
+        public Options ShouldLogResponseBody(Func<HttpProperties, bool> handler)
+        {
+            if (handler == null)
+                return this;
+
+            Handlers.ShouldLogResponseBody = handler;
+            return this;
+        }
+
+        internal class HandlersContainer
+        {
+            public Func<Exception, string> AppendExceptionDetails { get; set; }
+            public Func<OptionsArgs.LogListenerHeaderArgs, bool> ShouldLogRequestHeaderForListener { get; set; }
+            public Func<OptionsArgs.LogListenerCookieArgs, bool> ShouldLogRequestCookieForListener { get; set; }
+            public Func<OptionsArgs.LogListenerFormDataArgs, bool> ShouldLogFormDataForListener { get; set; }
+            public Func<OptionsArgs.LogListenerServerVariableArgs, bool> ShouldLogServerVariableForListener { get; set; }
+            public Func<OptionsArgs.LogListenerClaimArgs, bool> ShouldLogClaimForListener { get; set; }
+            public Func<OptionsArgs.LogListenerInputStreamArgs, bool> ShouldLogInputStreamForListener { get; set; }
+            public Func<OptionsArgs.LogListenerHeaderArgs, bool> ShouldLogResponseHeaderForListener { get; set; }
+            public Func<HttpRequest,  bool> ShouldLogFormData { get; set; }
+            public Func<HttpRequest, bool> ShouldLogInputStream { get; set; }
+            public Func<HttpProperties, bool> ShouldLogResponseBody { get; set; }
+
+            public HandlersContainer()
+            {
+                AppendExceptionDetails = (Exception ex) => null;
+                ShouldLogRequestHeaderForListener = (OptionsArgs.LogListenerHeaderArgs args) => true;
+                ShouldLogRequestCookieForListener = (OptionsArgs.LogListenerCookieArgs args) => true;
+                ShouldLogFormDataForListener = (OptionsArgs.LogListenerFormDataArgs args) => true;
+                ShouldLogServerVariableForListener = (OptionsArgs.LogListenerServerVariableArgs args) => true;
+                ShouldLogClaimForListener = (OptionsArgs.LogListenerClaimArgs args) => true;
+                ShouldLogInputStreamForListener = (OptionsArgs.LogListenerInputStreamArgs args) => true;
+                ShouldLogResponseHeaderForListener = (OptionsArgs.LogListenerHeaderArgs args) => true;
+                ShouldLogFormData = (HttpRequest args) => true;
+                ShouldLogInputStream = (HttpRequest args) => true;
+                ShouldLogResponseBody = (HttpProperties args) =>
+                {
+                    string contentType = args.Response?.Properties?.Headers?.FirstOrDefault(p => string.Compare(p.Key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0).Value;
+                    if (string.IsNullOrEmpty(contentType))
+                        return false;
+
+                    contentType = contentType.Trim().ToLowerInvariant();
+
+                    return Constants.DefaultReadResponseBodyContentTypes.Any(p => contentType.Contains(p));
+                };
+            }
         }
     }
 }

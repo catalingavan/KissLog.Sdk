@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C6842EC5-2765-42FF-B64C-840518F33903}</ProjectGuid>
+    <ProjectGuid>{8B09066A-48CC-41DF-959E-6A6BEB26DDCE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>KissLog.AspNet.WebApi</RootNamespace>
     <AssemblyName>KissLog.AspNet.WebApi</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,14 +31,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.4\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Http, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.4\lib\net45\System.Web.Http.dll</HintPath>
     </Reference>
@@ -49,34 +51,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HttpNotFoundAwareControllerActionSelector.cs" />
-    <Compile Include="HttpNotFoundAwareDefaultHttpControllerSelector.cs" />
+    <Compile Include="InternalExceptionLogger.cs" />
     <Compile Include="KissLogExceptionLogger.cs" />
     <Compile Include="KissLogWebApiExceptionFilterAttribute.cs" />
-    <Compile Include="PackageInit.cs" />
+    <Compile Include="ModuleInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="KissLog.AspNet.WebApi.nuspec">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="KissLog.AspNet.WebApi.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KissLog.AspNet.Web\KissLog.AspNet.Web.csproj">
-      <Project>{e615dc5d-c0be-4f23-b8cc-1680fa924245}</Project>
+      <Project>{d0c21c48-c253-41eb-a180-1253ca22381c}</Project>
       <Name>KissLog.AspNet.Web</Name>
     </ProjectReference>
     <ProjectReference Include="..\KissLog\KissLog.csproj">
-      <Project>{31515375-c888-4224-b607-a2127fb702de}</Project>
+      <Project>{6409076b-1153-44b8-927b-6112b8ebde99}</Project>
       <Name>KissLog</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="PackageIcon.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <Content Include="PackageIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

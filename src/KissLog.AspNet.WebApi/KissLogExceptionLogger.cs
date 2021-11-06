@@ -1,24 +1,40 @@
-﻿using KissLog.AspNet.Web;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http.ExceptionHandling;
 
 namespace KissLog.AspNet.WebApi
 {
     public class KissLogExceptionLogger : ExceptionLogger
     {
+        static KissLogExceptionLogger()
+        {
+            InternalHelpers.WrapInTryCatch(() =>
+            {
+                ModuleInitializer.Init();
+            });
+        }
+
         public override void Log(ExceptionLoggerContext context)
         {
-            ILogger logger = Logger.Factory.Get();
-            logger.Error(context.Exception);
+            if (HttpContext.Current != null && context.Exception != null)
+            {
+                HttpContextBase httpContext = new HttpContextWrapper(HttpContext.Current);
+                InternalExceptionLogger.LogException(context.Exception, httpContext);
+            }
+
+            base.Log(context);
         }
 
         public override Task LogAsync(ExceptionLoggerContext context, CancellationToken cancellationToken)
         {
-            ILogger logger = Logger.Factory.Get();
-            logger.Error(context.Exception);
+            if (HttpContext.Current != null && context.Exception != null)
+            {
+                HttpContextBase httpContext = new HttpContextWrapper(HttpContext.Current);
+                InternalExceptionLogger.LogException(context.Exception, httpContext);
+            }
 
-            return Task.FromResult(true);
+            return base.LogAsync(context, cancellationToken);
         }
 
         public override bool ShouldLog(ExceptionLoggerContext context)

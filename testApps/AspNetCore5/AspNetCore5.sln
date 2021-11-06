@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore5", "AspNetCore5.csproj", "{244C5447-D1C2-471B-8A86-6C6796D6EA19}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog", "..\..\src\KissLog\KissLog.csproj", "{D2561329-D00E-463D-9FBC-F278736762BE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.AspNetCore", "..\..\src\KissLog.AspNetCore\KissLog.AspNetCore.csproj", "{E191CF44-D1A7-4F75-B67F-99CA48279E76}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.RestClient", "..\..\src\KissLog.RestClient\KissLog.RestClient.csproj", "{01B42184-1A0C-4D8F-BF84-D07800F0893A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.CloudListeners", "..\..\src\KissLog.CloudListeners\KissLog.CloudListeners.csproj", "{45850B3A-876E-4EC9-83C4-F7A053C99B5F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{244C5447-D1C2-471B-8A86-6C6796D6EA19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{244C5447-D1C2-471B-8A86-6C6796D6EA19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{244C5447-D1C2-471B-8A86-6C6796D6EA19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{244C5447-D1C2-471B-8A86-6C6796D6EA19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2561329-D00E-463D-9FBC-F278736762BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2561329-D00E-463D-9FBC-F278736762BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2561329-D00E-463D-9FBC-F278736762BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2561329-D00E-463D-9FBC-F278736762BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E191CF44-D1A7-4F75-B67F-99CA48279E76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E191CF44-D1A7-4F75-B67F-99CA48279E76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E191CF44-D1A7-4F75-B67F-99CA48279E76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E191CF44-D1A7-4F75-B67F-99CA48279E76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01B42184-1A0C-4D8F-BF84-D07800F0893A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01B42184-1A0C-4D8F-BF84-D07800F0893A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01B42184-1A0C-4D8F-BF84-D07800F0893A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01B42184-1A0C-4D8F-BF84-D07800F0893A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45850B3A-876E-4EC9-83C4-F7A053C99B5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45850B3A-876E-4EC9-83C4-F7A053C99B5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45850B3A-876E-4EC9-83C4-F7A053C99B5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45850B3A-876E-4EC9-83C4-F7A053C99B5F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {61A5B53B-B8AB-4B74-A150-2E65DA96277B}
+	EndGlobalSection
+EndGlobal

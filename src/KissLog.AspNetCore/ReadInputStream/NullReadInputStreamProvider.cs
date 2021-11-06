@@ -2,11 +2,11 @@
 
 namespace KissLog.AspNetCore.ReadInputStream
 {
-    internal class NullReadInputStreamProvider : IReadInputStreamProvider
+    public class NullReadInputStreamProvider : IReadInputStreamProvider
     {
         public string ReadInputStream(HttpRequest request)
         {
-            return string.Empty;
+            return null;
         }
     }
 }

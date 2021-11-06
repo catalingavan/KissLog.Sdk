@@ -2,7 +2,7 @@
 
 [![Latest version](https://img.shields.io/nuget/v/KissLog.svg?style=flat-square&label=KissLog)](https://www.nuget.org/packages?q=kisslog) [![Downloads](https://img.shields.io/nuget/dt/KissLog.svg?style=flat-square&label=Downloads)](https://www.nuget.org/packages?q=kisslog)
 
-KissLog represents a powerful logging and monitoring solution for .NET applications.
+KissLog represents a lightweight and highly customizable logging and monitoring solution for .NET applications.
 
 Some of the main features of KissLog are:
 
@@ -10,7 +10,7 @@ Some of the main features of KissLog are:
 
 - Monitors all the HTTP traffic
 
-- Lightweight, powerful SDK
+- Object oriented implementation
 
 - Centralized logging using [kisslog.net](https://kisslog.net) or KissLog on-premises integration
 
@@ -22,7 +22,6 @@ Check the [documentation](https://docs.kisslog.net) for a complete list of featu
 
 - [.NET Core 5.x](https://docs.kisslog.net/SDK/install-instructions/netcore50.html)
 - [.NET Core 3.x](https://docs.kisslog.net/SDK/install-instructions/netcore30.html)
-- [.NET Core 2.x](https://docs.kisslog.net/SDK/install-instructions/netcore20.html)
 - [ASP.NET WebApi](https://docs.kisslog.net/SDK/install-instructions/aspnet-webapi.html)
 - [ASP.NET MVC](https://docs.kisslog.net/SDK/install-instructions/aspnet-mvc.html)
 - [Windows / Console apps](https://docs.kisslog.net/SDK/install-instructions/console-applications.html)
@@ -43,7 +42,7 @@ using KissLog;
 
 public class HomeController : Controller
 {
-    private readonly ILogger _logger;
+    private readonly IKLogger _logger;
     public HomeController()
     {
         _logger = Logger.Factory.Get();
@@ -77,16 +76,13 @@ namespace MyApplication
 
         private void RegisterKissLogListeners()
         {
-            // register KissLog.net cloud listener
             KissLogConfiguration.Listeners.Add(new RequestLogsApiListener(new Application("d625d5c8-ef47-4cd5-bf2d-6b0a1fa7fda4", "39bb675d-5c13-4bd8-9b5a-1d368da020a2"))
             {
                 ApiUrl = "https://api.kisslog.net"
             });
-			
-            // register NLog listener
-            KissLogConfiguration.Listeners.Add(new NLogTargetListener());
-            
-            // register MongoDB listener
+
+            KissLogConfiguration.Listeners.Add(new LocalTextFileListener("logs", FlushTrigger.OnMessage));
+
             KissLogConfiguration.Listeners.Add(new MongoDbListener());
         }
     }
@@ -103,13 +99,19 @@ Complete list of configuration options can be found on the [documentation](https
 protected void Application_Start()
 {
     KissLogConfiguration.Options
-        .JsonSerializerSettings.Converters.Add(new StringEnumConverter());
+        .ShouldLogResponseBody((HttpProperties httpProperties) =>
+        {
+            int statusCode = httpProperties.Response.StatusCode;
+            return statusCode >= 400;
+        });
 
     KissLogConfiguration.Options
-        .ShouldLogResponseBody((listener, logArgs, defaultValue) =>
+        .ShouldLogFormData((OptionsArgs.LogListenerFormDataArgs args) =>
         {
-            int responseStatusCode = (int)logArgs.WebProperties.Response.HttpStatusCode;
-            return responseStatusCode >= 400;
+            if (args.FormDataName == "Password")
+                return false;
+
+            return true;
         });
 
     KissLogConfiguration.Options

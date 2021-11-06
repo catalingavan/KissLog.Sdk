@@ -4,11 +4,14 @@ using System.Linq;
 
 namespace KissLog
 {
-    public class TemporaryFile : IDisposable
+    internal class TemporaryFile : IDisposable
     {
-        private static readonly string[] AllowedExtensions = new[] { "tmp", "png", "jpg", "jpeg", "jfif", "gif", "bm", "bmp", "txt", "log" };
+        internal static readonly string[] AllowedExtensions = new[] { "tmp", "png", "jpg", "jpeg", "jfif", "gif", "bm", "bmp", "txt", "log", "pdf" };
+        internal const string DefaultExtension = "tmp";
 
         public string FileName { get; private set; }
+
+        internal bool _disposed = false;
 
         private static string GenerateSalt()
         {
@@ -17,13 +20,13 @@ namespace KissLog
 
         private static string GetTempFileName(string extension = null)
         {
-            if (string.IsNullOrEmpty(extension))
-                extension = "tmp";
+            if (string.IsNullOrWhiteSpace(extension))
+                extension = DefaultExtension;
 
             extension = extension.Replace(".", string.Empty).Trim().ToLowerInvariant();
 
             if (AllowedExtensions.Any(p => extension == p) == false)
-                extension = "tmp";
+                extension = DefaultExtension;
 
             string path = Path.Combine(Path.GetTempPath(), "KissLog", $"{GenerateSalt()}.{extension}");
 
@@ -44,7 +47,7 @@ namespace KissLog
             {
                 try
                 {
-                    path = Path.Combine(Path.GetTempPath(), $"KissLog_{GenerateSalt()}.tmp");
+                    path = Path.Combine(Path.GetTempPath(), $"KissLog_{GenerateSalt()}.{extension}");
                     using (File.Create(path)) { };
                 }
                 catch
@@ -61,14 +64,26 @@ namespace KissLog
             return path;
         }
 
-        public TemporaryFile()
+        public TemporaryFile() : this(null)
         {
-            FileName = GetTempFileName(null);
+            
         }
 
         public TemporaryFile(string extension)
         {
             FileName = GetTempFileName(extension);
+        }
+
+        public long GetSize()
+        {
+            if (_disposed)
+                return 0;
+
+            FileInfo fileInfo = new FileInfo(FileName);
+            if(fileInfo.Exists)
+                return fileInfo.Length;
+
+            return 0;
         }
 
         public void Dispose()
@@ -84,6 +99,8 @@ namespace KissLog
             {
                 // ignored
             }
+
+            _disposed = true;
         }
     }
 }

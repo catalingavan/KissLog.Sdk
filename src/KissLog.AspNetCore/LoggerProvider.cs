@@ -4,23 +4,23 @@ namespace KissLog.AspNetCore
 {
     internal class LoggerProvider : ILoggerProvider
     {
-        private readonly KissLogAspNetCoreOptions _options;
-        public LoggerProvider() :this(null)
+        private readonly LoggerOptions _options;
+        public LoggerProvider() : this(null)
         {
         }
-        public LoggerProvider(KissLogAspNetCoreOptions options)
+        public LoggerProvider(LoggerOptions options)
         {
             _options = options;
         }
 
         public Microsoft.Extensions.Logging.ILogger CreateLogger(string categoryName)
         {
-            return new LoggerAdapter(categoryName, _options);
+            return new LoggerAdapter(_options, categoryName);
         }
 
         public void Dispose()
         {
-            
+
         }
     }
 }

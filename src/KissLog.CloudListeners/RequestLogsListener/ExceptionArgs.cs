@@ -1,19 +1,17 @@
-﻿using KissLog.FlushArgs;
-using System.Collections.Generic;
+﻿using KissLog.RestClient;
+using System;
 
 namespace KissLog.CloudListeners.RequestLogsListener
 {
     public class ExceptionArgs
     {
-        public FlushLogArgs FlushArgs { get; set; }
-        public string Payload { get; set; }
-        public IList<LoggerFile> Files { get; set; }
-        public int HttpStatusCode { get; set; }
-        public string Exception { get; set; }
+        public FlushLogArgs FlushArgs { get; }
+        public ApiResult ApiResult { get; }
 
-        public ExceptionArgs()
+        public ExceptionArgs(FlushLogArgs flushArgs, ApiResult apiResult)
         {
-            Files = new List<LoggerFile>();
+            FlushArgs = flushArgs ?? throw new ArgumentNullException(nameof(flushArgs));
+            ApiResult = apiResult ?? throw new ArgumentNullException(nameof(apiResult));
         }
     }
 }
