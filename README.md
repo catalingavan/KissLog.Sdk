@@ -12,7 +12,7 @@ Some of the main features of KissLog are:
 
 - Object oriented implementation
 
-- Centralized logging using [kisslog.net](https://kisslog.net) or KissLog on-premises integration
+- Centralized logging using [kisslog.net](https://kisslog.net) or KissLog on-premises local server
 
 Check the [documentation](https://docs.kisslog.net) for a complete list of features.
 
