@@ -2,7 +2,7 @@
 
 [![Latest version](https://img.shields.io/nuget/v/KissLog.svg?style=flat-square&label=KissLog)](https://www.nuget.org/packages?q=kisslog) [![Downloads](https://img.shields.io/nuget/dt/KissLog.svg?style=flat-square&label=Downloads)](https://www.nuget.org/packages?q=kisslog)
 
-KissLog represents a lightweight and highly customizable logging and monitoring solution for .NET applications.
+KissLog is a lightweight and highly customizable logging and monitoring framework for .NET applications.
 
 Some of the main features of KissLog are:
 
@@ -20,12 +20,11 @@ Check the [documentation](https://docs.kisslog.net) for a complete list of featu
 
 ## Framework support
 
-- [.NET Core 5.x](https://docs.kisslog.net/SDK/install-instructions/netcore50.html)
-- [.NET Core 3.x](https://docs.kisslog.net/SDK/install-instructions/netcore30.html)
-- [ASP.NET WebApi](https://docs.kisslog.net/SDK/install-instructions/aspnet-webapi.html)
-- [ASP.NET MVC](https://docs.kisslog.net/SDK/install-instructions/aspnet-mvc.html)
-- [Windows / Console apps](https://docs.kisslog.net/SDK/install-instructions/console-applications.html)
-- [NLog integration](https://docs.kisslog.net/SDK/nlog/index.html)
+- [.NET Core Web App](/testApps/AspNetCore5)
+- [ASP.NET WebApi](/testApps/AspNet.WebApi)
+- [ASP.NET MVC](/testApps/AspNet.Mvc)
+- [Console App (.NET Core)](/testApps/ConsoleApp_NetCore)
+- [Console App (.NET Framework)](/testApps/ConsoleApp_NetFramework)
 
 ## Why KissLog?
 
@@ -76,14 +75,13 @@ namespace MyApplication
 
         private void RegisterKissLogListeners()
         {
-            KissLogConfiguration.Listeners.Add(new RequestLogsApiListener(new Application("d625d5c8-ef47-4cd5-bf2d-6b0a1fa7fda4", "39bb675d-5c13-4bd8-9b5a-1d368da020a2"))
-            {
-                ApiUrl = "https://api.kisslog.net"
-            });
-
-            KissLogConfiguration.Listeners.Add(new LocalTextFileListener("logs", FlushTrigger.OnMessage));
-
-            KissLogConfiguration.Listeners.Add(new MongoDbListener());
+            KissLogConfiguration.Listeners
+                .Add(new RequestLogsApiListener(new Application("d625d5c8-ef47-4cd5-bf2d-6b0a1fa7fda4", "39bb675d-5c13-4bd8-9b5a-1d368da020a2"))
+                {
+                    ApiUrl = "https://api.kisslog.net"
+                })
+                .Add(new LocalTextFileListener("logs", FlushTrigger.OnMessage))
+                .Add(new MongoDbListener());
         }
     }
 }
