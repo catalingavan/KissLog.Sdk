@@ -30,7 +30,7 @@ namespace ConsoleApp_NetFramework
             string file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App.config");
 
             logger.LogAsFile($"Text content logged as file. Guid: {Guid.NewGuid()}", "file-01.txt");
-            logger.LogFile(file, "appsettings.json");
+            logger.LogFile(file, "App.config");
 
             logger.AddCustomProperty("CorrelationId", Guid.NewGuid());
             logger.AddCustomProperty("boolean", true);
@@ -54,8 +54,8 @@ namespace ConsoleApp_NetFramework
                     ApiUrl = ConfigurationManager.AppSettings["KissLog.ApiUrl"],
                     UseAsync = false
                 })
-                .Add(new LocalTextFileListener("Logs\\onFlush", FlushTrigger.OnFlush))
-                .Add(new LocalTextFileListener("Logs\\onMessage", FlushTrigger.OnMessage));
+                .Add(new LocalTextFileListener("Logs_onFlush", FlushTrigger.OnFlush))
+                .Add(new LocalTextFileListener("Logs_onMessage", FlushTrigger.OnMessage));
         }
     }
 }

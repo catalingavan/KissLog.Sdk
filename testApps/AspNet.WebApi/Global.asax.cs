@@ -76,8 +76,8 @@ namespace AspNet.WebApi
                         MinimumResponseHttpStatusCode = 0
                     }
                 })
-                .Add(new LocalTextFileListener("Logs\\onFlush", FlushTrigger.OnFlush))
-                .Add(new LocalTextFileListener("Logs\\onMessage", FlushTrigger.OnMessage));
+                .Add(new LocalTextFileListener("Logs_onFlush", FlushTrigger.OnFlush))
+                .Add(new LocalTextFileListener("Logs_onMessage", FlushTrigger.OnMessage));
         }
 
         public static KissLogHttpModule KissLogHttpModule = new KissLogHttpModule();
