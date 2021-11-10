@@ -28,29 +28,23 @@ namespace AspNetCore2
         {
             services.AddHttpContextAccessor();
 
-            services.AddSession();
-
             services.AddLogging(logging =>
             {
                 logging.AddKissLog(options =>
                 {
                     options.Formatter = (FormatterArgs args) =>
                     {
-                        string message = args.DefaultValue;
-
                         if (args.Exception == null)
-                            return message;
+                            return args.DefaultValue;
 
                         string exceptionStr = new ExceptionFormatter().Format(args.Exception, args.Logger);
 
-                        StringBuilder sb = new StringBuilder();
-                        sb.AppendLine(message);
-                        sb.Append(exceptionStr);
-
-                        return sb.ToString();
+                        return string.Join(Environment.NewLine, new[] { args.DefaultValue, exceptionStr });
                     };
                 });
             });
+
+            services.AddSession();
 
             services.AddMvc();
         }
@@ -116,8 +110,8 @@ namespace AspNetCore2
                         MinimumResponseHttpStatusCode = 200
                     }
                 })
-                .Add(new LocalTextFileListener("Logs\\onFlush", FlushTrigger.OnFlush))
-                .Add(new LocalTextFileListener("Logs\\onMessage", FlushTrigger.OnMessage));
+                .Add(new LocalTextFileListener("Logs_onFlush", FlushTrigger.OnFlush))
+                .Add(new LocalTextFileListener("Logs_onMessage", FlushTrigger.OnMessage));
         }
     }
 }

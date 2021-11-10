@@ -1,5 +1,5 @@
-﻿using KissLog.AspNetCore;
-using AspNetCore5.Models;
+﻿using AspNetCore5.Models;
+using KissLog.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
