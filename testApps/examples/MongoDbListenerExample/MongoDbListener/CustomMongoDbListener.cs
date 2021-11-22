@@ -36,13 +36,13 @@ namespace MongoDbListenerExample.MongoDbListener
         {
             var logMessages = args.MessagesGroups.SelectMany(p => p.Messages).OrderBy(p => p.DateTime).ToList();
 
-            RequestLog requestLog = ToModel(args.HttpProperties);
-            requestLog.Messages = logMessages.Select(p => ToModel(p)).ToList();
+            RequestLog requestLog = CreateModel(args.HttpProperties);
+            requestLog.Messages = logMessages.Select(p => CreateModel(p)).ToList();
 
             _mongoDatabase.Value.GetCollection<RequestLog>("RequestLog").InsertOne(requestLog);
         }
 
-        private LogMessage ToModel(KissLog.LogMessage logMessage)
+        private LogMessage CreateModel(KissLog.LogMessage logMessage)
         {
             return new LogMessage
             {
@@ -53,7 +53,7 @@ namespace MongoDbListenerExample.MongoDbListener
             };
         }
 
-        private RequestLog ToModel(HttpProperties httpProperties)
+        private RequestLog CreateModel(HttpProperties httpProperties)
         {
             HttpRequest request = httpProperties.Request;
             HttpResponse response = httpProperties.Response;

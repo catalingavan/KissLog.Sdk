@@ -46,7 +46,7 @@ namespace MongoDbListenerExample
         private void ConfigureKissLog(IOptionsBuilder options)
         {
             KissLogConfiguration.Listeners
-                .Add(new CustomMongoDbListener("mongodb://localhost:27017", "RequestLogs"));
+                .Add(new CustomMongoDbListener("mongodb://localhost:27017", "Logs"));
         }
     }
 }
