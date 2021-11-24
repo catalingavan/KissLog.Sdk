@@ -1,21 +1,21 @@
 ﻿using EntityFrameworkValidationExample.Models;
-using Microsoft.EntityFrameworkCore;
+using System.Data.Entity;
 
 namespace EntityFrameworkValidationExample.EntityFramework
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions options) :
-            base(options)
+        public AppDbContext(string nameOrConnectionString) :
+            base(nameOrConnectionString)
         {
 
         }
 
         public DbSet<Product> Products { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new ProductConfiguration());
+            modelBuilder.Configurations.Add(new ProductConfiguration());
         }
     }
 }

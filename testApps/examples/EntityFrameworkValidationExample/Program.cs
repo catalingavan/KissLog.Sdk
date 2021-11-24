@@ -2,7 +2,6 @@
 using EntityFrameworkValidationExample.Models;
 using KissLog;
 using KissLog.Listeners.FileListener;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
@@ -46,11 +45,9 @@ namespace EntityFrameworkValidationExample
         private static AppDbContext CreateDbContext(IConfiguration configuration)
         {
             string connectionString = configuration.GetConnectionString("AppDbContext");
-            var builder = new DbContextOptionsBuilder<AppDbContext>();
-            builder.UseSqlServer(connectionString);
 
-            var dbContext = new AppDbContext(builder.Options);
-            dbContext.Database.EnsureCreated();
+            var dbContext = new AppDbContext(connectionString);
+            dbContext.Database.CreateIfNotExists();
 
             return dbContext;
         }
@@ -59,6 +56,7 @@ namespace EntityFrameworkValidationExample
         {
             var product = new Product();
             product.Name = "Product 1";
+            product.Code = Guid.NewGuid().ToString();
             product.Price = 10.5;
 
             dbContext.Products.Add(product);
@@ -72,12 +70,15 @@ namespace EntityFrameworkValidationExample
                 {
                     StringBuilder sb = new StringBuilder();
 
-                    if (ex is Microsoft.EntityFrameworkCore.DbUpdateException dbUpdateException)
+                    if (ex is System.Data.Entity.Validation.DbEntityValidationException dbException)
                     {
-                        string entries = string.Join(Environment.NewLine, dbUpdateException.Entries.Select(p => p.ToString()));
+                        sb.AppendLine("Validation exceptions:");
 
-                        sb.AppendLine("Affected entries:");
-                        sb.Append(entries);
+                        foreach (var error in dbException.EntityValidationErrors.SelectMany(p => p.ValidationErrors))
+                        {
+                            string message = string.Format("Field: {0}, Error: {1}", error.PropertyName, error.ErrorMessage);
+                            sb.AppendLine(message);
+                        }
                     }
 
                     return sb.ToString();

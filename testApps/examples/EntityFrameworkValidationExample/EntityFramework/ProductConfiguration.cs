@@ -1,20 +1,19 @@
 ﻿using EntityFrameworkValidationExample.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Data.Entity.ModelConfiguration;
 
 namespace EntityFrameworkValidationExample.EntityFramework
 {
-    internal class ProductConfiguration : IEntityTypeConfiguration<Product>
+    internal class ProductConfiguration : EntityTypeConfiguration<Product>
     {
-        public void Configure(EntityTypeBuilder<Product> builder)
+        public ProductConfiguration()
         {
-            builder.HasKey(p => p.Id);
+            HasKey(p => p.Id);
 
-            builder.Property(p => p.Name).IsRequired().HasMaxLength(256);
-            builder.Property(p => p.Code).IsRequired().HasMaxLength(6);
-            builder.Property(p => p.Description).IsRequired().HasMaxLength(2000);
+            Property(p => p.Name).IsRequired().HasMaxLength(256);
+            Property(p => p.Code).IsRequired().HasMaxLength(6);
+            Property(p => p.Description).IsRequired().HasMaxLength(2000);
 
-            builder.ToTable("Product");
+            ToTable("Product");
         }
     }
 }
