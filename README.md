@@ -8,7 +8,7 @@ Some of the main features of KissLog are:
 
 - Automatically captures and logs all the exceptions
 
-- Logs all the HTTP properties
+- Monitors all the HTTP traffic
 
 - Object oriented implementation
 
