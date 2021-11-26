@@ -8,31 +8,33 @@ Some of the main features of KissLog are:
 
 - Automatically captures and logs all the exceptions
 
-- Monitors all the HTTP traffic
+- Logs all the HTTP properties
 
 - Object oriented implementation
 
 - Centralized logging using [kisslog.net](https://kisslog.net) or KissLog on-premises local server
 
-Check the [documentation](https://docs.kisslog.net) for a complete list of features.
+Check the [documentation](https://github.com/KissLog-net/KissLog.Sdk/wiki) for a complete list of features.
 
 ![KissLog.net centralized logging](https://docs.kisslog.net/_images/centralized-logging.png)
 
 ## Framework support
 
-- [.NET Core Web App](/testApps/AspNetCore5)
-- [ASP.NET WebApi](/testApps/AspNet.WebApi)
-- [ASP.NET MVC](/testApps/AspNet.Mvc)
-- [Console App (.NET Core)](/testApps/ConsoleApp_NetCore)
-- [Console App (.NET Framework)](/testApps/ConsoleApp_NetFramework)
+- [.NET Core Web App](https://github.com/KissLog-net/KissLog.Sdk/wiki/.NET-Core-Web-App)
+- [ASP.NET WebApi](https://github.com/KissLog-net/KissLog.Sdk/wiki/ASP.NET-WebApi)
+- [ASP.NET MVC](https://github.com/KissLog-net/KissLog.Sdk/wiki/ASP.NET-MVC)
+- [Console App (.NET Core)](https://github.com/KissLog-net/KissLog.Sdk/wiki/ConsoleApp-(.NET-Core))
+- [Console App (.NET Framework)](https://github.com/KissLog-net/KissLog.Sdk/wiki/ConsoleApp-(.NET-Framework))
 
 ## Why KissLog?
 
-KissLog is a logging framework which is focused primarily on HTTP behaviour.
+KissLog implements three main components: logging functionality, exceptions tracking and application insights.
 
-For each HTTP request, KissLog automatically captures all the available properties, including: User Agent, Request Headers, Form Data, Request Body, SessionId, Response Headers, Status Code, Response Body.
+For web applications, KissLog automatically captures all the HTTP properties.
 
-Log messages are grouped per each unique HTTP request, making it easy to follow the execution details.
+KissLog keeps the log events in memory and sends them to the registered listeners all at once. This can significantly reduce the load of the persistance logic (such as Disk I/O, database operations or network throughput).
+
+It is unobtrusive, easy to set up and easy to configure.
 
 ## Basic usage
 
