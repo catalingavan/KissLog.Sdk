@@ -67,7 +67,7 @@ Log listeners are registered at application startup using the `KissLogConfigurat
 
 Custom log listeners can be [easily implemented](https://github.com/KissLog-net/KissLog.Sdk/wiki/MongoDB-listener).
 
-Using [interceptors](https://github.com/KissLog-net/KissLog.Sdk/wiki/Filtering-the-logs), log listeners can apply custom filtering rules before saving the events.
+Using [interceptors](https://github.com/KissLog-net/KissLog.Sdk/wiki/Filtering-the-logs), log listeners can apply conditional filtering rules before saving the events.
 
 ```csharp
 namespace ConsoleApp
