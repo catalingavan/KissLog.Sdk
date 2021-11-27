@@ -14,130 +14,110 @@ Some of the main features of KissLog are:
 
 - Centralized logging using [kisslog.net](https://kisslog.net) or KissLog on-premises local server
 
-Check the [documentation](https://docs.kisslog.net) for a complete list of features.
+Check the [documentation](https://github.com/KissLog-net/KissLog.Sdk/wiki) for a complete list of features.
 
 ![KissLog.net centralized logging](https://docs.kisslog.net/_images/centralized-logging.png)
 
 ## Framework support
 
-- [.NET Core Web App](/testApps/AspNetCore5)
-- [ASP.NET WebApi](/testApps/AspNet.WebApi)
-- [ASP.NET MVC](/testApps/AspNet.Mvc)
-- [Console App (.NET Core)](/testApps/ConsoleApp_NetCore)
-- [Console App (.NET Framework)](/testApps/ConsoleApp_NetFramework)
+- [.NET Core Web App](https://github.com/KissLog-net/KissLog.Sdk/wiki/.NET-Core-Web-App)
+- [ASP.NET WebApi](https://github.com/KissLog-net/KissLog.Sdk/wiki/ASP.NET-WebApi)
+- [ASP.NET MVC](https://github.com/KissLog-net/KissLog.Sdk/wiki/ASP.NET-MVC)
+- [Console App (.NET Core)](https://github.com/KissLog-net/KissLog.Sdk/wiki/ConsoleApp-(.NET-Core))
+- [Console App (.NET Framework)](https://github.com/KissLog-net/KissLog.Sdk/wiki/ConsoleApp-(.NET-Framework))
 
 ## Why KissLog?
 
-KissLog is a logging framework which is focused primarily on HTTP behaviour.
+KissLog implements three main components: logging functionality, exceptions tracking and application insights.
 
-For each HTTP request, KissLog automatically captures all the available properties, including: User Agent, Request Headers, Form Data, Request Body, SessionId, Response Headers, Status Code, Response Body.
+For web applications, KissLog automatically captures all the HTTP properties.
 
-Log messages are grouped per each unique HTTP request, making it easy to follow the execution details.
+KissLog keeps the log events in memory and sends them to the registered listeners all at once. This can significantly reduce the load of the persistance logic (such as Disk I/O, database operations or network throughput).
 
 ## Basic usage
 
 ```csharp
 using KissLog;
+using KissLog.Listeners.FileListener;
 
-public class HomeController : Controller
+namespace ConsoleApp
 {
-    private readonly IKLogger _logger;
-    public HomeController()
+    class Program
     {
-        _logger = Logger.Factory.Get();
-    }
-
-    public IActionResult Index()
-    {
-        _logger.Debug("Hello World!");
-
-        return View();
-    }
-}
-```
-
-## Setup
-
-### Logs output
-
-KissLog saves the logs to multiple output locations by using log listeners.
-
-Log listeners are registered at application startup using the `KissLogConfiguration.Listeners` container.
-
-Check the [documentation](https://docs.kisslog.net/SDK/logs-output/index.html) for more logs output examples.
-
-```csharp
-namespace MyApplication
-{
-    public class MvcApplication : System.Web.HttpApplication
-    {
-        // [...]
-
-        private void RegisterKissLogListeners()
+        static void Main(string[] args)
         {
             KissLogConfiguration.Listeners
-                .Add(new RequestLogsApiListener(new Application("d625d5c8-ef47-4cd5-bf2d-6b0a1fa7fda4", "39bb675d-5c13-4bd8-9b5a-1d368da020a2"))
-                {
-                    ApiUrl = "https://api.kisslog.net"
-                })
-                .Add(new LocalTextFileListener("logs", FlushTrigger.OnMessage))
-                .Add(new MongoDbListener());
+                .Add(new LocalTextFileListener("logs", FlushTrigger.OnFlush));
+
+            var logger = new Logger();
+
+            logger.Trace("Hey, I am a log message");
+
+            Logger.NotifyListeners(logger);
         }
     }
 }
 ```
 
-### Configuration
+## Saving the logs
 
-Logging behavior can be customized by using `KissLogConfiguration.Options` container.
+KissLog saves the logs to multiple output locations by using log listeners.
 
-Complete list of configuration options can be found on the [documentation](https://docs.kisslog.net/SDK/configuration/index.html) page.
+Log listeners are registered at application startup using the `KissLogConfiguration.Listeners` container.
+
+Custom log listeners can be [easily implemented](https://github.com/KissLog-net/KissLog.Sdk/wiki/MongoDB-listener).
+
+Using [interceptors](https://github.com/KissLog-net/KissLog.Sdk/wiki/Filtering-the-logs), log listeners can apply conditional filtering rules before saving the events.
 
 ```csharp
-protected void Application_Start()
+namespace ConsoleApp
 {
-    KissLogConfiguration.Options
-        .ShouldLogResponseBody((HttpProperties httpProperties) =>
+    class Program
+    {
+        static void Main(string[] args)
         {
-            int statusCode = httpProperties.Response.StatusCode;
-            return statusCode >= 400;
-        });
+            KissLogConfiguration.Listeners
+                .Add(new LocalTextFileListener("logs", FlushTrigger.OnMessage))
+                .Add(new CustomMongoDbListener("mongodb://localhost:27017", "Logs")
+                {
+                    Interceptor = new StatusCodeInterceptor
+                    {
+                        MinimumLogMessageLevel = LogLevel.Information
+                    }
+                });
 
-    KissLogConfiguration.Options
-        .ShouldLogFormData((OptionsArgs.LogListenerFormDataArgs args) =>
-        {
-            if (args.FormDataName == "Password")
-                return false;
+            var logger = new Logger();
+            logger.Trace("Hey, I am a log message");
 
-            return true;
-        });
+            Logger.NotifyListeners(logger);
+        }
+    }
+}
+```
 
+## Configuration
+
+KissLog supports various [configuration options](https://github.com/KissLog-net/KissLog.Sdk/wiki/Configuration) using the ``KissLogConfiguration.Options`` configuration object.
+
+```csharp
+private void ConfigureKissLog
+{
     KissLogConfiguration.Options
         .AppendExceptionDetails((Exception ex) =>
         {
-            // log EntityFramework validation errors
-            if (ex is DbEntityValidationException dbException)
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine("DbEntityValidationException:");
-
-                foreach (var error in dbException.EntityValidationErrors.SelectMany(p => p.ValidationErrors))
-                {
-                    string message = string.Format("Field: {0}, Error: {1}", error.PropertyName, error.ErrorMessage);
-                    sb.AppendLine(message);
-                }
-
-                return sb.ToString();
-            }
+            if (ex is DivideByZeroException zeroDivisionEx)
+                return ">>> Should check if the denominator is zero before dividing";
 
             return null;
         });
 }
 ```
 
+![AppendExceptionDetails](https://raw.githubusercontent.com/wiki/KissLog-net/KissLog.Sdk/images/AppendExceptionDetails.png)
+
 ## Samples
 
-Check the [code samples](https://github.com/KissLog-net/KissLog.samples) for more examples of using KissLog.
+Check the [test applications](https://github.com/KissLog-net/KissLog.Sdk/tree/master/testApps) for more examples of using KissLog.
 
 ## Feedback
 
