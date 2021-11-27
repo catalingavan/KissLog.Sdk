@@ -80,10 +80,7 @@ namespace ConsoleApp
                 .Add(new LocalTextFileListener("logs", FlushTrigger.OnMessage))
                 .Add(new CustomMongoDbListener("mongodb://localhost:27017", "Logs")
                 {
-                    Interceptor = new StatusCodeInterceptor
-                    {
-                        MinimumLogMessageLevel = LogLevel.Information
-                    }
+                    Interceptor = new LogLevelInterceptor(LogLevel.Information)
                 });
 
             var logger = new Logger();
