@@ -32,7 +32,7 @@ KissLog implements three main components: logging functionality, exceptions trac
 
 For web applications, KissLog automatically captures all the HTTP properties.
 
-KissLog keeps the log events in memory and sends them to the registered listeners all at once. This can significantly reduce the load of the persistance logic (such as Disk I/O, database operations or network throughput).
+KissLog keeps the log events in memory and sends them to the registered listeners all at once. This can help reduce the load of the persistence implementation (such as Disk I/O, database operations or network throughput).
 
 ## Basic usage
 
