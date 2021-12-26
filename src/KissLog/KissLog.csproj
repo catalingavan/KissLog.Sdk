@@ -13,9 +13,9 @@ Install this package on all the projects.</Description>
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Logging, Error, Exception, Trace, Tracing, KissLog, Diagnostics, Reporing</PackageTags>
-    <Version>5.0.0</Version>
-    <PackageReleaseNotes>Major improvements. Introduced 630+ unit tests. Contains few breaking changes.
-https://docs.kisslog.net/SDK/change-log/index.html#kisslog-5-0-0</PackageReleaseNotes>
+    <Version>5.1.0</Version>
+    <PackageReleaseNotes>Fixes https://github.com/KissLog-net/KissLog.Sdk/issues/54
+https://docs.kisslog.net/SDK/change-log/index.html#kisslog-5-1-0</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
