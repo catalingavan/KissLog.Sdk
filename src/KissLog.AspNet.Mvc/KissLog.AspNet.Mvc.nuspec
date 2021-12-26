@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>KissLog.AspNet.Mvc</id>
-    <version>5.0.0</version>
+    <version>5.1.0</version>
     <authors>KissLog.net</authors>
     <owners>KissLog.net</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -13,14 +13,14 @@
     <icon>PackageIcon.png</icon>
     <description>KissLog ASP.NET MVC package. Install this package on ASP.NET MVC web applications.</description>
     <releaseNotes>
-        Major improvements. Introduced 630+ unit tests. Contains few breaking changes.
-        https://docs.kisslog.net/SDK/change-log/index.html#kisslog-5-0-0
+        Fixes https://github.com/KissLog-net/KissLog.Sdk/issues/54
+        https://docs.kisslog.net/SDK/change-log/index.html#kisslog-5-1-0
     </releaseNotes>
     <copyright>Copyright 2021</copyright>
     <tags>KissLog, MVC, AspNet</tags>
     <repository type="git" url="https://github.com/KissLog-net/KissLog.Sdk" />
     <dependencies>
-      <dependency id="KissLog.AspNet.Web" version="5.0.0" />
+      <dependency id="KissLog.AspNet.Web" version="5.1.0" />
       <dependency id="Microsoft.AspNet.Mvc" version="5.2.4" />
     </dependencies>
   </metadata>

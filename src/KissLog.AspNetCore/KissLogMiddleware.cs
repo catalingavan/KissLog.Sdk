@@ -44,7 +44,10 @@ namespace KissLog.AspNetCore
 
             ExceptionDispatchInfo ex = null;
             
-            context.Response.Body = new MirrorStreamDecorator(context.Response.Body);
+            if(context.Response.Body != null && context.Response.Body is MirrorStreamDecorator == false)
+            {
+                context.Response.Body = new MirrorStreamDecorator(context.Response.Body);
+            }
 
             try
             {

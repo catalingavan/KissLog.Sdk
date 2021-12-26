@@ -2,7 +2,7 @@
 
   <PropertyGroup>
       <TargetFrameworks>netstandard2.1;netstandard2.0;net461</TargetFrameworks>
-      <Version>5.0.0</Version>
+      <Version>5.1.0</Version>
       <Authors>KissLog.net</Authors>
       <Company>KissLog.net</Company>
       <Product>KissLog.net</Product>
@@ -13,8 +13,8 @@
       <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
       <RepositoryType>git</RepositoryType>
       <PackageTags>KissLog</PackageTags>
-      <PackageReleaseNotes>Major improvements. Introduced 630+ unit tests. Contains few breaking changes.
-https://docs.kisslog.net/SDK/change-log/index.html#kisslog-5-0-0</PackageReleaseNotes>
+      <PackageReleaseNotes>Adapted to KissLog 5.1.0 improvements.
+https://docs.kisslog.net/SDK/change-log/index.html#kisslog-5-1-0</PackageReleaseNotes>
   </PropertyGroup>
 
     <ItemGroup>

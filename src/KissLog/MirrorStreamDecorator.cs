@@ -48,13 +48,17 @@ namespace KissLog
         public override void Write(byte[] buffer, int offset, int count)
         {
             _decorated.Write(buffer, offset, count);
-            _mirrorStream.Write(buffer, offset, count);
+
+            if(_mirrorStream?.CanWrite == true)
+                _mirrorStream.Write(buffer, offset, count);
         }
 
         public override async Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             await _decorated.WriteAsync(buffer, offset, count, cancellationToken);
-            _mirrorStream.Write(buffer, offset, count);
+
+            if (_mirrorStream?.CanWrite == true)
+                _mirrorStream.Write(buffer, offset, count);
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -65,12 +69,19 @@ namespace KissLog
         public override void SetLength(long value)
         {
             _decorated.SetLength(value);
-            _mirrorStream.SetLength(value);
+
+            if (_mirrorStream?.CanWrite == true)
+                _mirrorStream.SetLength(value);
         }
 
         public override void Flush()
         {
             _decorated.Flush();
+        }
+
+        public override Task FlushAsync(CancellationToken cancellationToken)
+        {
+            return _decorated.FlushAsync(cancellationToken);
         }
 
         public override void Close()
