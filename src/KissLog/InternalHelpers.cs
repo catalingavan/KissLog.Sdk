@@ -38,6 +38,24 @@ namespace KissLog
             return default(T);
         }
 
+        public static string GetMachineName()
+        {
+            string result = null;
+
+            try
+            {
+                result = Environment.MachineName ??
+                         Environment.GetEnvironmentVariable("COMPUTERNAME") ??
+                         Environment.GetEnvironmentVariable("HOSTNAME");
+            }
+            catch
+            {
+                // ignored
+            }
+
+            return result;
+        }
+
         public static bool CanReadRequestInputStream(IEnumerable<KeyValuePair<string, string>> requestHeaders)
         {
             if (requestHeaders == null)

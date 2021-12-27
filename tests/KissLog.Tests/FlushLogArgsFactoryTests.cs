@@ -72,6 +72,20 @@ namespace KissLog.Tests
         [DataRow("")]
         [DataRow(" ")]
         [DataRow("/app/method")]
+        public void MachineNameIsCopied(string url)
+        {
+            FlushLogArgs item = FlushLogArgsFactory.Create(new[] { new Logger(url: url) });
+
+            string machineName = InternalHelpers.GetMachineName();
+
+            Assert.AreEqual(machineName, item.HttpProperties.Request.MachineName);
+        }
+
+        [TestMethod]
+        [DataRow(null)]
+        [DataRow("")]
+        [DataRow(" ")]
+        [DataRow("/app/method")]
         public void HttpPropertiesResponseIsNotNull(string url)
         {
             FlushLogArgs item = FlushLogArgsFactory.Create(new[] { new Logger(url: url) });

@@ -31,6 +31,7 @@ namespace KissLog
                 {
                     HttpMethod = "GET",
                     Url = UrlParser.GenerateUri(null),
+                    MachineName = InternalHelpers.GetMachineName(),
                     StartDateTime = defaultLogger.DataContainer.DateTimeCreated
                 }));
             }

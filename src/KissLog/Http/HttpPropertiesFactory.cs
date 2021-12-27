@@ -12,7 +12,8 @@ namespace KissLog.Http
             return new HttpProperties(new HttpRequest(new HttpRequest.CreateOptions
             {
                 HttpMethod = "GET",
-                Url = UrlParser.GenerateUri(url)
+                Url = UrlParser.GenerateUri(url),
+                MachineName = InternalHelpers.GetMachineName()
             }));
         }
     }

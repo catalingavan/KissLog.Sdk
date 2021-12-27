@@ -24,5 +24,15 @@ namespace KissLog.Tests.Http
 
             Assert.AreEqual("GET", result.Request.HttpMethod);
         }
+
+        [TestMethod]
+        public void MachineNameIsCopied()
+        {
+            HttpProperties result = HttpPropertiesFactory.Create("/");
+
+            string machineName = InternalHelpers.GetMachineName();
+
+            Assert.AreEqual(machineName, result.Request.MachineName);
+        }
     }
 }
