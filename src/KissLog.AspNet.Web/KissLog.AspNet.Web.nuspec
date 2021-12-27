@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>KissLog.AspNet.Web</id>
-    <version>5.1.0</version>
+    <version>5.1.1</version>
     <authors>KissLog.net</authors>
     <owners>KissLog.net</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -13,15 +13,15 @@
     <icon>PackageIcon.png</icon>
     <description>KissLog Web package. You should not manually install this package, as it will be installed as a dependency.</description>
     <releaseNotes>
-        Adapted to KissLog 5.1.0 improvements.
-        https://docs.kisslog.net/SDK/change-log/index.html#kisslog-5-1-0
+        Adapted to KissLog 5.1.1 improvements.
+        https://kisslog.net/Docs/SDK.change-log.index.html#kisslog-5-1-1
     </releaseNotes>
     <copyright>Copyright 2021</copyright>
     <tags>KissLog</tags>
     <repository type="git" url="https://github.com/KissLog-net/KissLog.Sdk" />
     <dependencies>
-      <dependency id="KissLog" version="5.1.0" />
-      <dependency id="KissLog.CloudListeners" version="5.1.0" />
+      <dependency id="KissLog" version="5.1.1" />
+      <dependency id="KissLog.CloudListeners" version="5.1.1" />
     </dependencies>
   </metadata>
   <files>

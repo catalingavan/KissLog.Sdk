@@ -4,7 +4,7 @@
       <TargetFrameworks>netstandard2.1;netstandard2.0;net461</TargetFrameworks>
       <Authors>KissLog.net</Authors>
       <Product>KissLog.net</Product>
-      <Version>5.1.0</Version>
+      <Version>5.1.1</Version>
       <Description>Adapter for saving log4Net messages to KissLog.net cloud / on-premises.</Description>
       <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
       <PackageProjectUrl>https://kisslog.net</PackageProjectUrl>
@@ -12,8 +12,8 @@
       <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
       <RepositoryType>git</RepositoryType>
       <PackageTags>log4net, KissLog</PackageTags>
-      <PackageReleaseNotes>Adapted to KissLog 5.1.0 improvements.
-https://docs.kisslog.net/SDK/change-log/index.html#kisslog-5-1-0</PackageReleaseNotes>
+      <PackageReleaseNotes>Adapted to KissLog 5.1.1 improvements.
+https://kisslog.net/Docs/SDK.change-log.index.html#kisslog-5-1-1</PackageReleaseNotes>
   </PropertyGroup>
 
     <ItemGroup>
