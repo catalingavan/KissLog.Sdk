@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 
 namespace KissLog.AspNetCore
 {
@@ -16,6 +17,8 @@ namespace KissLog.AspNetCore
         public void Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
             Logger logger = GetLogger();
+
+            var x = state as IEnumerable<KeyValuePair<string, object>>;
 
             string message = formatter(state, exception);
 

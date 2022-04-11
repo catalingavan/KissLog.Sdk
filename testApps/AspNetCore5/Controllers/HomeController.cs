@@ -17,7 +17,7 @@ namespace AspNetCore5.Controllers
 
         public IActionResult Index()
         {
-            _logger.LogTrace("Trace log");
+            _logger.LogTrace("Trace log {MyMessageId}", 10);
             _logger.LogDebug("Debug log");
             _logger.LogInformation("Information log");
             _logger.LogWarning("Warning log");
