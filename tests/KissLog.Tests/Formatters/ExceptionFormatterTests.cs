@@ -132,6 +132,42 @@ namespace KissLog.Tests.Formatters
         }
 
         [TestMethod]
+        public void SameInnerExceptionDoesNotThrowException()
+        {
+            var innerEx = new Exception($"Inner exception: {Guid.NewGuid()}");
+
+            var ex1 = new Exception("Exception 1", innerEx);
+            var ex2 = new Exception("Exception 2", innerEx);
+
+            Logger logger = new Logger();
+
+            var formatter = new ExceptionFormatter();
+            formatter.Format(ex1, logger);
+            formatter.Format(ex2, logger);
+
+            int count = logger.DataContainer.Exceptions.Count();
+
+            Assert.AreEqual(2, count);
+        }
+
+        [TestMethod]
+        public void InnerExceptionIsLoggedOnlyOnce()
+        {
+            var innerEx = new Exception($"Inner exception: {Guid.NewGuid()}");
+            var ex = new Exception("Exception", innerEx);
+
+            Logger logger = new Logger();
+
+            var formatter = new ExceptionFormatter();
+            formatter.Format(ex, logger);
+            formatter.Format(innerEx, logger);
+
+            int count = logger.DataContainer.Exceptions.Count();
+
+            Assert.AreEqual(1, count);
+        }
+
+        [TestMethod]
         public void AppendExceptionDetailsOptions()
         {
             CommonTestHelpers.ResetContext();

@@ -167,6 +167,8 @@ namespace KissLog.AspNet.Web.Tests
         [TestMethod]
         public void FormDataIsCopiedFromUnvalidatedRequestValues()
         {
+            KissLog.Tests.Common.CommonTestHelpers.ResetContext();
+
             var value = KissLog.Tests.Common.CommonTestHelpers.GenerateList(5);
             var unvalidatedValue = KissLog.Tests.Common.CommonTestHelpers.GenerateList(5);
 

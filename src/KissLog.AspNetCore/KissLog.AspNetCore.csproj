@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp2.1;netcoreapp3.0;netcoreapp3.1;net5.0</TargetFrameworks>
-    <Version>5.1.1</Version>
+    <Version>5.1.2</Version>
     <Authors>KissLog.net</Authors>
     <Company>KissLog.net</Company>
     <Product>KissLog.net</Product>
@@ -14,8 +14,8 @@ Install this package on ASP.NET Core web applications.</Description>
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>KissLog, AspNetCore, NetCore, Core</PackageTags>
-    <PackageReleaseNotes>Fixes https://github.com/KissLog-net/KissLog.Sdk/issues/56
-https://kisslog.net/Docs/SDK.change-log.index.html#kisslog-5-1-1</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixes https://github.com/KissLog-net/KissLog.Sdk/issues/60
+https://kisslog.net/Docs/SDK.change-log.index.html#kisslog-5-1-2</PackageReleaseNotes>
   </PropertyGroup>
 
     <ItemGroup>

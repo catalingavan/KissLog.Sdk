@@ -51,7 +51,9 @@ namespace KissLog.Formatters
             Exception innerException = ex.InnerException;
             while (innerException != null)
             {
-                innerException.Data.Add(id, true);
+                if (!innerException.Data.Contains(id))
+                    innerException.Data.Add(id, true);
+
                 innerException = innerException.InnerException;
             }
 

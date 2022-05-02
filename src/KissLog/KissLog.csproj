@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0;net462</TargetFrameworks>
     <Authors>KissLog.net</Authors>
     <Company>KissLog.net</Company>
     <Product>KissLog.net</Product>
@@ -13,9 +13,9 @@ Install this package on all the projects.</Description>
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Logging, Error, Exception, Trace, Tracing, KissLog, Diagnostics, Reporing</PackageTags>
-    <Version>5.1.1</Version>
-    <PackageReleaseNotes>Fixes https://github.com/KissLog-net/KissLog.Sdk/issues/56
-https://kisslog.net/Docs/SDK.change-log.index.html#kisslog-5-1-1</PackageReleaseNotes>
+    <Version>5.1.2</Version>
+    <PackageReleaseNotes>Fixes https://github.com/KissLog-net/KissLog.Sdk/issues/60
+https://kisslog.net/Docs/SDK.change-log.index.html#kisslog-5-1-2</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
