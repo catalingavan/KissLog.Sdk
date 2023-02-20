@@ -3,6 +3,8 @@ using KissLog.CloudListeners.Auth;
 using KissLog.CloudListeners.RequestLogsListener;
 using KissLog.Formatters;
 using KissLog.Listeners.FileListener;
+using System.Diagnostics;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddLogging(provider =>
@@ -36,15 +38,34 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.UseKissLogMiddleware(options => {
-    options.Listeners.Add(new RequestLogsApiListener(new Application(
-        builder.Configuration["KissLog.OrganizationId"],
-        builder.Configuration["KissLog.ApplicationId"])
-    )
-    {
-        ApiUrl = builder.Configuration["KissLog.ApiUrl"]
-    });
+    options.Listeners
+        .Add(new RequestLogsApiListener(new Application(builder.Configuration["KissLog.OrganizationId"], builder.Configuration["KissLog.ApplicationId"]))
+        {
+            ApiUrl = builder.Configuration["KissLog.ApiUrl"]
+        });
 
-    options.Listeners.Add(new LocalTextFileListener(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs")));
+    options.Listeners
+        .Add(new LocalTextFileListener(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs")));
+
+    // optional KissLog configuration
+    options.Options
+        .AppendExceptionDetails((Exception ex) =>
+        {
+            StringBuilder sb = new StringBuilder();
+
+            if (ex is NullReferenceException nullRefException)
+            {
+                sb.AppendLine("Important: check for null references");
+            }
+
+            return sb.ToString();
+        });
+
+    // KissLog internal logs
+    options.InternalLog = (message) =>
+    {
+        Debug.WriteLine(message);
+    };
 });
 
 app.Run();
