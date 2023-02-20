@@ -5,9 +5,9 @@ using KissLog.CloudListeners.Auth;
 using KissLog.CloudListeners.RequestLogsListener;
 using KissLog.Listeners.FileListener;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -55,13 +55,6 @@ namespace AspNet.Mvc
                     }
 
                     return sb.ToString();
-                })
-                .GenerateSearchKeywords((FlushLogArgs args) =>
-                {
-                    var service = new GenerateSearchKeywordsService();
-                    IEnumerable<string> keywords = service.GenerateKeywords(args);
-
-                    return keywords;
                 });
 
             // KissLog internal logs
@@ -79,15 +72,9 @@ namespace AspNet.Mvc
                     {
                         MinimumLogMessageLevel = LogLevel.Trace,
                         MinimumResponseHttpStatusCode = 200
-                    },
-                    OnException = (ExceptionArgs args) =>
-                    {
-                        var listener = new LocalTextFileListener("logs", FlushTrigger.OnFlush);
-                        listener.OnFlush(args.FlushArgs);
                     }
                 })
-                .Add(new LocalTextFileListener("Logs_onFlush", FlushTrigger.OnFlush))
-                .Add(new LocalTextFileListener("Logs_onMessage", FlushTrigger.OnMessage));
+                .Add(new LocalTextFileListener(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs")));
         }
 
         public static KissLogHttpModule KissLogHttpModule = new KissLogHttpModule();
