@@ -56,6 +56,7 @@ namespace dotnetcore_3._1_ConsoleApp
                     {
                         logging
                             .AddConfiguration(hostContext.Configuration.GetSection("Logging"))
+                            .AddSimpleConsole()
                             .AddKissLog(options =>
                             {
                                 options.Formatter = (FormatterArgs args) =>

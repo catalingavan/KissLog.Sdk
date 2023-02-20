@@ -25,9 +25,7 @@ namespace dotnetcore_3._1_ConsoleApp
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .Build();
 
-            var serviceCollection = new ServiceCollection();
-            ConfigureServices(serviceCollection, configuration);
-            var serviceProvider = serviceCollection.BuildServiceProvider();
+            var serviceProvider = ConfigureServices(configuration);
 
             ConfigureKissLog(configuration);
 
@@ -49,8 +47,10 @@ namespace dotnetcore_3._1_ConsoleApp
             Logger.NotifyListeners(loggers);
         }
 
-        private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        static IServiceProvider ConfigureServices(IConfiguration configuration)
         {
+            var services = new ServiceCollection();
+
             services.AddLogging(logging =>
             {
                 logging
@@ -70,6 +70,8 @@ namespace dotnetcore_3._1_ConsoleApp
             });
 
             services.AddTransient<IFooService, FooService>();
+
+            return services.BuildServiceProvider();
         }
 
         static void ConfigureKissLog(IConfiguration configuration)

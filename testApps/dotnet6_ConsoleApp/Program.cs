@@ -74,7 +74,7 @@ void ConfigureKissLog(IConfiguration configuration)
         });
 
     KissLogConfiguration.Listeners
-        .Add(new LocalTextFileListener(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs"), FlushTrigger.OnMessage));
+        .Add(new LocalTextFileListener(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs")));
 
     // optional KissLog configuration
     KissLogConfiguration.Options
