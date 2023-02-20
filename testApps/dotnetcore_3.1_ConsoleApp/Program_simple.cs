@@ -15,9 +15,9 @@ using System.Text;
 
 namespace dotnetcore_3._1_ConsoleApp
 {
-    internal class Program
+    internal class Program_simple
     {
-        static void Main(string[] args)
+        static void Main_simple(string[] args)
         {
             Logger.SetFactory(new KissLog.LoggerFactory(new Logger(url: "ConsoleApp/Main")));
 
@@ -38,7 +38,6 @@ namespace dotnetcore_3._1_ConsoleApp
             logger.LogWarning("Warning log");
             logger.LogError("Error log");
             logger.LogCritical("Critical log");
-
             logger.LogError(new DivideByZeroException(), "Divide by zero ex");
 
             IFooService fooService = serviceProvider.GetRequiredService<IFooService>();
@@ -56,6 +55,7 @@ namespace dotnetcore_3._1_ConsoleApp
             {
                 logging
                     .AddConfiguration(configuration.GetSection("Logging"))
+                    .AddSimpleConsole()
                     .AddKissLog(options =>
                     {
                         options.Formatter = (FormatterArgs args) =>
