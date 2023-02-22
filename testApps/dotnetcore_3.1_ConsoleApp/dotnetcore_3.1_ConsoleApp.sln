@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnetcore_3.1_ConsoleApp", "dotnetcore_3.1_ConsoleApp.csproj", "{AF1051C4-A229-4621-98DB-37DA0E98F366}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog", "..\..\src\KissLog\KissLog.csproj", "{150639E9-9E7E-4785-961B-B486D2731D6F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.AspNetCore", "..\..\src\KissLog.AspNetCore\KissLog.AspNetCore.csproj", "{CECC9138-387A-4A7C-8D39-7CD79DEB3854}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.RestClient", "..\..\src\KissLog.RestClient\KissLog.RestClient.csproj", "{E89368BB-FDA9-484A-878B-FDDA5F916C44}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.CloudListeners", "..\..\src\KissLog.CloudListeners\KissLog.CloudListeners.csproj", "{AFDDC973-460E-4B13-93C3-929D8135E6A7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AF1051C4-A229-4621-98DB-37DA0E98F366}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF1051C4-A229-4621-98DB-37DA0E98F366}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF1051C4-A229-4621-98DB-37DA0E98F366}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF1051C4-A229-4621-98DB-37DA0E98F366}.Release|Any CPU.Build.0 = Release|Any CPU
+		{150639E9-9E7E-4785-961B-B486D2731D6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{150639E9-9E7E-4785-961B-B486D2731D6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{150639E9-9E7E-4785-961B-B486D2731D6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{150639E9-9E7E-4785-961B-B486D2731D6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CECC9138-387A-4A7C-8D39-7CD79DEB3854}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CECC9138-387A-4A7C-8D39-7CD79DEB3854}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CECC9138-387A-4A7C-8D39-7CD79DEB3854}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CECC9138-387A-4A7C-8D39-7CD79DEB3854}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E89368BB-FDA9-484A-878B-FDDA5F916C44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E89368BB-FDA9-484A-878B-FDDA5F916C44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E89368BB-FDA9-484A-878B-FDDA5F916C44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E89368BB-FDA9-484A-878B-FDDA5F916C44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFDDC973-460E-4B13-93C3-929D8135E6A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFDDC973-460E-4B13-93C3-929D8135E6A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFDDC973-460E-4B13-93C3-929D8135E6A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFDDC973-460E-4B13-93C3-929D8135E6A7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {299FC79A-F25D-4A9D-9AD0-AF795915C6C9}
+	EndGlobalSection
+EndGlobal
