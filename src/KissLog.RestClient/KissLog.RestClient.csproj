@@ -1,20 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-      <TargetFrameworks>netstandard2.1;netstandard2.0;net462</TargetFrameworks>
-      <Version>5.1.2</Version>
-      <Authors>KissLog.net</Authors>
-      <Company>KissLog.net</Company>
-      <Product>KissLog.net</Product>
-      <Description>KissLog.net cloud / on-premises REST client.</Description>
-      <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-      <PackageProjectUrl>https://kisslog.net</PackageProjectUrl>
-      <PackageIcon>PackageIcon.png</PackageIcon>
-      <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
-      <RepositoryType>git</RepositoryType>
-      <PackageTags>KissLog</PackageTags>
-      <PackageReleaseNotes>Adapted to KissLog 5.1.2 improvements.
-https://kisslog.net/Docs/SDK.change-log.index.html#kisslog-5-1-2</PackageReleaseNotes>
+    <TargetFrameworks>net8.0;net7.0;net6.0;net5.0;netstandard2.1;netstandard2.0;net481;net471;net462</TargetFrameworks>
+    <Authors>Catalin Gavan</Authors>
+    <PackageId>KissLog.RestClient</PackageId>
+    <Description>logBee.net REST client.</Description>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://logbee.net</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageTags>KissLog</PackageTags>
+    <Version Condition="'$(BUILD_VERSION)' == ''">1.0.0</Version>
+    <Version Condition="'$(BUILD_VERSION)' != ''">$(BUILD_VERSION)</Version>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
 
     <ItemGroup>
@@ -32,10 +32,8 @@ https://kisslog.net/Docs/SDK.change-log.index.html#kisslog-5-1-2</PackageRelease
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="PackageIcon.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
+    <None Include="../../assets/icon.png" Pack="true" Visible="false" PackagePath="/" />
+    <None Include="../../README.md" Pack="true" Visible="false" PackagePath="/" />
   </ItemGroup>
 
 </Project>
