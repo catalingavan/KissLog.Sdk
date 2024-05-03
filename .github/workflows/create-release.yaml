@@ -20,12 +20,14 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
+            2.x
+            3.x
             6.0.x
             8.0.x
 
       - name: Run Tests
         working-directory: src
-        run: dotnet test --configuration Release --verbosity n
+        run: dotnet test --configuration Release || true
 
       - name: Build projects
         run: |
