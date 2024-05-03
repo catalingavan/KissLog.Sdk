@@ -2,17 +2,19 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0;net7.0;net6.0;net5.0;netstandard2.1;netstandard2.0;net481;net471;net462</TargetFrameworks>
-      <PackageId>KissLog.CloudListeners</PackageId>
-      <Authors>Catalin Gavan</Authors>
-      <Description>logBee.net REST client.</Description>
-      <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-      <PackageProjectUrl>https://logbee.net</PackageProjectUrl>
-      <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
-      <RepositoryType>git</RepositoryType>
-      <PackageIcon>PackageIcon.png</PackageIcon>
-      <PackageTags>KissLog</PackageTags>
-      <Version Condition="'$(BUILD_VERSION)' == ''">1.0.0</Version>
-      <Version Condition="'$(BUILD_VERSION)' != ''">$(BUILD_VERSION)</Version>
+    <Authors>Catalin Gavan</Authors>
+    <PackageId>KissLog.CloudListeners</PackageId>
+    <Description>logBee.net REST client.</Description>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://logbee.net</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageTags>KissLog</PackageTags>
+    <Version Condition="'$(BUILD_VERSION)' == ''">1.0.0</Version>
+    <Version Condition="'$(BUILD_VERSION)' != ''">$(BUILD_VERSION)</Version>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,10 +32,8 @@
       <PackageReference Include="System.Net.Http" Version="4.3.4" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Include="PackageIcon.png">
-        <Pack>True</Pack>
-        <PackagePath></PackagePath>
-      </None>
-    </ItemGroup>
+  <ItemGroup>
+    <None Include="../../assets/icon.png" Pack="true" Visible="false" PackagePath="/" />
+    <None Include="../../README.md" Pack="true" Visible="false" PackagePath="/" />
+  </ItemGroup>
 </Project>

@@ -1,0 +1,42 @@
+name: Create release
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        type: string
+        required: true
+        description: Release version
+        default: '1.0.0'
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            8.0.x
+
+      - name: Run Tests
+        working-directory: src
+        run: dotnet test --no-build --configuration Release --verbosity n
+
+      - name: Build projects
+        run: |
+          PROJECTS="KissLog KissLog.RestClient KissLog.CloudListeners KissLog.AspNet.Web KissLog.AspNet.Mvc KissLog.AspNet.WebApi KissLog.AspNetCore"
+          for project in $PROJECTS; do
+            echo "Building $project..."
+            dotnet build "src/$project/$project.csproj" --configuration Release /p:Version=${{ github.event.inputs.release_version }}
+            dotnet pack "src/$project/$project.csproj" --no-build -o . /p:PackageVersion=${{ github.event.inputs.release_version }}
+          done
+
+      - name: Upload nuget package
+        uses: actions/upload-artifact@v4
+        with:
+          path: ./*.nupkg
