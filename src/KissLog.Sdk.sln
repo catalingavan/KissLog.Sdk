@@ -5,9 +5,9 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog", "KissLog\KissLog.csproj", "{6409076B-1153-44B8-927B-6112B8EBDE99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KissLog.AspNet.Web", "KissLog.AspNet.Web\KissLog.AspNet.Web.csproj", "{D0C21C48-C253-41EB-A180-1253CA22381C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.AspNet.Web", "KissLog.AspNet.Web\KissLog.AspNet.Web.csproj", "{D0C21C48-C253-41EB-A180-1253CA22381C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KissLog.AspNet.Mvc", "KissLog.AspNet.Mvc\KissLog.AspNet.Mvc.csproj", "{23A7ABE8-82DE-401C-9410-6B5F545D456A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.AspNet.Mvc", "KissLog.AspNet.Mvc\KissLog.AspNet.Mvc.csproj", "{23A7ABE8-82DE-401C-9410-6B5F545D456A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KissLog.AspNet.WebApi", "KissLog.AspNet.WebApi\KissLog.AspNet.WebApi.csproj", "{8B09066A-48CC-41DF-959E-6A6BEB26DDCE}"
 EndProject
