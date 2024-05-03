@@ -1,12 +1,11 @@
 ﻿using KissLog.Http;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Security.Principal;
+using System.Text;
 
 namespace KissLog.AspNetCore
 {
@@ -24,7 +23,7 @@ namespace KissLog.AspNetCore
 
             KissLog.Http.HttpRequest result = new KissLog.Http.HttpRequest(new KissLog.Http.HttpRequest.CreateOptions
             {
-                Url = new Uri(httpRequest.GetDisplayUrl()),
+                Url = new Uri(GetDisplayUrl(httpRequest)),
                 HttpMethod = httpRequest.Method,
                 UserAgent = GetUserAgent(httpRequest.Headers),
                 HttpReferer = GetHttpReferrer(httpRequest.Headers),
@@ -116,11 +115,16 @@ namespace KissLog.AspNetCore
 
             if (httpRequest.HttpContext?.Session != null && httpRequest.HttpContext.Session.IsAvailable == true)
             {
-                sessionId = httpRequest.HttpContext.Session.GetString("X-KissLogSessionId");
-                if(string.IsNullOrEmpty(sessionId) || string.Compare(sessionId, httpRequest.HttpContext.Session.Id, true) != 0)
+                if(httpRequest.HttpContext.Session.TryGetValue("X-KissLogSessionId", out var value) && value != null)
+                {
+                    sessionId = System.Text.Encoding.UTF8.GetString(value);
+                }
+
+                if(string.IsNullOrEmpty(sessionId) || string.Equals(sessionId, httpRequest.HttpContext.Session.Id, StringComparison.OrdinalIgnoreCase))
                 {
                     isNewSession = true;
-                    httpRequest.HttpContext.Session.SetString("X-KissLogSessionId", httpRequest.HttpContext.Session.Id);
+                    var sessionIdBytes = Encoding.UTF8.GetBytes(httpRequest.HttpContext.Session.Id);
+                    httpRequest.HttpContext.Session.Set("X-KissLogSessionId", sessionIdBytes);
                 }
 
                 sessionId = httpRequest.HttpContext.Session.Id;
@@ -131,6 +135,19 @@ namespace KissLog.AspNetCore
                 IsNewSession = isNewSession,
                 SessionId = sessionId
             };
+        }
+
+        private static string GetDisplayUrl(Microsoft.AspNetCore.Http.HttpRequest request)
+        {
+            string value = request.Host.Value;
+            string value2 = request.PathBase.Value ?? string.Empty;
+            string value3 = request.Path.Value ?? string.Empty;
+            string value4 = request.QueryString.Value ?? string.Empty;
+            return new StringBuilder(request.Scheme.Length + "://".Length + value.Length + value2.Length + value3.Length + value4.Length).Append(request.Scheme).Append("://").Append(value)
+                .Append(value2)
+                .Append(value3)
+                .Append(value4)
+                .ToString();
         }
 
         class Session
