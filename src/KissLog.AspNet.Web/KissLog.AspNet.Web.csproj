@@ -18,6 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\KissLog.CloudListeners\KissLog.CloudListeners.csproj" />
     <ProjectReference Include="..\KissLog\KissLog.csproj" />
   </ItemGroup>
 
