@@ -1,27 +1,21 @@
 <?xml version="1.0"?>
-<package >
+<package>
   <metadata>
     <id>KissLog.AspNet.Web</id>
-    <version>5.1.2</version>
-    <authors>KissLog.net</authors>
-    <owners>KissLog.net</owners>
+    <version>0.0.0</version>
+    <authors>Catalin Gavan</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">Apache-2.0</license>
     <licenseUrl>https://licenses.nuget.org/Apache-2.0</licenseUrl>
-    <projectUrl>http://kisslog.net</projectUrl>
-    <iconUrl>https://kisslog.net/cdn/KissLog/favicon/96.png</iconUrl>
+    <projectUrl>http://logbee.net</projectUrl>
     <icon>PackageIcon.png</icon>
     <description>KissLog Web package. You should not manually install this package, as it will be installed as a dependency.</description>
-    <releaseNotes>
-        Adapted to KissLog 5.1.2 improvements.
-        https://kisslog.net/Docs/SDK.change-log.index.html#kisslog-5-1-2
-    </releaseNotes>
-    <copyright>Copyright 2021</copyright>
+    <copyright>Copyright 2024</copyright>
     <tags>KissLog</tags>
     <repository type="git" url="https://github.com/KissLog-net/KissLog.Sdk" />
     <dependencies>
-      <dependency id="KissLog" version="5.1.2" />
-      <dependency id="KissLog.CloudListeners" version="5.1.2" />
+      <dependency id="KissLog" version="0.0.0" />
+      <dependency id="KissLog.CloudListeners" version="0.0.0" />
     </dependencies>
   </metadata>
   <files>
