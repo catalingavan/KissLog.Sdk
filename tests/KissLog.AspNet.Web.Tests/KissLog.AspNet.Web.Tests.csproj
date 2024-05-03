@@ -112,13 +112,13 @@
       <Project>{d0c21c48-c253-41eb-a180-1253ca22381c}</Project>
       <Name>KissLog.AspNet.Web</Name>
     </ProjectReference>
-    <ProjectReference Include="..\KissLog.Tests.Common\KissLog.Tests.Common.csproj">
-      <Project>{19015010-690b-4c84-b1fc-7a49043be7a5}</Project>
-      <Name>KissLog.Tests.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\src\KissLog\KissLog.csproj">
       <Project>{6409076b-1153-44b8-927b-6112b8ebde99}</Project>
       <Name>KissLog</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KissLog.Tests.Common\KissLog.Tests.Common.csproj">
+      <Project>{19015010-690b-4c84-b1fc-7a49043be7a5}</Project>
+      <Name>KissLog.Tests.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
