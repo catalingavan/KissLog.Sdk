@@ -22,12 +22,13 @@ jobs:
           dotnet-version: |
             2.x
             3.x
-            6.0.x
-            8.0.x
+            6.x
+            7.x
+            8.x
 
       - name: Run Tests
         working-directory: src
-        run: dotnet test --configuration Release || true
+        run: dotnet test --configuration Release
 
       - name: Build projects
         run: |
@@ -38,7 +39,20 @@ jobs:
             dotnet pack "src/$project/$project.csproj" --no-build -o . /p:PackageVersion=${{ github.event.inputs.release_version }}
           done
 
-      - name: Upload nuget package
-        uses: actions/upload-artifact@v4
+      - name: Publish NuGet packages
+        run: |
+          dotnet nuget push "./*.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+
+      - name: Publish GitHub packages
+        run: |
+          dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.KISSLOG_RELEASE }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/KissLog-net/index.json"
+          dotnet nuget push "./*.nupkg" --source "github"
+
+      - name: Release
+        uses: softprops/action-gh-release@v2.0.4
         with:
-          path: ./*.nupkg
+          body: v${{ github.event.inputs.release_version }}
+          draft: false
+          tag_name: v${{ github.event.inputs.release_version }}
+          files: |
+            ./*.nupkg

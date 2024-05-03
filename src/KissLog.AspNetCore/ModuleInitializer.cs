@@ -22,15 +22,9 @@ namespace KissLog.AspNetCore
         private static void SetReadInputStreamProvider()
         {
             bool hasEnableBuffering = KissLog.InternalHelpers.WrapInTryCatch(() => HasEnableBuffering());
-            bool hasEnableRewind = !hasEnableBuffering && KissLog.InternalHelpers.WrapInTryCatch(() => HasEnableRewind());
-
             if (hasEnableBuffering)
             {
                 ReadInputStreamProvider = new EnableBufferingReadInputStreamProvider();
-            }
-            else if(hasEnableRewind)
-            {
-                ReadInputStreamProvider = new EnableRewindReadInputStreamProvider();
             }
 
             string type = ReadInputStreamProvider.GetType().Name;

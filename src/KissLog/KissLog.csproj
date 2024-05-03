@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net7.0;net6.0;net5.0;netstandard2.1;netstandard2.0;net481;net471;net462</TargetFrameworks>
+    <TargetFrameworks>net8.0;net7.0;net6.0;netstandard2.1;netstandard2.0;net481;net471;net462</TargetFrameworks>
     <PackageId>KissLog</PackageId>
     <Authors>Catalin Gavan</Authors>
     <Description>KissLog package. Contains all the necessary components used for logging.
@@ -55,9 +55,6 @@ Install this package on all the projects.</Description>
       <_Parameter1>KissLog.AspNet.Web</_Parameter1>
     </AssemblyAttribute>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>KissLog.AspNet.Web2</_Parameter1>
-    </AssemblyAttribute>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
         <_Parameter1>KissLog.AspNet.Mvc</_Parameter1>
     </AssemblyAttribute>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
@@ -78,7 +75,7 @@ Install this package on all the projects.</Description>
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="System.Text.Json" Version="5.0.2" />
+    <PackageReference Include="System.Text.Json" Version="8.0.3" />
   </ItemGroup>
 
 </Project>

@@ -18,12 +18,13 @@ jobs:
           dotnet-version: |
             2.x
             3.x
-            6.0.x
-            8.0.x
+            6.x
+            7.x
+            8.x
 
       - name: Run Tests
         working-directory: src
-        run: dotnet test --configuration Release || true
+        run: dotnet test --configuration Release
 
       - name: Build projects
         run: |
