@@ -50,7 +50,9 @@ namespace KissLog.AspNetCore.Tests
 
             var middleware = new KissLogMiddleware((innerHttpContext) =>
             {
-                innerHttpContext.Response.WriteAsync(responseBody).Wait();
+                var content = System.Text.Encoding.UTF8.GetBytes(responseBody);
+                innerHttpContext.Response.Body.Write(content, 0, content.Length);
+
                 return Task.CompletedTask;
             });
 
