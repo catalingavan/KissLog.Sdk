@@ -22,8 +22,10 @@ jobs:
           dotnet-version: |
             2.x
             3.x
-            6.0.x
-            8.0.x
+            5.x
+            6.x
+            7.x
+            8.x
 
       - name: Run Tests
         working-directory: src
