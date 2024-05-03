@@ -63,6 +63,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="PackageIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\KissLog.AspNet.Web\KissLog.AspNet.Web.csproj">
       <Project>{d0c21c48-c253-41eb-a180-1253ca22381c}</Project>
       <Name>KissLog.AspNet.Web</Name>
@@ -71,9 +74,6 @@
       <Project>{6409076b-1153-44b8-927b-6112b8ebde99}</Project>
       <Name>KissLog</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="PackageIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
