@@ -17,7 +17,7 @@ namespace KissLog.CloudListeners.RequestLogsListener
         public ILogListenerInterceptor Interceptor { get; set; }
 
         public bool UseAsync { get; set; } = true;
-        public string ApiUrl { get; set; } = Constants.KissLogApiUrl;
+        public string ApiUrl { get; set; } = Constants.LogBeeApiUrl;
         public bool IgnoreSslCertificate { get; set; } = false;
         public Action<ExceptionArgs> OnException { get; set; }
         public IObfuscationService ObfuscationService { get; set; } = new ObfuscationService();
