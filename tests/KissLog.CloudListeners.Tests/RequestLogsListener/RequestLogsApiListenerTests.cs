@@ -29,7 +29,7 @@ namespace KissLog.CloudListeners.Tests.RequestLogsListener
             var application = new Application("organizationId", "applicationId");
             var listener = new RequestLogsApiListener(application);
 
-            Assert.AreEqual(Constants.KissLogApiUrl, listener.ApiUrl);
+            Assert.AreEqual(Constants.LogBeeApiUrl, listener.ApiUrl);
         }
 
         [TestMethod]

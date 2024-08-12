@@ -2,6 +2,6 @@
 {
     internal class Constants
     {
-        public const string KissLogApiUrl = "https://api.kisslog.net";
+        public const string LogBeeApiUrl = "https://api.logbee.net";
     }
 }

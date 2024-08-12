@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30907.101
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLog_AspNet.Mvc", "NLog_AspNet.Mvc.csproj", "{D16A173D-8F43-4C2F-B01C-C4EB86B4EECB}"
 EndProject
@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.Adapters.NLog", "..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.CloudListeners", "..\..\src\KissLog.CloudListeners\KissLog.CloudListeners.csproj", "{9E0BF4B3-6153-4D2E-A0BC-511CAF2A1343}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KissLog.AspNet.Web", "..\..\src\KissLog.AspNet.Web\KissLog.AspNet.Web.csproj", "{D0C21C48-C253-41EB-A180-1253CA22381C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.AspNet.Web", "..\..\src\KissLog.AspNet.Web\KissLog.AspNet.Web.csproj", "{D0C21C48-C253-41EB-A180-1253CA22381C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KissLog.RestClient", "..\..\src\KissLog.RestClient\KissLog.RestClient.csproj", "{1FD0F3DE-737D-4B0C-BF05-E7C3F4349D7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{D0C21C48-C253-41EB-A180-1253CA22381C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0C21C48-C253-41EB-A180-1253CA22381C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0C21C48-C253-41EB-A180-1253CA22381C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FD0F3DE-737D-4B0C-BF05-E7C3F4349D7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FD0F3DE-737D-4B0C-BF05-E7C3F4349D7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FD0F3DE-737D-4B0C-BF05-E7C3F4349D7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FD0F3DE-737D-4B0C-BF05-E7C3F4349D7A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

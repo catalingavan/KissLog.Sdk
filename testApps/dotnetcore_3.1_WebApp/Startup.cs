@@ -79,9 +79,9 @@ namespace dotnetcore_3._1_WebApp
         private void ConfigureKissLog(IOptionsBuilder options)
         {
             options.Listeners
-                .Add(new RequestLogsApiListener(new Application(Configuration["KissLog.OrganizationId"], Configuration["KissLog.ApplicationId"]))
+                .Add(new RequestLogsApiListener(new Application(Configuration["LogBee.OrganizationId"], Configuration["LogBee.ApplicationId"]))
                 {
-                    ApiUrl = Configuration["KissLog.ApiUrl"]
+                    ApiUrl = Configuration["LogBee.ApiUrl"]
                 });
 
             options.Listeners
