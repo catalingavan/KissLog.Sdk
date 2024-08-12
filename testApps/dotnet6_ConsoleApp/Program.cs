@@ -68,9 +68,10 @@ IServiceProvider ConfigureServices(IConfiguration configuration)
 void ConfigureKissLog(IConfiguration configuration)
 {
     KissLogConfiguration.Listeners
-        .Add(new RequestLogsApiListener(new Application(configuration["KissLog.OrganizationId"], configuration["KissLog.ApplicationId"]))
+        .Add(new RequestLogsApiListener(new Application(configuration["LogBee.OrganizationId"], configuration["LogBee.ApplicationId"]))
         {
-            ApiUrl = configuration["KissLog.ApiUrl"]
+            ApiUrl = configuration["LogBee.ApiUrl"],
+            UseAsync = false
         });
 
     KissLogConfiguration.Listeners
