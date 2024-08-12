@@ -39,9 +39,9 @@ app.MapControllerRoute(
 
 app.UseKissLogMiddleware(options => {
     options.Listeners
-        .Add(new RequestLogsApiListener(new Application(builder.Configuration["KissLog.OrganizationId"], builder.Configuration["KissLog.ApplicationId"]))
+        .Add(new RequestLogsApiListener(new Application(builder.Configuration["LogBee.OrganizationId"], builder.Configuration["LogBee.ApplicationId"]))
         {
-            ApiUrl = builder.Configuration["KissLog.ApiUrl"]
+            ApiUrl = builder.Configuration["LogBee.ApiUrl"]
         });
 
     options.Listeners
