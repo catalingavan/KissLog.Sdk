@@ -238,7 +238,7 @@ namespace KissLog.Tests.LoggerData
             LogMessage message = logger.DataContainer.LogMessages.FirstOrDefault();
 
             Assert.IsNotNull(message);
-            Assert.AreEqual(LogLevel.Error, message.LogLevel);
+            Assert.AreEqual(LogLevel.Debug, message.LogLevel);
             Assert.IsTrue(message.Message.Contains(ex.Message));
         }
 
@@ -259,7 +259,7 @@ namespace KissLog.Tests.LoggerData
             LogMessage message = logger.DataContainer.LogMessages.FirstOrDefault();
 
             Assert.IsNotNull(message);
-            Assert.AreEqual(LogLevel.Error, message.LogLevel);
+            Assert.AreEqual(LogLevel.Debug, message.LogLevel);
             Assert.IsTrue(message.Message.Contains(ex.Message));
         }
 
@@ -285,7 +285,7 @@ namespace KissLog.Tests.LoggerData
             LogMessage message = logger.DataContainer.LogMessages.FirstOrDefault();
 
             Assert.IsNotNull(message);
-            Assert.AreEqual(LogLevel.Error, message.LogLevel);
+            Assert.AreEqual(LogLevel.Debug, message.LogLevel);
             Assert.IsTrue(message.Message.Contains(ex.Message));
         }
 
@@ -309,7 +309,7 @@ namespace KissLog.Tests.LoggerData
             LogMessage message = logger.DataContainer.LogMessages.FirstOrDefault();
 
             Assert.IsNotNull(message);
-            Assert.AreEqual(LogLevel.Error, message.LogLevel);
+            Assert.AreEqual(LogLevel.Debug, message.LogLevel);
             Assert.IsTrue(message.Message.Contains(ex.Message));
         }
     }

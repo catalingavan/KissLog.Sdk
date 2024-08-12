@@ -31,7 +31,7 @@ namespace KissLog.LoggerData
 
             if(fileSize > Constants.MaximumAllowedFileSizeInBytes)
             {
-                _logger.Error(new FileSizeTooLargeException(fileSize, Constants.MaximumAllowedFileSizeInBytes));
+                _logger.Debug(new FileSizeTooLargeException(fileSize, Constants.MaximumAllowedFileSizeInBytes).ToString());
                 return null;
             }
 
@@ -69,7 +69,7 @@ namespace KissLog.LoggerData
 
             if (fileSize > Constants.MaximumAllowedFileSizeInBytes)
             {
-                _logger.Error(new FileSizeTooLargeException(fileSize, Constants.MaximumAllowedFileSizeInBytes));
+                _logger.Debug(new FileSizeTooLargeException(fileSize, Constants.MaximumAllowedFileSizeInBytes).ToString());
                 return null;
             }
 
@@ -91,7 +91,7 @@ namespace KissLog.LoggerData
                 if (temporaryFile != null)
                     temporaryFile.Dispose();
 
-                _logger.Error(new LogByteArrayAsFileException(contents, ex));
+                _logger.Debug(new LogByteArrayAsFileException(contents, ex).ToString());
 
                 return null;
             }
@@ -108,13 +108,13 @@ namespace KissLog.LoggerData
 
             if(!fi.Exists)
             {
-                _logger.Error(new LogFileException(sourceFilePath, new FileNotFoundException(null, sourceFilePath)));
+                _logger.Debug(new LogFileException(sourceFilePath, new FileNotFoundException(null, sourceFilePath)).ToString());
                 return null;
             }
 
             if (fi.Length > Constants.MaximumAllowedFileSizeInBytes)
             {
-                _logger.Error(new FileSizeTooLargeException(fi.Length, Constants.MaximumAllowedFileSizeInBytes));
+                _logger.Debug(new FileSizeTooLargeException(fi.Length, Constants.MaximumAllowedFileSizeInBytes).ToString());
                 return null;
             }
 
@@ -138,7 +138,7 @@ namespace KissLog.LoggerData
                 if (temporaryFile != null)
                     temporaryFile.Dispose();
 
-                _logger.Error(new LogFileException(sourceFilePath, ex));
+                _logger.Debug(new LogFileException(sourceFilePath, ex).ToString());
 
                 return null;
             }
