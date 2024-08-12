@@ -60,9 +60,9 @@ namespace AspNet.WebApi
 
             // register listeners
             KissLogConfiguration.Listeners
-                .Add(new RequestLogsApiListener(new Application(ConfigurationManager.AppSettings["KissLog.OrganizationId"], ConfigurationManager.AppSettings["KissLog.ApplicationId"]))
+                .Add(new RequestLogsApiListener(new Application(ConfigurationManager.AppSettings["LogBee.OrganizationId"], ConfigurationManager.AppSettings["LogBee.ApplicationId"]))
                 {
-                    ApiUrl = ConfigurationManager.AppSettings["KissLog.ApiUrl"],
+                    ApiUrl = ConfigurationManager.AppSettings["LogBee.ApiUrl"],
                     Interceptor = new StatusCodeInterceptor
                     {
                         MinimumLogMessageLevel = LogLevel.Trace,
