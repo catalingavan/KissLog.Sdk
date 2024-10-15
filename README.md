@@ -111,7 +111,7 @@ private void ConfigureKissLog
 
 ## Samples
 
-Check the [test applications](https://github.com/KissLog-net/KissLog.Sdk/tree/master/testApps) for more examples of using KissLog.
+Different use cases and examples can be found on the [KissLog integrations page](https://github.com/catalingavan/logbee-integrations-examples/tree/main/KissLog).
 
 ## Feedback
 
