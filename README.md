@@ -12,10 +12,10 @@ Check the [Wiki page](/wiki) for a complete list of features.
 
 ## .NET support
 
-- [.NET Web App](https://logbee.net/Docs/Integrations.KissLog-net.install-instructions.dotnet6-webApp.html)
-- [.NET Console App](https://logbee.net/Docs/Integrations.KissLog-net.install-instructions.dotnet6-consoleApp.html)
-- [ASP.NET MVC](https://logbee.net/Docs/Integrations.KissLog-net.install-instructions.aspnet-mvc.html)
-- [ASP.NET WebApi](https://logbee.net/Docs/Integrations.KissLog-net.install-instructions.aspnet-webapi.html)
+- [.NET Web App](https://github.com/catalingavan/KissLog.Sdk/wiki/dotnet-WebApp)
+- [.NET Console App](https://github.com/catalingavan/KissLog.Sdk/wiki/dotnet-ConsoleApp)
+- [ASP.NET MVC](https://github.com/catalingavan/KissLog.Sdk/wiki/ASP.NET-MVC)
+- [ASP.NET WebApi](https://github.com/catalingavan/KissLog.Sdk/wiki/ASP.NET-WebApi)
 
 ## Why KissLog?
 
@@ -62,9 +62,9 @@ KissLog saves the logs to multiple output locations by using log listeners.
 
 Log listeners are registered at application startup using the `KissLogConfiguration.Listeners` container.
 
-Custom log listeners can be [easily implemented](https://logbee.net/Docs/Integrations.KissLog-net.examples.MongoDB-listener.html).
+Custom log listeners can be [easily implemented](https://github.com/catalingavan/KissLog.Sdk/wiki/MongoDB-listener).
 
-Using [interceptors](https://logbee.net/Docs/Integrations.KissLog-net.advanced.Filtering-the-logs.html), log listeners can apply conditional filtering rules before saving the events.
+Using [interceptors](https://github.com/catalingavan/KissLog.Sdk/wiki/Filtering-the-logs), log listeners can apply conditional filtering rules before saving the events.
 
 ```csharp
 namespace ConsoleApp
@@ -91,7 +91,7 @@ namespace ConsoleApp
 
 ## Configuration
 
-KissLog supports various [configuration options](https://logbee.net/Docs/Integrations.KissLog-net.using-kisslog.Configuration.html) using the ``KissLogConfiguration.Options`` configuration object.
+KissLog supports various [configuration options](https://github.com/catalingavan/KissLog.Sdk/wiki/Configuration) using the ``KissLogConfiguration.Options`` configuration object.
 
 ```csharp
 private void ConfigureKissLog
@@ -107,7 +107,7 @@ private void ConfigureKissLog
 }
 ```
 
-![AppendExceptionDetails](https://raw.githubusercontent.com/wiki/KissLog-net/KissLog.Sdk/images/AppendExceptionDetails.png)
+![AppendExceptionDetails](https://raw.githubusercontent.com/wiki/catalingavan/KissLog.Sdk/images/AppendExceptionDetails.png)
 
 ## Samples
 
