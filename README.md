@@ -1,20 +1,21 @@
 # KissLog
 
-[![Latest version](https://img.shields.io/nuget/v/KissLog.svg?style=flat-square&label=KissLog)](https://www.nuget.org/packages?q=kisslog) [![Downloads](https://img.shields.io/nuget/dt/KissLog.svg?style=flat-square&label=Downloads)](https://www.nuget.org/packages?q=kisslog)
+[![KissLog](https://img.shields.io/nuget/v/KissLog.svg?style=flat-square&label=KissLog)](https://www.nuget.org/packages?q=kisslog)
+[![KissLog.AspNetCore](https://img.shields.io/nuget/v/KissLog.svg?style=flat-square&label=KissLog.AspNetCore)](https://www.nuget.org/packages?q=kisslog)
+[![KissLog.AspNet.WebApi](https://img.shields.io/nuget/v/KissLog.svg?style=flat-square&label=KissLog.AspNet.WebApi)](https://www.nuget.org/packages?q=kisslog)
+[![KissLog.AspNet.Mvc](https://img.shields.io/nuget/v/KissLog.svg?style=flat-square&label=KissLog.AspNet.Mvc)](https://www.nuget.org/packages?q=kisslog)
+[![Downloads](https://img.shields.io/nuget/dt/KissLog.svg?style=flat-square&label=Downloads)](https://www.nuget.org/packages?q=kisslog)
 
-KissLog is the built-in .NET integration for saving the logs to [logBee.net](https://logbee.net).
+KissLog is the built-in .NET integration for saving the logs to [logbee.net](https://logbee.net).
 
-Check the [documentation](https://logbee.net/Docs/Integrations.KissLog-net.index.html) for a complete list of features.
+Check the [Wiki page](/wiki) for a complete list of features.
 
 ## .NET support
 
-- [.NET 6 Web App](https://logbee.net/Docs/Integrations.KissLog-net.install-instructions.dotnet6-webApp.html)
-- [.NET 6 Console App](https://logbee.net/Docs/Integrations.KissLog-net.install-instructions.dotnet6-consoleApp.html)
-- [.NET Core Web App](https://logbee.net/Docs/Integrations.KissLog-net.install-instructions.netcore-webApp.html)
-- [.NET Core Console App](https://logbee.net/Docs/Integrations.KissLog-net.install-instructions.netcore-consoleApp.html)
+- [.NET Web App](https://logbee.net/Docs/Integrations.KissLog-net.install-instructions.dotnet6-webApp.html)
+- [.NET Console App](https://logbee.net/Docs/Integrations.KissLog-net.install-instructions.dotnet6-consoleApp.html)
 - [ASP.NET MVC](https://logbee.net/Docs/Integrations.KissLog-net.install-instructions.aspnet-mvc.html)
 - [ASP.NET WebApi](https://logbee.net/Docs/Integrations.KissLog-net.install-instructions.aspnet-webapi.html)
-- [.NET Framework Console App](https://logbee.net/Docs/Integrations.KissLog-net.install-instructions.netframework-consoleApp.html)
 
 ## Why KissLog?
 
@@ -24,10 +25,10 @@ For web applications, KissLog automatically captures all the HTTP properties.
 
 KissLog keeps the log events in memory and sends them to the registered listeners all at once. This can help reduce the load of the persistence implementation (such as Disk I/O, database operations or network throughput).
 
-Centralized logging using [logBee.net](https://logbee.net) or [logBee on-premises](https://github.com/logBee-net/logBee-app) app.
+Centralized logging using [logbee.net](https://logbee.net) or [Logbee on-premises](https://github.com/catalingavan/logbee-app).
 
 <table><tr><td>
-    <img alt="logBee.net centralized logging" width="600" src="https://github.com/KissLog-net/KissLog.Sdk/assets/39127098/583ff625-d0ce-4ebc-b0d7-9a3b0257d3ef" />
+    <img alt="logbee.net centralized logging" width="600" src="https://github.com/catalingavan/KissLog.Sdk/assets/39127098/583ff625-d0ce-4ebc-b0d7-9a3b0257d3ef" />
 </td></tr></table>
 
 ## Basic usage
