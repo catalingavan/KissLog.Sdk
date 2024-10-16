@@ -27,10 +27,12 @@ jobs:
         run: dotnet test --configuration Release
 
       - name: Build projects
+        shell: pwsh
         run: |
-          PROJECTS="KissLog KissLog.RestClient KissLog.CloudListeners KissLog.AspNet.Web KissLog.AspNet.Mvc KissLog.AspNet.WebApi KissLog.AspNetCore"
-          for project in $PROJECTS; do
-            echo "Building $project..."
-            dotnet build "src/$project/$project.csproj" --configuration Release /p:Version=1.0.0
-            dotnet pack "src/$project/$project.csproj" --no-build -o . /p:PackageVersion=1.0.0
-          done
+          $projects = "KissLog", "KissLog.RestClient", "KissLog.CloudListeners", "KissLog.AspNet.Web", "KissLog.AspNet.Mvc", "KissLog.AspNet.WebApi", "KissLog.AspNetCore"
+          
+          foreach ($project in $projects) {
+              Write-Host "Building $project..."
+              dotnet build "src/$project/$project.csproj" --configuration Release /p:Version=1.0.0
+              dotnet pack "src/$project/$project.csproj" --no-build -o . /p:PackageVersion=1.0.0
+          }
