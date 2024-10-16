@@ -43,7 +43,11 @@ jobs:
       - name: Publish NuGet packages
         shell: pwsh
         run: |
-          dotnet nuget push "./*.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+          $nupkgFiles = Get-ChildItem -Path . -Filter *.nupkg
+          foreach ($file in $nupkgFiles) {
+              Write-Host "Pushing package: $($file.FullName)"
+              dotnet nuget push $file.FullName --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+          }
 
       - name: Publish GitHub packages
         shell: pwsh
