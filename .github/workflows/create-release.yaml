@@ -49,7 +49,12 @@ jobs:
         shell: pwsh
         run: |
           dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.KISSLOG_RELEASE }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/KissLog-net/index.json"
-          dotnet nuget push "./*.nupkg" --source "github"
+          $nupkgFiles = Get-ChildItem -Path . -Filter *.nupkg
+    
+          foreach ($file in $nupkgFiles) {
+              Write-Host "Pushing package: $($file.FullName)"
+              dotnet nuget push $file.FullName --source "github"
+          }
 
       - name: Release
         uses: softprops/action-gh-release@v2.0.4
