@@ -7,7 +7,7 @@
     <Description>KissLog Web package. You should not manually install this package, as it will be installed as a dependency.</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://logbee.net</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
+    <RepositoryUrl>https://github.com/catalingavan/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageIcon>icon.png</PackageIcon>
     <PackageTags>KissLog</PackageTags>

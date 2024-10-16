@@ -7,7 +7,7 @@
     <Description>KissLog .NET and ASP.NET Core package. Install this package on .NET and ASP.NET Core applications.</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://logbee.net</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
+    <RepositoryUrl>https://github.com/catalingavan/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageIcon>icon.png</PackageIcon>
     <PackageTags>KissLog, AspNetCore, NetCore, Core</PackageTags>
