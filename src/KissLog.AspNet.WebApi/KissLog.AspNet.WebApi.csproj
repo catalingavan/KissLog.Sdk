@@ -7,7 +7,7 @@
     <Description>KissLog ASP.NET WebApi package. Install this package on ASP.NET WebApi applications.</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://logbee.net</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
+    <RepositoryUrl>https://github.com/catalingavan/KissLog.Sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageIcon>icon.png</PackageIcon>
     <PackageTags>KissLog, WebApi, AspNet</PackageTags>
