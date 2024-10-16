@@ -8,7 +8,7 @@
 
 KissLog is the built-in .NET integration for saving the logs to [logbee.net](https://logbee.net).
 
-Check the [Wiki page](/wiki) for a complete list of features.
+Check the [Wiki page](https://github.com/catalingavan/KissLog.Sdk/wiki) for a complete list of features.
 
 ## .NET support
 
