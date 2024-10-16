@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0;net6.0;net7.0;net8.0;</TargetFrameworks>
     <Authors>Catalin Gavan</Authors>
     <PackageId>KissLog.AspNetCore</PackageId>
-    <Description>KissLog ASP.NET Core package. Install this package on ASP.NET Core web applications.</Description>
+    <Description>KissLog .NET and ASP.NET Core package. Install this package on .NET and ASP.NET Core applications.</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://logbee.net</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KissLog-net/KissLog.Sdk</RepositoryUrl>
