@@ -16,6 +16,11 @@ namespace KissLog.AspNetCore
             if (httpRequest == null)
                 throw new ArgumentNullException(nameof(httpRequest));
 
+            RequestProperties.CreateOptions propertiesOptions = new RequestProperties.CreateOptions();
+            propertiesOptions.Cookies = InternalHelpers.ToKeyValuePair(httpRequest.Cookies);
+            propertiesOptions.Headers = InternalHelpers.ToKeyValuePair(httpRequest.Headers);
+            propertiesOptions.QueryString = InternalHelpers.ToKeyValuePair(httpRequest.Query);
+
             Session session = KissLog.InternalHelpers.WrapInTryCatch(() => GetSession(httpRequest));
             session = session ?? new Session();
 
@@ -27,17 +32,13 @@ namespace KissLog.AspNetCore
                 HttpMethod = httpRequest.Method,
                 UserAgent = GetUserAgent(httpRequest.Headers),
                 HttpReferer = GetHttpReferrer(httpRequest.Headers),
-                RemoteAddress = httpRequest.HttpContext?.Connection?.RemoteIpAddress?.ToString(),
+                RemoteAddress = GetRemoteAddress(httpRequest, propertiesOptions.Headers),
                 MachineName = InternalHelpers.GetMachineName(),
                 IsNewSession = session.IsNewSession,
                 SessionId = session.SessionId,
                 IsAuthenticated = isAuthenticated
             });
-
-            RequestProperties.CreateOptions propertiesOptions = new RequestProperties.CreateOptions();
-            propertiesOptions.Cookies = InternalHelpers.ToKeyValuePair(httpRequest.Cookies);
-            propertiesOptions.Headers = InternalHelpers.ToKeyValuePair(httpRequest.Headers);
-            propertiesOptions.QueryString = InternalHelpers.ToKeyValuePair(httpRequest.Query);
+            
             propertiesOptions.Claims = GetClaims(httpRequest);
 
             if(httpRequest.HasFormContentType)
@@ -148,6 +149,21 @@ namespace KissLog.AspNetCore
                 .Append(value3)
                 .Append(value4)
                 .ToString();
+        }
+
+        private static string GetRemoteAddress(Microsoft.AspNetCore.Http.HttpRequest httpRequest, IEnumerable<KeyValuePair<string, string>> requestHeaders)
+        {
+            if (httpRequest == null)
+                throw new ArgumentNullException(nameof(httpRequest));
+
+            if (requestHeaders == null)
+                throw new ArgumentNullException(nameof(requestHeaders));
+
+            string forwadedFor = KissLog.InternalHelpers.GetRemoteIPAddressFromRequestHeaders(requestHeaders);
+            if (!string.IsNullOrWhiteSpace(forwadedFor))
+                return forwadedFor;
+
+            return httpRequest.HttpContext?.Connection?.RemoteIpAddress?.ToString();
         }
 
         class Session

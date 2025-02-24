@@ -49,6 +49,21 @@ namespace KissLog.AspNet.Web
             return null;
         }
 
+        internal static string GetRemoteAddress(HttpRequestBase httpRequest, IEnumerable<KeyValuePair<string, string>> requestHeaders)
+        {
+            if (httpRequest == null)
+                throw new ArgumentNullException(nameof(httpRequest));
+
+            if (requestHeaders == null)
+                throw new ArgumentNullException(nameof(requestHeaders));
+
+            string forwadedFor = KissLog.InternalHelpers.GetRemoteIPAddressFromRequestHeaders(requestHeaders);
+            if (!string.IsNullOrWhiteSpace(forwadedFor))
+                return forwadedFor;
+
+            return httpRequest.UserHostAddress;
+        }
+
         public static List<KeyValuePair<string, string>> ToKeyValuePair(NameValueCollection collection)
         {
             if (collection == null)

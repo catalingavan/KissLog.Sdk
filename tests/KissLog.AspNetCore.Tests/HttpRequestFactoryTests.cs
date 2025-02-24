@@ -6,6 +6,7 @@ using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -123,6 +124,33 @@ namespace KissLog.AspNetCore.Tests
             var result = HttpRequestFactory.Create(httpRequest.Object);
 
             Assert.AreEqual(ipAddress, result.RemoteAddress);
+        }
+
+        [TestMethod]
+        [DataRow("X-Forwarded-For", "203.2.64.59", "203.2.64.59")]
+        [DataRow("x-forwarded-for", "187.122.27.32, 203.2.64.59", "187.122.27.32")]
+        public void XForwardedForHasIsCopied(string headerName, string headerValue, string expectedValue)
+        {
+            string ipAddress = "82.116.36.117";
+
+            var connectionInfo = new Mock<ConnectionInfo>();
+            connectionInfo.Setup(p => p.RemoteIpAddress).Returns(IPAddress.Parse(ipAddress));
+
+            var httpContext = new Mock<HttpContext>();
+            httpContext.Setup(p => p.Connection).Returns(connectionInfo.Object);
+
+            var httpRequest = new Mock<HttpRequest>();
+            httpRequest.SetUrl(UrlParser.GenerateUri("/Home/Index"));
+            httpRequest.Setup(p => p.Method).Returns("GET");
+            httpRequest.Setup(p => p.HttpContext).Returns(httpContext.Object);
+            httpRequest.Setup(p => p.Headers).Returns(new CustomHeaderCollection(new Dictionary<string, StringValues>
+            {
+                { headerName, headerValue }
+            }));
+
+            var result = HttpRequestFactory.Create(httpRequest.Object);
+
+            Assert.AreEqual(result.RemoteAddress, expectedValue);
         }
 
         [TestMethod]

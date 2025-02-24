@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Web;
@@ -93,6 +94,27 @@ namespace KissLog.AspNet.Web.Tests
             var result = HttpRequestFactory.Create(httpRequest.Object);
 
             Assert.AreEqual(userHostAddress, result.RemoteAddress);
+        }
+
+        [TestMethod]
+        [DataRow("X-Forwarded-For", "203.2.64.59", "203.2.64.59")]
+        [DataRow("x-forwarded-for", "187.122.27.32, 203.2.64.59", "187.122.27.32")]
+        public void XForwardedForHasIsCopied(string headerName, string headerValue, string expectedValue)
+        {
+            string ipAddress = "82.116.36.117";
+
+            var httpRequest = new Mock<HttpRequestBase>();
+            httpRequest.Setup(p => p.Url).Returns(UrlParser.GenerateUri("/Home/Index"));
+            httpRequest.Setup(p => p.HttpMethod).Returns("GET");
+            httpRequest.Setup(p => p.UserHostAddress).Returns(ipAddress);
+            httpRequest.Setup(p => p.Unvalidated.Headers).Returns(Helpers.GenerateNameValueCollection(new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>(headerName, headerValue)
+            }));
+
+            var result = HttpRequestFactory.Create(httpRequest.Object);
+
+            Assert.AreEqual(result.RemoteAddress, expectedValue);
         }
 
         [TestMethod]
