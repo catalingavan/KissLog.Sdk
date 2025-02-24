@@ -1,5 +1,6 @@
 ﻿using KissLog.Http;
 using System;
+using System.Collections.Generic;
 
 namespace KissLog.AspNet.Web
 {
@@ -10,13 +11,17 @@ namespace KissLog.AspNet.Web
             if (httpRequest == null)
                 throw new ArgumentNullException(nameof(httpRequest));
 
+            List<KeyValuePair<string, string>> requestHeaders = new List<KeyValuePair<string, string>>();
+            if (httpRequest.Unvalidated != null)
+                requestHeaders = InternalHelpers.ToKeyValuePair(httpRequest.Unvalidated.Headers);
+
             HttpRequest result = new HttpRequest(new HttpRequest.CreateOptions
             {
                 Url = httpRequest.Url,
                 HttpMethod = httpRequest.HttpMethod,
                 UserAgent = httpRequest.UserAgent,
                 HttpReferer = httpRequest.UrlReferrer?.ToString(),
-                RemoteAddress = httpRequest.UserHostAddress,
+                RemoteAddress = InternalHelpers.GetRemoteAddress(httpRequest, requestHeaders),
                 MachineName = InternalHelpers.GetMachineName(httpRequest)
             });
 
@@ -26,7 +31,7 @@ namespace KissLog.AspNet.Web
 
             if(httpRequest.Unvalidated != null)
             {
-                propertiesOptions.Headers = InternalHelpers.ToKeyValuePair(httpRequest.Unvalidated.Headers);
+                propertiesOptions.Headers = requestHeaders;
                 propertiesOptions.Cookies = InternalHelpers.ToKeyValuePair(httpRequest.Unvalidated.Cookies);
                 propertiesOptions.QueryString = InternalHelpers.ToKeyValuePair(httpRequest.Unvalidated.QueryString);
 

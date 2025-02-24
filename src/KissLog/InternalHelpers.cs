@@ -133,5 +133,19 @@ namespace KissLog
 
             return result;
         }
+
+        public static string GetRemoteIPAddressFromRequestHeaders(IEnumerable<KeyValuePair<string, string>> headers)
+        {
+            if (headers == null)
+                return null;
+
+            string headerValue = headers.FirstOrDefault(p => string.Equals(p.Key, "X-Forwarded-For", StringComparison.OrdinalIgnoreCase)).Value;
+            if (string.IsNullOrWhiteSpace(headerValue))
+                return null;
+
+            headerValue = headerValue.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()?.Trim();
+
+            return headerValue;
+        }
     }
 }
