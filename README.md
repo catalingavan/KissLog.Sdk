@@ -6,7 +6,7 @@
 [![KissLog.AspNet.Mvc](https://img.shields.io/nuget/v/KissLog.svg?style=flat-square&label=KissLog.AspNet.Mvc)](https://www.nuget.org/packages?q=kisslog)<br>
 [![Downloads](https://img.shields.io/nuget/dt/KissLog.svg?style=flat-square&label=Downloads)](https://www.nuget.org/packages?q=kisslog)
 
-KissLog is the built-in .NET integration for saving the logs to [logbee.net](https://logbee.net).
+KissLog is the default .NET integration for saving the logs to [logbee.net](https://logbee.net).
 
 Check the [Wiki page](https://github.com/catalingavan/KissLog.Sdk/wiki) for a complete list of features.
 
